@@ -1,0 +1,53 @@
+# ── Secrets & environment ─────────────────────────────────────────────────────
+.env
+*.env
+!.env.example
+*.key
+*.pem
+credentials.json
+service-account*.json
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+data/aegis.db
+data/aegis.db-shm
+data/aegis.db-wal
+data/*.db
+
+# ── Node / frontend ───────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+frontend/.env.local
+
+# ── Terraform ─────────────────────────────────────────────────────────────────
+infrastructure/terraform/.terraform/
+infrastructure/terraform/*.tfstate
+infrastructure/terraform/*.tfstate.backup
+infrastructure/terraform/*.tfvars
+!infrastructure/terraform/*.tfvars.example
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

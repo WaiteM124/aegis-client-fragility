@@ -1,0 +1,42 @@
+[
+  {
+    "id": "industry-energy",
+    "industry": "energy",
+    "name": "Energy Sector Risk Context",
+    "description": "Energy companies operating in upstream, midstream, and downstream segments face exposure to geopolitical events, sanctions regimes, and infrastructure disruption. Pipeline and refinery assets are particularly vulnerable to conflict and regulatory action. Oil price is sensitive to OPEC decisions, geopolitical disruption, and demand shifts.",
+    "primary_exposures": ["geopolitical conflict", "sanctions", "infrastructure disruption", "oil price volatility", "environmental regulation"],
+    "source_type": "industry_context"
+  },
+  {
+    "id": "industry-manufacturing",
+    "industry": "manufacturing",
+    "name": "Manufacturing Sector Risk Context",
+    "description": "Global manufacturers face elevated supply chain concentration risk, particularly for rare earth minerals, semiconductors, and industrial components sourced from Asia. Trade tariffs and export controls can rapidly disrupt production schedules. Just-in-time inventory models amplify disruption impact.",
+    "primary_exposures": ["supply chain disruption", "trade tariffs", "rare earth restrictions", "semiconductor shortage", "logistics delays"],
+    "source_type": "industry_context"
+  },
+  {
+    "id": "industry-investment-banking",
+    "industry": "investment_banking",
+    "name": "Investment Banking Sector Risk Context",
+    "description": "Investment banks face direct exposure to geopolitical events that affect sovereign credit ratings, currency markets, and cross-border deal activity. Sanctions compliance is a primary operational risk. Emerging market mandates carry concentrated geopolitical and currency risk.",
+    "primary_exposures": ["sovereign default", "sanctions compliance", "currency devaluation", "market volatility", "deal disruption"],
+    "source_type": "industry_context"
+  },
+  {
+    "id": "industry-pharma",
+    "industry": "pharmaceuticals",
+    "name": "Pharmaceuticals Sector Risk Context",
+    "description": "Pharmaceutical companies face active pharmaceutical ingredient (API) sourcing concentration risk, with significant dependence on India and China for generics manufacturing. Pandemic-related demand shocks and regulatory divergence between US FDA and EU EMA add complexity. Health crises can create both demand surges and supply disruptions.",
+    "primary_exposures": ["API supply concentration", "regulatory divergence", "pandemic disruption", "pricing regulation", "clinical trial delays"],
+    "source_type": "industry_context"
+  },
+  {
+    "id": "industry-technology",
+    "industry": "technology",
+    "name": "Technology Sector Risk Context",
+    "description": "Technology companies face cyber threat actor activity, semiconductor supply constraints, and increasing data sovereignty regulation. AI governance is an emerging regulatory risk. Data centre operators face energy cost pressure and geographic regulation (GDPR, data localisation). Talent concentration in key hubs creates workforce risk.",
+    "primary_exposures": ["cyberattack", "semiconductor shortage", "data regulation", "AI governance", "energy cost", "talent risk"],
+    "source_type": "industry_context"
+  }
+]

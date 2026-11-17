@@ -1,0 +1,52 @@
+[
+  {
+    "id": "region-middle-east",
+    "region": "middle_east",
+    "name": "Middle East Regional Risk Profile",
+    "description": "The Middle East region faces elevated geopolitical risk driven by ongoing conflicts, proxy rivalries, and sanctions regimes. Oil infrastructure is a primary concern for multinational operations. Regulatory environments vary significantly by country.",
+    "key_risks": ["geopolitical instability", "sanctions exposure", "oil price volatility", "infrastructure disruption"],
+    "sectors_exposed": ["energy", "investment_banking", "infrastructure"],
+    "stability_index": "medium-low",
+    "source_type": "regional_profile"
+  },
+  {
+    "id": "region-europe",
+    "region": "europe",
+    "name": "Europe Regional Risk Profile",
+    "description": "Europe faces elevated energy cost risks following supply disruptions, alongside regulatory headwinds from ESG mandates and digital sovereignty requirements. Eastern Europe has heightened security risk. Sanctions regimes against Russia continue to evolve.",
+    "key_risks": ["energy cost escalation", "regulatory burden", "cyber threats", "conflict spillover", "sanctions compliance"],
+    "sectors_exposed": ["manufacturing", "technology", "pharmaceuticals", "investment_banking"],
+    "stability_index": "medium",
+    "source_type": "regional_profile"
+  },
+  {
+    "id": "region-asia-pacific",
+    "region": "asia_pacific",
+    "name": "Asia-Pacific Regional Risk Profile",
+    "description": "Asia-Pacific presents strategic supply chain concentration risks, particularly in semiconductor fabrication (Taiwan) and pharmaceutical ingredient manufacturing (India, China). US-China trade tensions and Taiwan Strait dynamics are primary geopolitical risk factors.",
+    "key_risks": ["supply chain concentration", "trade war escalation", "Taiwan Strait tension", "regulatory divergence"],
+    "sectors_exposed": ["manufacturing", "technology", "pharmaceuticals"],
+    "stability_index": "medium",
+    "source_type": "regional_profile"
+  },
+  {
+    "id": "region-north-america",
+    "region": "north_america",
+    "name": "North America Regional Risk Profile",
+    "description": "North America is a comparatively stable operating environment. Primary risks include regulatory policy shifts, cyber threat actor activity targeting critical infrastructure, and trade policy uncertainty. Financial sector faces interest rate and credit cycle exposure.",
+    "key_risks": ["cyber threats", "regulatory change", "trade policy uncertainty", "credit cycle risk"],
+    "sectors_exposed": ["investment_banking", "technology", "pharmaceuticals"],
+    "stability_index": "medium-high",
+    "source_type": "regional_profile"
+  },
+  {
+    "id": "region-africa",
+    "region": "africa",
+    "name": "Africa Regional Risk Profile",
+    "description": "Africa presents variable operating conditions; North Africa faces ongoing conflict spillover risk and infrastructure gaps. Sub-Saharan Africa has significant resource extraction opportunities but governance and security challenges. Energy infrastructure is frequently targeted.",
+    "key_risks": ["political instability", "infrastructure gaps", "security incidents", "currency volatility"],
+    "sectors_exposed": ["energy", "infrastructure"],
+    "stability_index": "low-medium",
+    "source_type": "regional_profile"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "proj-001",
+    "client_id": "client-001",
+    "name": "Gulf Sovereign Debt Advisory",
+    "description": "Advisory mandate for restructuring of Gulf state sovereign debt instruments, with direct exposure to oil price volatility and regional geopolitical risk.",
+    "geography": ["middle_east"],
+    "status": "active",
+    "keywords": ["sovereign debt", "oil", "bonds", "gulf", "restructuring", "sanctions"],
+    "value_usd": 15000000
+  },
+  {
+    "id": "proj-002",
+    "client_id": "client-001",
+    "name": "Eastern European Infrastructure Bond",
+    "description": "Structuring and placement of infrastructure bonds for an Eastern European government entity with proximity to active conflict zones.",
+    "geography": ["europe"],
+    "status": "active",
+    "keywords": ["infrastructure", "bonds", "eastern europe", "government", "conflict risk", "sanctions"],
+    "value_usd": 8500000
+  },
+  {
+    "id": "proj-003",
+    "client_id": "client-002",
+    "name": "Taiwan Semiconductor Supply Chain Review",
+    "description": "Strategic review of semiconductor supply chain concentration risk with Taiwanese fabricators; scenario planning for geopolitical disruption.",
+    "geography": ["asia_pacific"],
+    "status": "active",
+    "keywords": ["semiconductor", "supply chain", "taiwan", "fabrication", "concentration risk"],
+    "value_usd": 2200000
+  },
+  {
+    "id": "proj-004",
+    "client_id": "client-003",
+    "name": "Libya Pipeline Rehabilitation",
+    "description": "Engineering and project management for rehabilitation of Libyan coastal oil pipeline infrastructure; subject to security and regulatory risk.",
+    "geography": ["africa", "middle_east"],
+    "status": "active",
+    "keywords": ["pipeline", "libya", "oil", "infrastructure", "conflict", "security"],
+    "value_usd": 45000000
+  },
+  {
+    "id": "proj-005",
+    "client_id": "client-004",
+    "name": "Asia API Sourcing Programme",
+    "description": "Active pharmaceutical ingredient sourcing diversification away from single-country dependency; key suppliers in India and China.",
+    "geography": ["asia_pacific"],
+    "status": "active",
+    "keywords": ["api", "pharmaceutical", "sourcing", "india", "china", "supply chain", "diversification"],
+    "value_usd": 6800000
+  },
+  {
+    "id": "proj-006",
+    "client_id": "client-005",
+    "name": "European Data Centre Expansion",
+    "description": "Deployment of three hyperscale data centres across Germany and Poland; subject to energy cost risk and regulatory compliance requirements.",
+    "geography": ["europe"],
+    "status": "active",
+    "keywords": ["data centre", "cloud", "germany", "poland", "infrastructure", "energy", "GDPR"],
+    "value_usd": 120000000
+  }
+]

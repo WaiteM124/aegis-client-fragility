@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  # ── Backend API + worker ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount data directory so the SQLite DB persists between restarts
+      - ./data:/app/data
+    environment:
+      APP_ENV: development
+      DEBUG: "true"
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      PERSISTENCE_BACKEND: sqlite
+      SQLITE_DB_PATH: /app/data/aegis.db
+      MESSAGE_BUS_BACKEND: in_memory
+      MODEL_PROVIDER: deterministic
+      RETRIEVAL_BACKEND: lexical
+      KNOWLEDGE_BASE_PATH: /app/data/synthetic
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Pub/Sub emulator (opt-in via --profile pubsub) ───────────────────────
+  #
+  # docker-compose --profile pubsub up
+  #
+  # Then set MESSAGE_BUS_BACKEND=pubsub_emulator in your .env
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+    ports:
+      - "8085:8085"
+    profiles:
+      - pubsub
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/v1/projects/aegis-local/topics"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s

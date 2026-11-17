@@ -1,0 +1,67 @@
+[
+  {
+    "id": "client-001",
+    "name": "Meridian Capital Partners",
+    "industry": "investment_banking",
+    "geography": ["europe", "middle_east", "north_america"],
+    "risk_profile": "moderate",
+    "keywords": [
+      "financial markets", "sovereign debt", "oil", "sanctions", "currency",
+      "bonds", "equity", "credit", "emerging markets", "interest rate"
+    ],
+    "description": "Global investment bank with significant exposure to emerging markets and energy sector debt instruments.",
+    "active": true
+  },
+  {
+    "id": "client-002",
+    "name": "Synthos Manufacturing Group",
+    "industry": "manufacturing",
+    "geography": ["europe", "asia_pacific"],
+    "risk_profile": "moderate",
+    "keywords": [
+      "supply chain", "semiconductors", "rare earth", "logistics",
+      "trade", "tariffs", "factory", "industrial", "components", "procurement"
+    ],
+    "description": "Diversified manufacturer with complex Asia-Pacific supply chain dependencies and European production facilities.",
+    "active": true
+  },
+  {
+    "id": "client-003",
+    "name": "Veridia Energy Systems",
+    "industry": "energy",
+    "geography": ["middle_east", "africa", "europe"],
+    "risk_profile": "aggressive",
+    "keywords": [
+      "oil", "gas", "pipeline", "energy", "petrochemical", "refinery",
+      "sanctions", "infrastructure", "exploration", "OPEC"
+    ],
+    "description": "Energy infrastructure company operating across Middle East and African markets with European trading operations.",
+    "active": true
+  },
+  {
+    "id": "client-004",
+    "name": "Citadel Pharmaceuticals",
+    "industry": "pharmaceuticals",
+    "geography": ["europe", "asia_pacific", "north_america"],
+    "risk_profile": "conservative",
+    "keywords": [
+      "pharmaceutical", "clinical trial", "regulatory approval", "healthcare",
+      "pandemic", "supply chain", "api", "drug", "FDA", "EMA", "biosimilar"
+    ],
+    "description": "Global pharmaceutical company with manufacturing in Asia and distribution across developed markets.",
+    "active": true
+  },
+  {
+    "id": "client-005",
+    "name": "Auriga Digital Infrastructure",
+    "industry": "technology",
+    "geography": ["europe", "north_america", "asia_pacific"],
+    "risk_profile": "moderate",
+    "keywords": [
+      "cloud", "data centre", "cyber", "infrastructure", "software",
+      "ai", "semiconductor", "talent", "digital", "network", "security"
+    ],
+    "description": "Digital infrastructure provider with critical dependency on semiconductor supply and hyperscale cloud services.",
+    "active": true
+  }
+]
