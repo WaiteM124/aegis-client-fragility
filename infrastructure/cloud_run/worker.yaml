@@ -1,34 +1,22 @@
-# Aegis Worker — Cloud Run service definition
-#
-# Deploy:
-#   gcloud run services replace infrastructure/cloud_run/worker.yaml \
-#     --region=us-central1
-#
-# Replace ${PROJECT_ID} and ${IMAGE_TAG} before deploying, e.g.:
-#   envsubst < infrastructure/cloud_run/worker.yaml | gcloud run services replace -
-
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: aegis-worker
   annotations:
-    # Internal-only ingress: not exposed to the public internet.
-    # Traffic comes only from within the same VPC / Cloud Run environment.
     run.googleapis.com/ingress: internal
 spec:
   template:
     metadata:
       annotations:
-        # Worker scales to 0 when idle — Pub/Sub push triggers scale-out
         autoscaling.knative.dev/minScale: "0"
         autoscaling.knative.dev/maxScale: "5"
         run.googleapis.com/execution-environment: gen2
     spec:
-      serviceAccountName: aegis-sa@${PROJECT_ID}.iam.gserviceaccount.com
+      serviceAccountName: aegis-sa@exalted-cell-475019-b7.iam.gserviceaccount.com
       containerConcurrency: 1
       timeoutSeconds: 300
       containers:
-        - image: gcr.io/${PROJECT_ID}/aegis-worker:${IMAGE_TAG}
+        - image: europe-west2-docker.pkg.dev/exalted-cell-475019-b7/aegis-repo/aegis-worker:latest
           resources:
             limits:
               cpu: "2"
@@ -41,25 +29,15 @@ spec:
             - name: LOG_LEVEL
               value: "INFO"
             - name: PERSISTENCE_BACKEND
-              value: "firestore_emulator"
+              value: "firestore"
             - name: MESSAGE_BUS_TYPE
-              value: "pubsub_emulator"
-            # Sensitive config from Secret Manager (aegis-config secret)
+              value: "pubsub"
             - name: GEMINI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: aegis-config
-                  key: GEMINI_API_KEY
+              value: "not-set"
             - name: MODEL_PROVIDER
-              valueFrom:
-                secretKeyRef:
-                  name: aegis-config
-                  key: MODEL_PROVIDER
+              value: "deterministic"
             - name: PUBSUB_PROJECT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: aegis-config
-                  key: PUBSUB_PROJECT_ID
+              value: "exalted-cell-475019-b7"
   traffic:
     - percent: 100
       latestRevision: true
