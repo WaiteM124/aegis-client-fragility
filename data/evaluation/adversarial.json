@@ -1,0 +1,87 @@
+[
+  {
+    "id": "adv-001",
+    "title": "Gulf crude oil pipeline disruption affects regional energy supplies",
+    "source": "synthetic_evaluation",
+    "raw_content": "Gulf region crude oil pipeline disruption reported. OPEC emergency consultation called. Energy and petrochemical operations suspended. Financial markets reacting.",
+    "affected_regions": ["gulf"],
+    "event_date": "2026-01-15T00:00:00",
+    "adversarial_purpose": "sub-region 'gulf' must normalise to 'middle_east' via GEO_HIERARCHY",
+    "expected": {
+      "category": "unknown",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 48.0,
+      "max_risk_score": 61.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "adv-002",
+    "title": "Chip shortage worsens; asia pacific consumer electronics impacted",
+    "source": "synthetic_evaluation",
+    "raw_content": "Global chip shortage continues. Consumer electronics production delayed. Chip fabrication capacity constrained. Manufacturing output reduced across asia pacific region.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "adversarial_purpose": "synonym 'chip' must expand to 'semiconductor'; event.tags must include 'semiconductor'",
+    "expected": {
+      "category": "technology",
+      "severity": "low",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 23.0,
+      "max_risk_score": 31.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "adv-003",
+    "title": "Soil contamination industrial recoil spring review in middle east",
+    "source": "synthetic_evaluation",
+    "raw_content": "Soil contamination detected near industrial zone in region. Recoil spring components reviewed for safety compliance. Factory environmental assessment conducted. Logistics rerouted.",
+    "affected_regions": ["middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "adversarial_purpose": "'soil' and 'recoil' must NOT match 'oil' keyword via word-boundary fix; client-001 and client-003 match via geo only",
+    "expected": {
+      "category": "environmental",
+      "severity": "low",
+      "matched_client_ids": ["client-001", "client-002", "client-003"],
+      "min_risk_score": 22.0,
+      "max_risk_score": 32.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "adv-004",
+    "title": "Antarctic research station operational review",
+    "source": "synthetic_evaluation",
+    "raw_content": "Routine operational review at Antarctic research station completed. Weather monitoring stable. No significant incidents reported.",
+    "affected_regions": ["antarctica"],
+    "event_date": "2026-01-15T00:00:00",
+    "adversarial_purpose": "region 'antarctica' is outside all client geographies; zero clients should match",
+    "expected": {
+      "category": "unknown",
+      "severity": "high",
+      "matched_client_ids": [],
+      "min_risk_score": 0.0,
+      "max_risk_score": 100.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "adv-005",
+    "title": "Global supply chain crisis semiconductor shortage and energy disruption",
+    "source": "synthetic_evaluation",
+    "raw_content": "Global supply chain crisis. Semiconductor components shortage across asia pacific. Middle east energy and oil pipeline disruptions. Pharmaceutical clinical trial delays. Manufacturing output reduced.",
+    "affected_regions": ["asia_pacific", "middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "adversarial_purpose": "multi-region [asia_pacific, middle_east] must trigger all 5 clients via overlapping geographies",
+    "expected": {
+      "category": "technology",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 49.0,
+      "max_risk_score": 59.0,
+      "evidence_should_contain": []
+    }
+  }
+]

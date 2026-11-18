@@ -4,11 +4,17 @@ Retrieval service.
 Thin orchestration layer between the assessment service and the
 knowledge repository port.  Enriches the query with client context
 and filters out low-relevance results.
+
+Returns a ``RetrievalResult`` containing both the validated reference list
+and the set of document IDs that were actually retrieved.  The assessment
+service uses ``retrieved_ids`` to guard against LLM-fabricated citations:
+any reference whose ``source_document_id`` is not in ``retrieved_ids`` is
+dropped before the ``ImpactAssessment`` is built.
 """
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import NamedTuple, Optional
 
 from ..shared.config import get_settings
 from ..shared.logging import get_logger
@@ -17,6 +23,21 @@ from ..shared.models.clients import Client, Project
 from ..shared.ports.knowledge_repository import KnowledgeRepositoryPort
 
 logger = get_logger("retrieval")
+
+
+class RetrievalResult(NamedTuple):
+    """
+    Return type of ``RetrievalService.retrieve()``.
+
+    ``references``  — validated, relevance-filtered evidence references.
+    ``retrieved_ids`` — frozenset of ``source_document_id`` values in
+                        ``references``.  Passed to the assessment service
+                        so it can reject any reference a live LLM fabricates
+                        that was never actually retrieved.
+    """
+
+    references: list[EvidenceReference]
+    retrieved_ids: frozenset[str]
 
 
 class RetrievalService:
@@ -30,7 +51,7 @@ class RetrievalService:
         client: Client,
         project: Optional[Project] = None,
         correlation_id: str = "",
-    ) -> list[EvidenceReference]:
+    ) -> RetrievalResult:
         """
         Retrieve relevant evidence for a client/event query.
 
@@ -39,6 +60,9 @@ class RetrievalService:
 
         Only evidence with relevance_score >= 0.1 is returned.
         Evidence IDs are always traceable back to indexed documents.
+
+        Returns a ``RetrievalResult`` with both the filtered references and the
+        set of retrieved document IDs for downstream citation validation.
         """
         enriched = (
             f"{query} {client.industry} {' '.join(client.geography)}"
@@ -67,6 +91,13 @@ class RetrievalService:
                     },
                 )
 
+        # Build the retrieved_ids set from the validated references only.
+        # This set is passed to the assessment service to validate that no
+        # references were fabricated by a live LLM provider.
+        retrieved_ids: frozenset[str] = frozenset(
+            ref.source_document_id for ref in validated
+        )
+
         logger.debug(
             "Evidence retrieved",
             extra={
@@ -78,4 +109,4 @@ class RetrievalService:
             },
         )
 
-        return validated
+        return RetrievalResult(references=validated, retrieved_ids=retrieved_ids)

@@ -1,0 +1,402 @@
+[
+  {
+    "id": "eval-001",
+    "title": "Military invasion launched across contested Middle East border; war declared",
+    "source": "synthetic_evaluation",
+    "raw_content": "Full-scale military invasion launched across the contested border. War declared. International sanctions regime imposed. Oil and gas pipeline system and energy facilities at risk. OPEC production commitments under threat. Financial markets reacting with currency volatility and sovereign debt concerns. Government forces mobilizing.",
+    "affected_regions": ["middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 70.0,
+      "max_risk_score": 79.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-002",
+    "title": "Significant sanctions imposed on Middle East oil producer; emerging markets credit concern",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant sanctions imposed following escalation. Oil and gas exports restricted. Emerging markets credit rating downgrade expected. Currency reserves under pressure. Pipeline operations halted.",
+    "affected_regions": ["middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 54.0,
+      "max_risk_score": 63.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-003",
+    "title": "Eastern European geopolitical tensions; sanctions regime; financial markets impact",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant escalation in eastern_europe. Territorial sovereignty disputed. Government forces mobilized. Sanctions regime against oil and gas exports. Financial markets volatility with currency pressure and sovereign debt concerns. Credit rating agencies on watch.",
+    "affected_regions": ["eastern_europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 47.0,
+      "max_risk_score": 66.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-004",
+    "title": "Significant earthquake disrupts Asia Pacific supply chain, factory, pharmaceutical",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant earthquake causes widespread disruption. Tsunami warning issued. Storm surge flooding follows. Supply chain severely disrupted. Factory production halted. Industrial components logistics affected. Pharmaceutical drug manufacturing and clinical trial operations severely disrupted.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "natural_disaster",
+      "severity": "critical",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 60.0,
+      "max_risk_score": 79.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-005",
+    "title": "Significant data breach intrusion targeting cloud data centre, pharmaceutical supply chain",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant data breach and intrusion targeting cloud data centre operations. Pharmaceutical supply chain systems compromised. Zero-day exploit discovered. Semiconductor components procurement systems exposed. Drug manufacturing operational disruption.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "cyber",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 54.0,
+      "max_risk_score": 62.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-006",
+    "title": "Pandemic virus outbreak healthcare emergency; pharmaceutical FDA regulatory authorization",
+    "source": "synthetic_evaluation",
+    "raw_content": "Pandemic declared globally. Epidemic outbreak of novel virus affecting multiple regions. Healthcare system under severe strain. Mortality rates critical. Pharmaceutical drug and biosimilar production prioritized. Clinical trial regulatory approval fast-tracked. FDA and EMA emergency authorization. Cloud capacity overwhelmed.",
+    "affected_regions": ["north_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "health",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-004", "client-005"],
+      "min_risk_score": 62.0,
+      "max_risk_score": 85.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-007",
+    "title": "Significant market crash; interest rate; financial markets bond equity credit pharmaceutical cloud",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant market crash triggers financial markets turmoil. Interest rate hike announced by central bank. Currency devaluation feared. Bonds and equity sell-off accelerates. Credit rating downgrades. Pharmaceutical sector affected. Cloud services and digital costs rising.",
+    "affected_regions": ["north_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-004", "client-005"],
+      "min_risk_score": 50.0,
+      "max_risk_score": 66.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-008",
+    "title": "Major military conflict government forces deployed; financial markets pharmaceutical ai impact",
+    "source": "synthetic_evaluation",
+    "raw_content": "Major military conflict erupts. Government forces deployed to contested region. Financial markets significant disruption. Pharmaceutical supply chain at risk. AI and cloud systems disrupted. Widespread impact on credit and bonds.",
+    "affected_regions": ["north_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-004", "client-005"],
+      "min_risk_score": 44.0,
+      "max_risk_score": 58.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-009",
+    "title": "Bilateral trade tariffs agreement logistics procurement factory industrial pharmaceutical biosimilar",
+    "source": "synthetic_evaluation",
+    "raw_content": "Bilateral trade agreement signed covering new tariffs on logistics and industrial components. Procurement protocols updated. Factory compliance deadlines extended. Pharmaceutical biosimilar trade included.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "low",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 21.0,
+      "max_risk_score": 44.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-010",
+    "title": "Economic uncertainty trade disruption semiconductors supply chain pharmaceutical cloud oil price",
+    "source": "synthetic_evaluation",
+    "raw_content": "Economic uncertainty emerges from trade disruption. Semiconductors supply chain affected. Oil price volatility. Pharmaceutical supply chain at risk. Cloud and digital services impacted. Procurement and logistics delays.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "medium",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 37.0,
+      "max_risk_score": 52.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-011",
+    "title": "Major disease outbreak pharmaceutical drug EMA clinical trial biosimilar healthcare oil",
+    "source": "synthetic_evaluation",
+    "raw_content": "Major disease outbreak spreading across region. Pharmaceutical drug and biosimilar supply disrupted. EMA issues emergency guidance. Clinical trial operations suspended. Healthcare system under strain. Oil price impact from supply disruptions. Financial markets reacting. Cloud capacity monitoring elevated.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "health",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 50.0,
+      "max_risk_score": 64.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-012",
+    "title": "Significant tropical storm destroys gas pipeline petrochemical refinery Africa energy OPEC",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant tropical storm has caused widespread damage to gas pipeline and petrochemical refinery operations in Africa. Energy exploration activities suspended. OPEC emergency consultation. LNG export terminals shut down.",
+    "affected_regions": ["africa"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "natural_disaster",
+      "severity": "high",
+      "matched_client_ids": ["client-003"],
+      "min_risk_score": 61.0,
+      "max_risk_score": 66.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-013",
+    "title": "Major epidemic disease outbreak healthcare pharmaceutical clinical trial FDA drug biosimilar",
+    "source": "synthetic_evaluation",
+    "raw_content": "Major epidemic disease outbreak spreading. Pharmaceutical drug and biosimilar production prioritized. Clinical trial regulatory approval fast-tracked. FDA emergency authorization. Healthcare system under severe strain. Semiconductor component supply affected. Cloud platform capacity expanded. Supply chain disruption.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "health",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 52.0,
+      "max_risk_score": 68.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-014",
+    "title": "Territorial protest sovereignty Middle East oil pipeline OPEC tensions",
+    "source": "synthetic_evaluation",
+    "raw_content": "Territorial sovereignty dispute erupts in region. Widespread protest and tension over oil pipeline operations. OPEC member states in disagreement. Financial markets reacting with oil price volatility. Currency pressure on emerging markets.",
+    "affected_regions": ["middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 53.0,
+      "max_risk_score": 61.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-015",
+    "title": "Minor earthquake factory logistics components asia pacific pharmaceutical cloud",
+    "source": "synthetic_evaluation",
+    "raw_content": "Minor earthquake recorded near industrial zone. Factory operations and logistics temporarily adjusted. Components procurement updated. Pharmaceutical manufacturing contingency plans activated. Cloud failover operations tested. Supply chain rerouting underway.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "low",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 23.0,
+      "max_risk_score": 41.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-016",
+    "title": "DDoS vulnerability exploit cloud pharmaceutical supply chain semiconductor components drug",
+    "source": "synthetic_evaluation",
+    "raw_content": "DDoS attacks exploiting zero-day vulnerability across cloud providers. Pharmaceutical supply chain systems affected. Semiconductor components procurement platform hacked. Data breach suspected. Network intrusion detected.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "cyber",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 53.0,
+      "max_risk_score": 63.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-017",
+    "title": "Major geopolitical conflict government sanctions oil gas pipeline petrochemical energy OPEC Africa",
+    "source": "synthetic_evaluation",
+    "raw_content": "Major geopolitical conflict erupts. Government sanctions imposed on oil and gas pipeline. Energy and petrochemical refinery access restricted. OPEC emergency session held. Exploration permits revoked.",
+    "affected_regions": ["africa"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 46.0,
+      "max_risk_score": 71.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-018",
+    "title": "Significant devaluation clinical trial regulatory approval pharmaceutical biosimilar FDA cloud semiconductor",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant currency devaluation. Clinical trial regulatory approval delays announced by FDA. Pharmaceutical biosimilar pricing under pressure. Cloud and semiconductor supply chain review initiated.",
+    "affected_regions": ["north_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-004", "client-005"],
+      "min_risk_score": 44.0,
+      "max_risk_score": 63.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-019",
+    "title": "Significant cyberattack data breach financial markets credit bonds cloud security network",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant cyberattack causing major data breach at financial institutions. Financial markets disruption. Credit and bonds trading halted. Cloud security vulnerabilities exploited. Network intrusion detected. AI platform compromised.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "cyber",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 48.0,
+      "max_risk_score": 61.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-020",
+    "title": "Healthcare pandemic virus clinical trial pharmaceutical biosimilar EMA drug outbreak",
+    "source": "synthetic_evaluation",
+    "raw_content": "Healthcare system under strain from virus spread. Pandemic risk elevated. Pharmaceutical biosimilar and drug supply chain disruption. Clinical trial operations suspended. EMA guidance issued. Cloud capacity expanded.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "health",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 61.0,
+      "max_risk_score": 81.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-021",
+    "title": "Full-scale war invasion oil gas sanctions financial markets supply chain pharmaceutical cloud semiconductor",
+    "source": "synthetic_evaluation",
+    "raw_content": "Full-scale war and invasion launched. Major sanctions regime. Oil and gas pipeline disrupted. Financial markets in crisis. Supply chain collapse. Pharmaceutical drug shortages. Cloud data centre outages. Semiconductor factory closures. Credit and bonds suspended. Currency collapse.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "geopolitical",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 65.0,
+      "max_risk_score": 78.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-022",
+    "title": "Oil price default sovereign debt emerging markets credit rating currency bonds financial",
+    "source": "synthetic_evaluation",
+    "raw_content": "Oil price collapse triggers sovereign debt crisis. Default risk elevated for emerging markets. Credit rating agencies downgrade multiple sovereigns. Currency reserves depleted. Bonds collapse. Financial markets in turmoil. Interest rate emergency response.",
+    "affected_regions": ["middle_east"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-003"],
+      "min_risk_score": 62.0,
+      "max_risk_score": 83.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-023",
+    "title": "Typhoon gas pipeline petrochemical refinery Africa energy OPEC LNG exploration",
+    "source": "synthetic_evaluation",
+    "raw_content": "Typhoon causes significant damage to gas pipeline and petrochemical refinery in region. Energy exploration suspended. OPEC production commitments at risk. LNG export operations halted.",
+    "affected_regions": ["africa"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "natural_disaster",
+      "severity": "high",
+      "matched_client_ids": ["client-003"],
+      "min_risk_score": 61.0,
+      "max_risk_score": 66.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-024",
+    "title": "Significant intrusion espionage cloud data centre ai digital network security zero-day",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant intrusion and espionage detected targeting cloud data centre operations. AI platform compromised. Digital network security breached. Talent and operations elevated risk. Zero-day exploit discovered.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "cyber",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 48.0,
+      "max_risk_score": 67.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "eval-025",
+    "title": "Flood wildfire natural disaster supply chain factory logistics pharmaceutical cloud components",
+    "source": "synthetic_evaluation",
+    "raw_content": "Widespread natural disaster including flood and wildfire has disrupted supply chain and factory operations. Logistics and components procurement affected. Pharmaceutical manufacturing suspended. Cloud failover operations activated.",
+    "affected_regions": ["asia_pacific"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "natural_disaster",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 49.0,
+      "max_risk_score": 65.0,
+      "evidence_should_contain": []
+    }
+  }
+]

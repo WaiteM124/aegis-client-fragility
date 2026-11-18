@@ -24,9 +24,12 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
 
     # ── Persistence ───────────────────────────────────────────────────────────
-    # Options: sqlite | firestore
+    # Options: sqlite | firestore_emulator
     persistence_backend: str = "sqlite"
     sqlite_db_path: str = "./data/aegis.db"
+
+    # Firestore emulator (set when PERSISTENCE_BACKEND=firestore_emulator)
+    firestore_emulator_host: str = ""  # e.g. "localhost:8086"
 
     # ── Message bus ───────────────────────────────────────────────────────────
     # Options: in_memory | pubsub_emulator | pubsub

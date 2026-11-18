@@ -13,11 +13,14 @@ Contract requirements:
      not content contract — deterministic provider only).
 """
 
+import json
+
 import pytest
 from pydantic import BaseModel
 from typing import Optional
 
 from backend.model_gateway.deterministic import DeterministicModelProvider
+from backend.model_gateway.gemini import GeminiModelProvider
 from backend.shared.ports.model_provider import ModelProviderPort
 
 
@@ -30,13 +33,54 @@ class SimpleOutput(BaseModel):
     recommended_actions: list[str]
 
 
+# ── Gemini stub ───────────────────────────────────────────────────────────────
+
+
+class _StubResponse:
+    """Minimal stand-in for a Gemini API response object."""
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+
+class _StubGeminiClient:
+    """
+    Fake Gemini client that returns structurally valid JSON.
+
+    Injected via GeminiModelProvider(_client=...) so no real API calls
+    are made during contract tests.
+    """
+
+    async def generate_content_async(self, prompt: str) -> _StubResponse:
+        payload = json.dumps(
+            {
+                "assessment_text": (
+                    "Stub assessment: the event presents material risk "
+                    "to the client's operations."
+                ),
+                "key_risks": [
+                    "Operational disruption in affected regions",
+                    "Regulatory and compliance exposure",
+                ],
+                "recommended_actions": [
+                    "Activate contingency protocols",
+                    "Review contractual obligations",
+                ],
+            }
+        )
+        return _StubResponse(payload)
+
+
 # ── Provider fixtures ─────────────────────────────────────────────────────────
 
 
-@pytest.fixture(params=["deterministic"])
+@pytest.fixture(params=["deterministic", "gemini_stub"])
 def provider(request) -> ModelProviderPort:
     if request.param == "deterministic":
         return DeterministicModelProvider()
+    if request.param == "gemini_stub":
+        # Injected fake client — no real API call, no key validation
+        return GeminiModelProvider(api_key="stub-key", _client=_StubGeminiClient())
     raise ValueError(f"Unknown provider: {request.param}")
 
 
@@ -92,7 +136,8 @@ class TestModelProviderContract:
         assert result.assessment_text.strip() != ""
 
     async def test_deterministic_provider_idempotent(self):
-        """Structural contract: deterministic provider must return structurally identical output."""
+        """Structural contract: deterministic provider returns structurally identical output."""
+        # Only meaningful for the deterministic provider; Gemini stub may vary.
         provider = DeterministicModelProvider()
         kwargs = dict(
             system_prompt="Analyst.",

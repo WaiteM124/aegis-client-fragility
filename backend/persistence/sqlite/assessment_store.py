@@ -220,6 +220,39 @@ class SQLiteAssessmentStore(AssessmentStorePort):
             rows = await cur.fetchall()
         return [_row_to_exposure(r) for r in rows]
 
+    async def list_exposures_by_assessment(self, assessment_id: str) -> list[ClientExposure]:
+        """Return client exposures that share the same (event_id, client_id) as the assessment."""
+        async with self._db.execute(
+            """
+            SELECT ce.*
+            FROM client_exposures ce
+            JOIN assessments a
+              ON a.event_id = ce.event_id AND a.client_id = ce.client_id
+            WHERE a.id = ?
+            ORDER BY ce.relevance_score DESC
+            """,
+            (assessment_id,),
+        ) as cur:
+            rows = await cur.fetchall()
+        return [_row_to_exposure(r) for r in rows]
+
+    async def get_assessments_summary(self) -> dict:
+        """Return total count, counts by risk level, and distinct client count."""
+        async with self._db.execute(
+            "SELECT COUNT(*) as total, COUNT(DISTINCT client_id) as clients FROM assessments"
+        ) as cur:
+            row = await cur.fetchone()
+        total = row["total"] if row else 0
+        clients_affected = row["clients"] if row else 0
+
+        async with self._db.execute(
+            "SELECT risk_level, COUNT(*) as cnt FROM risk_scores GROUP BY risk_level"
+        ) as cur:
+            rows = await cur.fetchall()
+        by_risk_level = {row["risk_level"]: row["cnt"] for row in rows}
+
+        return {"total": total, "by_risk_level": by_risk_level, "clients_affected": clients_affected}
+
 
 # ── Row mappers ───────────────────────────────────────────────────────────────
 

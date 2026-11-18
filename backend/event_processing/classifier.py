@@ -3,9 +3,17 @@ Rule-based event classifier.
 
 Deterministic keyword matching — no LLM.
 Classification is predictable, fully auditable, and versioned.
+
+Synonym expansion is applied before keyword matching so that surface
+variations (e.g. "chip" → "semiconductor") are captured.  Expanded
+canonical terms are appended to `event.tags` so the downstream client
+matcher can use them for keyword matching without re-running the
+classifier.
 """
 
 from __future__ import annotations
+
+import re
 
 from ..shared.logging import get_logger
 from ..shared.models.events import (
@@ -18,6 +26,25 @@ from ..shared.models.events import (
 logger = get_logger("classifier")
 
 VERSION = "1.0.0"
+
+# ── Synonym map ───────────────────────────────────────────────────────────────
+# Maps surface-form terms to their canonical equivalents.
+# Used to expand event text before category/client keyword matching.
+
+SYNONYMS: dict[str, str] = {
+    "chip": "semiconductor",
+    "chips": "semiconductor",
+    "microchip": "semiconductor",
+    "microchips": "semiconductor",
+    "ransomware": "cyber",
+    "malware": "cyber",
+    "hack": "cyber",
+    "hacked": "cyber",
+    "crude": "oil",
+    "petroleum": "oil",
+    "lng": "gas",
+    "api": "pharmaceutical",
+}
 
 # ── Category keyword tables ───────────────────────────────────────────────────
 
@@ -99,6 +126,22 @@ class RuleBasedClassifier:
         combined = (
             f"{event.title} {event.summary or ''} {event.raw_content}"
         ).lower()
+
+        # ── Synonym expansion ─────────────────────────────────────────────────
+        # Expand surface terms to canonical equivalents.
+        # The expanded canonical terms are:
+        #   1. Appended to `combined` for more accurate category/severity scoring.
+        #   2. Added to `event.tags` so the client matcher can use them without
+        #      re-running the classifier.
+        new_tags: list[str] = []
+        for surface, canonical in SYNONYMS.items():
+            if re.search(r"\b" + re.escape(surface) + r"\b", combined):
+                if canonical not in combined:
+                    combined = combined + " " + canonical
+                if canonical not in event.tags and canonical not in new_tags:
+                    new_tags.append(canonical)
+        for tag in new_tags:
+            event.tags.append(tag)
 
         category = _classify_category(combined)
         severity = _classify_severity(combined)

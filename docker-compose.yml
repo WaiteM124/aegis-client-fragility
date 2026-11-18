@@ -28,6 +28,25 @@ services:
       timeout: 5s
       retries: 3
 
+  # ── Firestore emulator (opt-in via --profile firestore) ─────────────────
+  #
+  # docker-compose --profile firestore up
+  #
+  # Then set PERSISTENCE_BACKEND=firestore_emulator and
+  # FIRESTORE_EMULATOR_HOST=localhost:8086 in your .env
+  firestore-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    command: gcloud beta emulators firestore start --host-port=0.0.0.0:8086
+    ports:
+      - "8086:8086"
+    profiles:
+      - firestore
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # ── Pub/Sub emulator (opt-in via --profile pubsub) ───────────────────────
   #
   # docker-compose --profile pubsub up

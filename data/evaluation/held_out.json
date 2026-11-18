@@ -1,0 +1,82 @@
+[
+  {
+    "id": "held-001",
+    "title": "Latin American currency crisis impacts pharmaceutical exports and clinical trials",
+    "source": "synthetic_evaluation",
+    "raw_content": "Significant currency devaluation across latin america. Pharmaceutical exports affected. Clinical trial operations disrupted. Biosimilar supply chain under pressure. Financial markets volatility. Supply chain disruption.",
+    "affected_regions": ["latin_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "high",
+      "matched_client_ids": ["client-001", "client-002", "client-004", "client-005"],
+      "min_risk_score": 44.0,
+      "max_risk_score": 60.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "held-002",
+    "title": "Southeast Asian state-sponsored cyberattack targets semiconductor supply chain",
+    "source": "synthetic_evaluation",
+    "raw_content": "State-sponsored cyberattack detected originating from southeast asia. Semiconductor supply chain systems compromised. Pharmaceutical data breach discovered. Cloud network intrusion detected. Zero-day exploit used.",
+    "affected_regions": ["southeast_asia"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "cyber",
+      "severity": "high",
+      "matched_client_ids": ["client-002", "client-004", "client-005"],
+      "min_risk_score": 52.0,
+      "max_risk_score": 60.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "held-003",
+    "title": "LNG export terminal fire disrupts African gas pipeline operations",
+    "source": "synthetic_evaluation",
+    "raw_content": "LNG export terminal fire in africa region. Gas pipeline operations suspended. Energy exploration activities halted. OPEC emergency consultation called. Petrochemical refinery on standby.",
+    "affected_regions": ["africa"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "regulatory",
+      "severity": "high",
+      "matched_client_ids": ["client-003"],
+      "min_risk_score": 61.0,
+      "max_risk_score": 66.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "held-004",
+    "title": "Global pandemic virus declared; pharmaceutical emergency authorization worldwide",
+    "source": "synthetic_evaluation",
+    "raw_content": "World Health Organization declares global pandemic. Virus spreading across europe, asia pacific and north america. Pharmaceutical emergency authorization issued. Biosimilar supply chains disrupted. Clinical trial operations suspended. Healthcare systems under strain.",
+    "affected_regions": ["europe", "asia_pacific", "north_america"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "health",
+      "severity": "critical",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 60.0,
+      "max_risk_score": 85.0,
+      "evidence_should_contain": []
+    }
+  },
+  {
+    "id": "held-005",
+    "title": "New bilateral trade agreement extends pharmaceutical market access in Europe",
+    "source": "synthetic_evaluation",
+    "raw_content": "New bilateral trade agreement signed. Extended pharmaceutical market access across europe. Biosimilar pricing framework updated. Clinical trial collaboration expanded. Procurement protocols adjusted.",
+    "affected_regions": ["europe"],
+    "event_date": "2026-01-15T00:00:00",
+    "expected": {
+      "category": "economic",
+      "severity": "low",
+      "matched_client_ids": ["client-001", "client-002", "client-003", "client-004", "client-005"],
+      "min_risk_score": 21.0,
+      "max_risk_score": 33.0,
+      "evidence_should_contain": []
+    }
+  }
+]

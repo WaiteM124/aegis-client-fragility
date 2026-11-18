@@ -15,6 +15,7 @@ or what actions should be taken authoritatively.
 
 from __future__ import annotations
 
+import re
 import time
 from typing import Optional
 
@@ -22,6 +23,7 @@ from pydantic import BaseModel, ValidationError
 
 from ..decision_engine.risk_scorer import RiskScorer
 from ..retrieval.service import RetrievalService
+from ..shared.geography import normalise_geography
 from ..shared.logging import get_logger
 from ..shared.models.assessment import EvidenceReference, ImpactAssessment
 from ..shared.models.clients import Client, ClientExposure, Project
@@ -100,12 +102,16 @@ class AssessmentService:
                     f"{event.title} {event.summary or ''} "
                     f"{client.industry} {' '.join(client.geography)}"
                 )
-                evidence = await self._retrieval.retrieve(query, client, project, correlation_id=event.correlation_id)
+                retrieval_result = await self._retrieval.retrieve(
+                    query, client, project, correlation_id=event.correlation_id
+                )
+                evidence = retrieval_result.references
+                retrieved_ids = retrieval_result.retrieved_ids
 
                 # Generate and validate assessment via model
                 start = time.monotonic()
                 assessment_output = await self._generate_assessment(
-                    event, classification, client, project, evidence
+                    event, classification, client, project, evidence, retrieved_ids
                 )
                 duration_ms = int((time.monotonic() - start) * 1000)
 
@@ -156,9 +162,17 @@ class AssessmentService:
         event: Event,
         classification: EventClassification,
     ) -> list[tuple[Client, ClientExposure]]:
+        # Include event.tags so that synonym-expanded terms (added by the
+        # classifier) are visible to keyword matching.
         event_text = (
-            f"{event.title} {event.summary or ''} {event.raw_content}"
+            f"{event.title} {event.summary or ''} {event.raw_content} "
+            f"{' '.join(event.tags)}"
         ).lower()
+
+        # Pre-normalise event regions via the geographic hierarchy once.
+        normalised_event_regions = [
+            normalise_geography(r) for r in event.affected_regions
+        ]
 
         matched: list[tuple[Client, ClientExposure]] = []
 
@@ -166,11 +180,19 @@ class AssessmentService:
             if not client.active:
                 continue
 
-            matched_kw = [kw for kw in client.keywords if kw.lower() in event_text]
+            # Fix 1: word-boundary keyword matching prevents substring false
+            # matches (e.g. "oil" must not match "soil" or "recoil").
+            matched_kw = [
+                kw for kw in client.keywords
+                if _keyword_in_text(kw, event_text)
+            ]
+
+            # Fix 2: geographic hierarchy — normalise both sides so sub-regions
+            # (e.g. "eastern_europe") correctly match parent regions ("europe").
             matched_geo = [
                 region
                 for region in client.geography
-                if region.lower() in [r.lower() for r in event.affected_regions]
+                if normalise_geography(region) in normalised_event_regions
             ]
 
             if not matched_kw and not matched_geo:
@@ -221,6 +243,7 @@ class AssessmentService:
         client: Client,
         project: Optional[Project],
         evidence: list[EvidenceReference],
+        retrieved_ids: frozenset[str] = frozenset(),
     ) -> AssessmentOutput:
         evidence_text = "\n".join(
             f"- [{ref.source_type}] {ref.content_excerpt}" for ref in evidence
@@ -273,4 +296,42 @@ class AssessmentService:
             )
             raise AssessmentError(event.id, "model provider raised an exception", cause=exc) from exc
 
+        # ── Citation guard ────────────────────────────────────────────────────
+        # With the DeterministicModelProvider, evidence references are passed
+        # through unchanged (the model never fabricates new IDs).  With a live
+        # LLM provider (e.g. Gemini), the model could hallucinate document IDs
+        # that were never retrieved — this guard drops any such fabricated
+        # references before they reach the ImpactAssessment.
+        if retrieved_ids:
+            safe_evidence: list[EvidenceReference] = []
+            for ref in evidence:
+                if ref.source_document_id in retrieved_ids:
+                    safe_evidence.append(ref)
+                else:
+                    logger.warning(
+                        "Dropping fabricated evidence reference not in retrieved set",
+                        extra={
+                            "source_document_id": ref.source_document_id,
+                            "event_id": event.id,
+                        },
+                    )
+            # Reassign evidence to the validated safe set
+            evidence[:] = safe_evidence
+
         return result  # type: ignore[return-value]
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+
+def _keyword_in_text(kw: str, text: str) -> bool:
+    """
+    Return True if ``kw`` appears in ``text`` as a whole word (word-boundary
+    match).  This prevents substring false matches such as "oil" matching
+    "soil", "recoil", or "spoil".
+
+    Multi-word keywords (e.g. "supply chain") are matched as full phrases with
+    word boundaries anchored at the start of the first word and the end of
+    the last word.
+    """
+    return bool(re.search(r"\b" + re.escape(kw.lower()) + r"\b", text))

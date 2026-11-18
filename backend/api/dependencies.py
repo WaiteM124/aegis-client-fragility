@@ -20,6 +20,8 @@ from ..persistence.message_bus.in_memory import InMemoryMessageBus
 from ..persistence.message_bus.pubsub_emulator import PubSubEmulatorMessageBus
 from ..persistence.sqlite.assessment_store import SQLiteAssessmentStore
 from ..persistence.sqlite.event_store import SQLiteEventStore
+from ..shared.ports.event_store import EventStorePort
+from ..shared.ports.assessment_store import AssessmentStorePort
 from ..retrieval.service import RetrievalService
 from ..event_processing.worker import EventProcessingWorker
 from ..shared.config import Settings
@@ -39,8 +41,8 @@ class Container:
     Concrete adapters live here; services see only port abstractions.
     """
 
-    event_store: SQLiteEventStore
-    assessment_store: SQLiteAssessmentStore
+    event_store: EventStorePort
+    assessment_store: AssessmentStorePort
     message_bus: MessageBusPort
     knowledge_repo: LexicalKnowledgeRepository
     model_provider: ModelProviderPort
@@ -53,15 +55,53 @@ class Container:
     @classmethod
     async def create(cls, settings: Settings) -> "Container":
         # ── Persistence ───────────────────────────────────────────────────────
-        db_dir = os.path.dirname(settings.sqlite_db_path) or "."
-        os.makedirs(db_dir, exist_ok=True)
         os.makedirs(settings.knowledge_base_path, exist_ok=True)
 
-        event_store = SQLiteEventStore(settings.sqlite_db_path)
-        await event_store.initialise()
+        event_store: EventStorePort
+        assessment_store: AssessmentStorePort
 
-        assessment_store = SQLiteAssessmentStore(settings.sqlite_db_path)
-        await assessment_store.initialise()
+        if settings.persistence_backend == "firestore_emulator":
+            # Lazy import so the module loads even when google-cloud-firestore
+            # is not installed (falls back gracefully to SQLite).
+            try:
+                import os as _os
+                import google.cloud.firestore as _firestore  # noqa: PLC0415
+
+                emulator_host = settings.firestore_emulator_host or _os.getenv(
+                    "FIRESTORE_EMULATOR_HOST", "localhost:8086"
+                )
+                _os.environ["FIRESTORE_EMULATOR_HOST"] = emulator_host
+                db = _firestore.Client(project="aegis-local")
+
+                from ..persistence.firestore.event_store import FirestoreEventStore
+                from ..persistence.firestore.assessment_store import FirestoreAssessmentStore
+
+                event_store = FirestoreEventStore(db)
+                assessment_store = FirestoreAssessmentStore(db)
+                await event_store.initialise()
+                await assessment_store.initialise()
+                logger.info(
+                    "Persistence backend: Firestore emulator",
+                    extra={"emulator_host": emulator_host},
+                )
+            except ImportError:
+                logger.warning(
+                    "google-cloud-firestore not installed; falling back to SQLite"
+                )
+                settings = settings.model_copy(update={"persistence_backend": "sqlite"})
+                db_dir = os.path.dirname(settings.sqlite_db_path) or "."
+                os.makedirs(db_dir, exist_ok=True)
+                event_store = SQLiteEventStore(settings.sqlite_db_path)
+                await event_store.initialise()
+                assessment_store = SQLiteAssessmentStore(settings.sqlite_db_path)
+                await assessment_store.initialise()
+        else:
+            db_dir = os.path.dirname(settings.sqlite_db_path) or "."
+            os.makedirs(db_dir, exist_ok=True)
+            event_store = SQLiteEventStore(settings.sqlite_db_path)
+            await event_store.initialise()
+            assessment_store = SQLiteAssessmentStore(settings.sqlite_db_path)
+            await assessment_store.initialise()
 
         # ── Message bus ───────────────────────────────────────────────────────
         # Select adapter based on message_bus_type (falls back to message_bus_backend

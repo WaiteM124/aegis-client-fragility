@@ -8,7 +8,7 @@ additional model calls.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from ...shared.logging import get_logger
 
@@ -73,6 +73,64 @@ async def get_dashboard_summary(request: Request):
         "risk_level_breakdown": risk_level_counts,
         "recent_events": recent_events,
         "recent_assessments": recent_assessments,
+    }
+
+
+@router.get("/stats", summary="Aggregated stats: event and assessment counts")
+async def get_stats(request: Request):
+    """
+    Returns a flat summary of event and assessment counts suitable for
+    a dashboard KPI row.  All values come from the stores — no model calls.
+    """
+    container = request.app.state.container
+
+    events_summary = await container.event_store.get_events_summary()
+    assessments_summary = await container.assessment_store.get_assessments_summary()
+
+    return {
+        "total_events": events_summary.get("total", 0),
+        "events_by_status": events_summary.get("by_status", {}),
+        "events_by_severity": events_summary.get("by_severity", {}),
+        "total_assessments": assessments_summary.get("total", 0),
+        "assessments_by_risk_level": assessments_summary.get("by_risk_level", {}),
+        "clients_affected": assessments_summary.get("clients_affected", 0),
+    }
+
+
+@router.get("/events/{event_id}/trace", summary="Full provenance trace for one event")
+async def get_event_trace(event_id: str, request: Request):
+    """
+    Returns the event, its classification, and all assessments (with risk
+    scores and client exposures) in a single response.  Read-only — does
+    not trigger any model calls.
+
+    Returns 404 if the event does not exist.
+    """
+    container = request.app.state.container
+
+    event = await container.event_store.get_event(event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event {event_id!r} not found")
+
+    classification = await container.event_store.get_classification(event_id)
+    assessments = await container.assessment_store.list_assessments(event_id=event_id)
+
+    assessment_traces = []
+    for a in assessments:
+        risk_score = await container.assessment_store.get_risk_score(a.id)
+        exposures = await container.assessment_store.list_exposures_by_assessment(a.id)
+        client_exposure = exposures[0] if exposures else None
+
+        assessment_traces.append({
+            "assessment": a.model_dump(mode="json"),
+            "risk_score": risk_score.model_dump(mode="json") if risk_score else None,
+            "client_exposure": client_exposure.model_dump(mode="json") if client_exposure else None,
+        })
+
+    return {
+        "event": event.model_dump(mode="json"),
+        "classification": classification.model_dump(mode="json") if classification else None,
+        "assessments": assessment_traces,
     }
 
 

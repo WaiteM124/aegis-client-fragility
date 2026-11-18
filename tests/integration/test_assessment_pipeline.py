@@ -380,7 +380,7 @@ class TestCitationValidation:
         original_search = repo.search
         repo.search = _patched_search
         try:
-            refs = await retrieval.retrieve(
+            result = await retrieval.retrieve(
                 query="cyber attack banking",
                 client=client,
                 correlation_id="test-correlation-id",
@@ -388,6 +388,9 @@ class TestCitationValidation:
         finally:
             repo.search = original_search
 
-        returned_ids = {r.source_document_id for r in refs}
+        # retrieve() now returns a RetrievalResult(references, retrieved_ids)
+        returned_ids = {r.source_document_id for r in result.references}
         assert "real-doc-001" in returned_ids, "Real reference should be kept"
         assert "nonexistent-doc-xyz" not in returned_ids, "Bogus reference should be dropped"
+        # retrieved_ids must match the reference list exactly
+        assert result.retrieved_ids == returned_ids

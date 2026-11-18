@@ -45,6 +45,19 @@ class AssessmentStorePort(ABC):
     async def list_exposures(self, event_id: str) -> list[ClientExposure]:
         ...
 
+    # ── Aggregation ───────────────────────────────────────────────────────────
+
+    async def get_assessments_summary(self) -> dict:
+        """Return total count, counts by risk level, and distinct client count.
+
+        Return shape: {"total": int, "by_risk_level": {str: int}, "clients_affected": int}
+        """
+        return {"total": 0, "by_risk_level": {}, "clients_affected": 0}
+
+    async def list_exposures_by_assessment(self, assessment_id: str) -> list[ClientExposure]:
+        """Return client exposures for a given assessment."""
+        return []
+
     # ── Lifecycle ─────────────────────────────────────────────────────────────
 
     async def initialise(self) -> None:

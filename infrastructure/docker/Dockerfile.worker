@@ -1,0 +1,37 @@
+# Aegis Worker — Docker image
+#
+# Runs only the asynchronous event processing worker; no API server.
+# Designed for Cloud Run worker deployment where the worker listens
+# for Pub/Sub messages and processes events independently of the API.
+
+# ── Builder stage ─────────────────────────────────────────────────────────────
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ── Runtime stage ─────────────────────────────────────────────────────────────
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy installed packages from builder
+COPY --from=builder /install /usr/local
+
+# Copy application source
+COPY backend/ ./backend/
+COPY data/synthetic/ ./data/synthetic/
+COPY requirements.txt .
+
+ENV PYTHONPATH=/app
+
+CMD ["python", "-m", "backend.worker_main"]

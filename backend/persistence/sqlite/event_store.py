@@ -188,6 +188,32 @@ class SQLiteEventStore(EventStorePort):
             row = await cur.fetchone()
         return _row_to_classification(row) if row else None
 
+    async def get_events_summary(self) -> dict:
+        """Return counts by status and by severity (from joined classifications)."""
+        # Total and by-status counts
+        async with self._db.execute("SELECT status, COUNT(*) as cnt FROM events GROUP BY status") as cur:
+            rows = await cur.fetchall()
+        by_status = {row["status"]: row["cnt"] for row in rows}
+        total = sum(by_status.values())
+
+        # By-severity: use the most recent classification per event
+        async with self._db.execute(
+            """
+            SELECT ec.severity, COUNT(DISTINCT ec.event_id) as cnt
+            FROM event_classifications ec
+            WHERE ec.id = (
+                SELECT id FROM event_classifications ec2
+                WHERE ec2.event_id = ec.event_id
+                ORDER BY ec2.classified_at DESC LIMIT 1
+            )
+            GROUP BY ec.severity
+            """
+        ) as cur:
+            rows = await cur.fetchall()
+        by_severity = {row["severity"]: row["cnt"] for row in rows}
+
+        return {"total": total, "by_status": by_status, "by_severity": by_severity}
+
 
 # ── Row mappers ───────────────────────────────────────────────────────────────
 

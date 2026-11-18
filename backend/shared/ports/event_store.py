@@ -50,6 +50,15 @@ class EventStorePort(ABC):
     async def get_classification(self, event_id: str) -> Optional[EventClassification]:
         ...
 
+    # ── Aggregation ───────────────────────────────────────────────────────────
+
+    async def get_events_summary(self) -> dict:
+        """Return counts by status and by severity (from joined classifications).
+
+        Return shape: {"total": int, "by_status": {str: int}, "by_severity": {str: int}}
+        """
+        return {"total": 0, "by_status": {}, "by_severity": {}}
+
     # ── Lifecycle ─────────────────────────────────────────────────────────────
 
     async def initialise(self) -> None:
