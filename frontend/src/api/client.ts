@@ -1,6 +1,8 @@
-// NOTE: If CORS errors occur at runtime, the live API must be called directly.
-// No Vite proxy is used — requests go directly to the production API.
-export const API_BASE = 'https://aegis-api-343322260451.europe-west2.run.app';
+const PRODUCTION_API = 'https://aegis-api-343322260451.europe-west2.run.app';
+
+// Vite exposes only VITE_* variables. If VITE_API_BASE is unset, keep calling
+// the current Cloud Run API so existing production builds do not break.
+export const API_BASE = import.meta.env.VITE_API_BASE || PRODUCTION_API;
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {

@@ -41,6 +41,12 @@ spec:
               value: "exalted-cell-475019-b7"
             - name: MESSAGE_BUS_TYPE
               value: "pubsub"
+            # No public dashboard origin is recorded in this repository.
+            # Set CORS_ALLOWED_ORIGINS to that origin before applying this
+            # manifest, otherwise browsers will be limited to localhost Vite
+            # origins and a deployed dashboard will be blocked.
+            # - name: CORS_ALLOWED_ORIGINS
+            #   value: "https://YOUR-DASHBOARD-ORIGIN"
           livenessProbe:
             httpGet:
               path: /health

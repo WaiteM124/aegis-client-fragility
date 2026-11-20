@@ -77,7 +77,12 @@ npm install
 npm run dev
 ```
 
-The Vite dev server has no API proxy. `frontend/src/api/client.ts` currently points at the deployed Cloud Run API (`https://aegis-api-343322260451.europe-west2.run.app`), not at `localhost:8000`. For a fully local dashboard, change `API_BASE` to `http://localhost:8000` first. Making that value configurable is a recommended follow-up; it is not changed in this documentation-only update.
+The Vite dev server has no API proxy. The dashboard reads `VITE_API_BASE` (see `frontend/.env.example`). If that variable is unset, it falls back to the deployed Cloud Run API (`https://aegis-api-343322260451.europe-west2.run.app`). For a fully local dashboard:
+
+```bash
+cp frontend/.env.example frontend/.env
+# default in the example is http://localhost:8000
+```
 
 As of 20 November 2026, 09:47 Europe/London, `GET /health` on that Cloud Run service returned `{"status":"healthy",...}` with the deterministic provider and 29 indexed documents. There is no verified public URL for the frontend in this repository.
 
@@ -154,7 +159,9 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | Model provider | Deterministic (no API key) | Gemini (`GEMINI_API_KEY` required) |
 | Knowledge repository | Lexical (BM25-style) | `bge_m3` is listed in configuration, but no BGE-M3 adapter is present in the tree |
 
-Configuration is via environment variables or `.env`. Important switches: `MODEL_PROVIDER`, `PERSISTENCE_BACKEND`, `MESSAGE_BUS_TYPE` / `MESSAGE_BUS_BACKEND`, `RETRIEVAL_BACKEND`, `SQLITE_DB_PATH`. `GEMINI_API_KEY` is required only for the Gemini provider.
+Configuration is via environment variables or `.env`. Important switches: `MODEL_PROVIDER`, `PERSISTENCE_BACKEND`, `MESSAGE_BUS_TYPE` / `MESSAGE_BUS_BACKEND`, `RETRIEVAL_BACKEND`, `SQLITE_DB_PATH`, `CORS_ALLOWED_ORIGINS`. `GEMINI_API_KEY` is required only for the Gemini provider.
+
+`CORS_ALLOWED_ORIGINS` is a comma-separated allowlist of browser origins. It defaults to local Vite dev and preview origins (`http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:4173`, `http://127.0.0.1:4173`). Pushing to `master` does not auto-deploy to Cloud Run. This repository does not record a public dashboard URL, so before the next API deploy set `CORS_ALLOWED_ORIGINS` on the `aegis-api` Cloud Run service to the live dashboard origin. If that variable is left unset on deploy, browsers on a hosted dashboard will be blocked.
 
 ## Design decisions and trade-offs
 
@@ -216,8 +223,8 @@ The root README previously marked checkpoints 2–4 as pending. The code is ahea
 - Knowledge in the repo is synthetic. There is no live event-feed integration in this tree.
 - The default model is a deterministic stand-in. Gemini is implemented, but live-model quality, latency, and cost have not been published here.
 - Retrieval is lexical. A `bge_m3` setting exists without a matching adapter.
-- The dashboard’s `API_BASE` is hardcoded to the Cloud Run URL, which makes local frontend development easy to point at production by accident. Recommendation: load it from an environment variable, and default the Vite dev server to `http://localhost:8000`.
-- **CORS:** `backend/api/app.py` allows all origins (`allow_origins=["*"]`, `allow_credentials=False`). That is convenient for a first frontend hook-up, but the API is already publicly reachable. Recommendation: restrict allowed origins to the real dashboard origin before treating the deployment as a public demo. This documentation update does not change that behaviour.
+- The dashboard API base is configurable via `VITE_API_BASE`. If unset, it still falls back to the current Cloud Run API URL, so existing builds keep working. For local development, set it to `http://localhost:8000` as in `frontend/.env.example`.
+- CORS is an allowlist (`CORS_ALLOWED_ORIGINS`), defaulting to local Vite origins. A deployed dashboard origin is not in this repository; set that variable on Cloud Run to the live dashboard origin before the next API deploy, or browsers on the hosted dashboard will be blocked.
 - `pyproject.toml` declares the project as proprietary. There is no `LICENSE` file. Decide explicitly if this should stay closed or be opened.
 - Cloud Run YAML and the frontend contain the GCP project id / number for the current deployment. That is already in the public tree; treat it as a known exposure of infrastructure identifiers, not of keys.
 

@@ -21,6 +21,18 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_prefix: str = "/api/v1"
 
+    # Comma-separated browser origins allowed to call the API. Defaults to local
+    # Vite dev/preview origins. In production, set CORS_ALLOWED_ORIGINS to the
+    # deployed dashboard origin before the next Cloud Run deploy.
+    cors_allowed_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:4173,http://127.0.0.1:4173"
+    )
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_allowed_origins.split(",") if origin.strip()]
+
     # ── Persistence ───────────────────────────────────────────────────────────
     # Options: sqlite | firestore_emulator
     persistence_backend: str = "sqlite"
