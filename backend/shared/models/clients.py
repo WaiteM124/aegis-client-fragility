@@ -7,20 +7,19 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
 from .events import utcnow
 
 
-class RiskProfile(str, Enum):
+class RiskProfile(str, Enum):  # noqa: UP042
     CONSERVATIVE = "conservative"
     MODERATE = "moderate"
     AGGRESSIVE = "aggressive"
 
 
-class ProjectStatus(str, Enum):
+class ProjectStatus(str, Enum):  # noqa: UP042
     ACTIVE = "active"
     PLANNED = "planned"
     ON_HOLD = "on_hold"
@@ -48,7 +47,7 @@ class Client(BaseModel):
         default_factory=list,
         description="Domain keywords used for deterministic event matching",
     )
-    description: Optional[str] = None
+    description: str | None = None
     created_at: datetime = Field(default_factory=utcnow)
     active: bool = True
 
@@ -65,7 +64,7 @@ class Project(BaseModel):
     geography: list[str] = Field(default_factory=list)
     status: ProjectStatus = ProjectStatus.ACTIVE
     keywords: list[str] = Field(default_factory=list)
-    value_usd: Optional[float] = Field(None, description="Approximate deal value in USD")
+    value_usd: float | None = Field(None, description="Approximate deal value in USD")
     created_at: datetime = Field(default_factory=utcnow)
 
     model_config = {"use_enum_values": True}
@@ -82,7 +81,7 @@ class ClientExposure(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_id: str
     event_id: str
-    project_id: Optional[str] = None
+    project_id: str | None = None
     relevance_score: float = Field(
         ge=0.0,
         le=1.0,

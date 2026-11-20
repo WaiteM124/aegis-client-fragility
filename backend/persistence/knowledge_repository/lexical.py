@@ -20,7 +20,6 @@ import math
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
 
 from ...shared.logging import get_logger
 from ...shared.models.assessment import EvidenceReference
@@ -74,7 +73,7 @@ class LexicalKnowledgeRepository(KnowledgeRepositoryPort):
         self,
         query: str,
         top_k: int = 5,
-        source_types: Optional[list[str]] = None,
+        source_types: list[str] | None = None,
     ) -> list[EvidenceReference]:
         if not self._documents:
             return []

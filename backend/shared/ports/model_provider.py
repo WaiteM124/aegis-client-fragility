@@ -20,7 +20,6 @@ Concrete adapters:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Type
 
 from pydantic import BaseModel
 
@@ -44,7 +43,7 @@ class ModelProviderPort(ABC):
         self,
         system_prompt: str,
         user_prompt: str,
-        output_schema: Type[BaseModel],
+        output_schema: type[BaseModel],
         temperature: float = 0.3,
         max_tokens: int = 2048,
     ) -> BaseModel:

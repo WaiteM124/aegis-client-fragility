@@ -9,7 +9,6 @@ Concrete adapters:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from ..models.assessment import EvidenceReference
 
@@ -21,7 +20,7 @@ class KnowledgeRepositoryPort(ABC):
         self,
         query: str,
         top_k: int = 5,
-        source_types: Optional[list[str]] = None,
+        source_types: list[str] | None = None,
     ) -> list[EvidenceReference]:
         """
         Retrieve the top-k most relevant evidence references for a query.

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from ..models.assessment import ImpactAssessment
 from ..models.clients import ClientExposure
@@ -17,14 +16,14 @@ class AssessmentStorePort(ABC):
         ...
 
     @abstractmethod
-    async def get_assessment(self, assessment_id: str) -> Optional[ImpactAssessment]:
+    async def get_assessment(self, assessment_id: str) -> ImpactAssessment | None:
         ...
 
     @abstractmethod
     async def list_assessments(
         self,
-        event_id: Optional[str] = None,
-        client_id: Optional[str] = None,
+        event_id: str | None = None,
+        client_id: str | None = None,
         limit: int = 50,
     ) -> list[ImpactAssessment]:
         ...
@@ -34,7 +33,7 @@ class AssessmentStorePort(ABC):
         ...
 
     @abstractmethod
-    async def get_risk_score(self, assessment_id: str) -> Optional[RiskScore]:
+    async def get_risk_score(self, assessment_id: str) -> RiskScore | None:
         ...
 
     @abstractmethod

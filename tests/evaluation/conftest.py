@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import json
-import pytest
 from datetime import datetime
 from pathlib import Path
+
+import pytest
 
 from backend.assessment.service import AssessmentService
 from backend.decision_engine.risk_scorer import RiskScorer

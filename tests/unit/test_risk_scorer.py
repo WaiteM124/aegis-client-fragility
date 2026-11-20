@@ -5,13 +5,11 @@ The scorer is a pure function: given the same inputs it must always
 produce the same score.  No I/O, no randomness.
 """
 
-import pytest
-from datetime import datetime
 
-from backend.decision_engine.risk_scorer import RiskScorer, _classify_level, VERSION
+from backend.decision_engine.risk_scorer import VERSION, RiskScorer, _classify_level
 from backend.shared.models.assessment import ImpactAssessment
 from backend.shared.models.clients import ClientExposure
-from backend.shared.models.events import EventClassification, EventCategory, EventSeverity
+from backend.shared.models.events import EventCategory, EventClassification
 from backend.shared.models.scoring import RiskLevel
 
 

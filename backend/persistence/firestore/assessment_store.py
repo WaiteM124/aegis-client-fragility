@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-from typing import Optional
 
 from ...shared.logging import get_logger
 from ...shared.models.assessment import EvidenceReference, ImpactAssessment
@@ -55,7 +54,7 @@ class FirestoreAssessmentStore(AssessmentStorePort):
         doc_ref = self._db.collection(_ASSESSMENTS).document(assessment.id)
         await asyncio.to_thread(doc_ref.set, data)
 
-    async def get_assessment(self, assessment_id: str) -> Optional[ImpactAssessment]:
+    async def get_assessment(self, assessment_id: str) -> ImpactAssessment | None:
         doc_ref = self._db.collection(_ASSESSMENTS).document(assessment_id)
         snap = await asyncio.to_thread(doc_ref.get)
         if not snap.exists:
@@ -64,8 +63,8 @@ class FirestoreAssessmentStore(AssessmentStorePort):
 
     async def list_assessments(
         self,
-        event_id: Optional[str] = None,
-        client_id: Optional[str] = None,
+        event_id: str | None = None,
+        client_id: str | None = None,
         limit: int = 50,
     ) -> list[ImpactAssessment]:
         def _query():
@@ -93,7 +92,7 @@ class FirestoreAssessmentStore(AssessmentStorePort):
         doc_ref = self._db.collection(_RISK_SCORES).document(score.id)
         await asyncio.to_thread(doc_ref.set, data)
 
-    async def get_risk_score(self, assessment_id: str) -> Optional[RiskScore]:
+    async def get_risk_score(self, assessment_id: str) -> RiskScore | None:
         def _query():
             return list(
                 self._db.collection(_RISK_SCORES)

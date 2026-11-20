@@ -11,8 +11,9 @@ Each adversarial event targets a specific robustness property:
 from __future__ import annotations
 
 import json
-import pytest
 from pathlib import Path
+
+import pytest
 
 from backend.event_processing.classifier import RuleBasedClassifier
 

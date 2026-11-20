@@ -5,15 +5,23 @@ Validates that models enforce constraints, serialise correctly,
 and round-trip through JSON without data loss.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
 from pydantic import ValidationError
 
-from backend.shared.models.events import Event, EventStatus, EventSeverity, EventCategory, EventClassification
-from backend.shared.models.clients import Client, Project, ClientExposure, RiskProfile, ProjectStatus
-from backend.shared.models.assessment import ImpactAssessment, EvidenceReference
-from backend.shared.models.scoring import RiskScore, RiskLevel
-
+from backend.shared.models.assessment import EvidenceReference
+from backend.shared.models.clients import (
+    Client,
+)
+from backend.shared.models.events import (
+    Event,
+    EventCategory,
+    EventClassification,
+    EventSeverity,
+    EventStatus,
+)
+from backend.shared.models.scoring import RiskLevel, RiskScore
 
 # ── Event ─────────────────────────────────────────────────────────────────────
 

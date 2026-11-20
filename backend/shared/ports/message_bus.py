@@ -10,7 +10,7 @@ Concrete adapters:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Awaitable, Callable, Optional
+from collections.abc import Awaitable, Callable
 
 # A handler receives the deserialised message payload and the correlation ID.
 MessageHandler = Callable[[dict, str], Awaitable[None]]
@@ -24,7 +24,7 @@ class MessageBusPort(ABC):
         topic: str,
         message: dict,
         correlation_id: str,
-        attributes: Optional[dict[str, str]] = None,
+        attributes: dict[str, str] | None = None,
     ) -> str:
         """
         Publish a message to a topic.

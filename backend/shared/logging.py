@@ -13,7 +13,6 @@ import sys
 from datetime import datetime
 from typing import Any
 
-
 # Fields that belong to LogRecord's own namespace and should not be echoed
 _RECORD_BUILTINS = frozenset({
     "name", "msg", "args", "levelname", "levelno", "pathname",

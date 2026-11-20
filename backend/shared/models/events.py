@@ -8,20 +8,18 @@ everywhere inside Aegis so the convention is centralised.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
 def utcnow() -> datetime:
     """Return the current time in UTC as a naive datetime (timezone-stripped for SQLite)."""
-    from datetime import timezone
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
-class EventStatus(str, Enum):
+class EventStatus(str, Enum):  # noqa: UP042
     PENDING = "pending"
     NORMALISED = "normalised"
     CLASSIFIED = "classified"
@@ -31,14 +29,14 @@ class EventStatus(str, Enum):
     FAILED = "failed"
 
 
-class EventSeverity(str, Enum):
+class EventSeverity(str, Enum):  # noqa: UP042
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
 
 
-class EventCategory(str, Enum):
+class EventCategory(str, Enum):  # noqa: UP042
     GEOPOLITICAL = "geopolitical"
     ECONOMIC = "economic"
     NATURAL_DISASTER = "natural_disaster"
@@ -63,13 +61,13 @@ class Event(BaseModel):
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     source: str = Field(description="Data source identifier, e.g. reuters, ap, manual")
-    source_url: Optional[str] = None
+    source_url: str | None = None
     title: str
     raw_content: str
-    summary: Optional[str] = None
+    summary: str | None = None
     event_date: datetime
     ingested_at: datetime = Field(default_factory=utcnow)
-    location: Optional[str] = None
+    location: str | None = None
     affected_regions: list[str] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     status: EventStatus = EventStatus.PENDING
@@ -77,7 +75,7 @@ class Event(BaseModel):
         default_factory=lambda: str(uuid.uuid4()),
         description="Propagated through every processing step for traceability",
     )
-    idempotency_key: Optional[str] = Field(
+    idempotency_key: str | None = Field(
         None,
         description="Caller-supplied unique key; duplicate submissions are rejected with 409",
     )
@@ -99,6 +97,6 @@ class EventClassification(BaseModel):
     sub_categories: list[str] = Field(default_factory=list)
     classified_at: datetime = Field(default_factory=utcnow)
     classifier_version: str
-    rationale: Optional[str] = None
+    rationale: str | None = None
 
     model_config = {"use_enum_values": True}

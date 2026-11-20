@@ -45,7 +45,7 @@ class EventProcessingWorker:
         self,
         message_bus: MessageBusPort,
         event_store: EventStorePort,
-        assessment_service: "AssessmentService",
+        assessment_service: AssessmentService,
         settings=None,
     ) -> None:
         self._bus = message_bus

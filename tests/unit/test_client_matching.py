@@ -27,7 +27,6 @@ from backend.retrieval.service import RetrievalService
 from backend.shared.models.clients import Client
 from backend.shared.models.events import Event, EventCategory, EventClassification, EventSeverity
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 

@@ -11,12 +11,13 @@ from __future__ import annotations
 import asyncio
 import os
 import tempfile
-from datetime import datetime
 
 import httpx
 import pytest
 from fastapi import FastAPI
 
+from backend.api.routers import dashboard as dashboard_router
+from backend.api.routers import events as events_router
 from backend.assessment.service import AssessmentService
 from backend.decision_engine.risk_scorer import RiskScorer
 from backend.event_processing.worker import EventProcessingWorker
@@ -29,9 +30,6 @@ from backend.persistence.sqlite.event_store import SQLiteEventStore
 from backend.retrieval.service import RetrievalService
 from backend.shared.config import Settings
 from backend.shared.models.clients import Client
-from backend.api.routers import dashboard as dashboard_router
-from backend.api.routers import events as events_router
-
 
 # ── Minimal-app fixture (no worker) for simple stats/trace tests ──────────────
 

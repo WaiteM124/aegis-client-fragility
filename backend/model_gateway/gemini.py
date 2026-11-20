@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Optional, Type
 
 from pydantic import BaseModel, ValidationError
 
@@ -69,7 +68,7 @@ class GeminiModelProvider(ModelProviderPort):
         self,
         system_prompt: str,
         user_prompt: str,
-        output_schema: Type[BaseModel],
+        output_schema: type[BaseModel],
         temperature: float = 0.3,
         max_tokens: int = 2048,
     ) -> BaseModel:

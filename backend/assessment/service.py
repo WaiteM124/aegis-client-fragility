@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import re
 import time
-from typing import Optional
 
 from pydantic import BaseModel, ValidationError
 
@@ -216,7 +215,7 @@ class AssessmentService:
 
         return matched
 
-    def _match_project(self, client: Client, event: Event) -> Optional[Project]:
+    def _match_project(self, client: Client, event: Event) -> Project | None:
         """Return the highest-relevance active project for this client, or None."""
         event_text = (
             f"{event.title} {event.summary or ''} {event.raw_content}"
@@ -241,7 +240,7 @@ class AssessmentService:
         event: Event,
         classification: EventClassification,
         client: Client,
-        project: Optional[Project],
+        project: Project | None,
         evidence: list[EvidenceReference],
         retrieved_ids: frozenset[str] = frozenset(),
     ) -> AssessmentOutput:

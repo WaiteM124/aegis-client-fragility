@@ -16,9 +16,6 @@ the schema fields to build a valid response.
 
 from __future__ import annotations
 
-import re
-from typing import Type
-
 from pydantic import BaseModel
 
 from ..shared.logging import get_logger
@@ -43,7 +40,7 @@ class DeterministicModelProvider(ModelProviderPort):
         self,
         system_prompt: str,
         user_prompt: str,
-        output_schema: Type[BaseModel],
+        output_schema: type[BaseModel],
         temperature: float = 0.3,
         max_tokens: int = 2048,
     ) -> BaseModel:

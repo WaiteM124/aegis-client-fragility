@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -54,7 +53,7 @@ class ImpactAssessment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     event_id: str
     client_id: str
-    project_id: Optional[str] = None
+    project_id: str | None = None
     correlation_id: str = Field(description="Propagated from the originating event")
 
     # ── Model-generated content (validated against AssessmentOutput schema) ──
@@ -74,4 +73,4 @@ class ImpactAssessment(BaseModel):
 
     # ── Processing metadata ──────────────────────────────────────────────────
     assessed_at: datetime = Field(default_factory=utcnow)
-    processing_duration_ms: Optional[int] = None
+    processing_duration_ms: int | None = None

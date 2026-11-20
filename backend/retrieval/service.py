@@ -14,7 +14,7 @@ dropped before the ``ImpactAssessment`` is built.
 
 from __future__ import annotations
 
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from ..shared.config import get_settings
 from ..shared.logging import get_logger
@@ -49,7 +49,7 @@ class RetrievalService:
         self,
         query: str,
         client: Client,
-        project: Optional[Project] = None,
+        project: Project | None = None,
         correlation_id: str = "",
     ) -> RetrievalResult:
         """

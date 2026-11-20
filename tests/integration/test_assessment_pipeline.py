@@ -13,11 +13,10 @@ from __future__ import annotations
 
 import os
 import tempfile
-from typing import Type
-from unittest.mock import AsyncMock, patch
+from datetime import datetime
 
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from backend.assessment.service import AssessmentOutput, AssessmentService
 from backend.decision_engine.risk_scorer import RiskScorer
@@ -26,11 +25,9 @@ from backend.persistence.knowledge_repository.lexical import LexicalKnowledgeRep
 from backend.persistence.sqlite.assessment_store import SQLiteAssessmentStore
 from backend.retrieval.service import RetrievalService
 from backend.shared.models.assessment import EvidenceReference
-from backend.shared.models.clients import Client, Project
-from backend.shared.models.events import Event, EventClassification, EventCategory, EventSeverity
+from backend.shared.models.clients import Client
+from backend.shared.models.events import Event, EventCategory, EventClassification, EventSeverity
 from backend.shared.ports.model_provider import ModelProviderPort
-from datetime import datetime
-
 
 # ── Shared helpers ─────────────────────────────────────────────────────────────
 
@@ -300,7 +297,7 @@ class TestModelValidationFailure:
                 self,
                 system_prompt: str,
                 user_prompt: str,
-                output_schema: Type[BaseModel],
+                output_schema: type[BaseModel],
                 temperature: float = 0.3,
                 max_tokens: int = 2048,
             ) -> BaseModel:

@@ -29,7 +29,6 @@ import asyncio
 import json
 import os
 import uuid
-from typing import Optional
 
 from ...shared.logging import get_logger
 from ...shared.ports.message_bus import MessageBusPort, MessageHandler
@@ -122,7 +121,7 @@ class PubSubEmulatorMessageBus(MessageBusPort):
         topic: str,
         message: dict,
         correlation_id: str,
-        attributes: Optional[dict[str, str]] = None,
+        attributes: dict[str, str] | None = None,
     ) -> str:
         """
         Serialise and publish a message.

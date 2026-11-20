@@ -12,7 +12,6 @@ from __future__ import annotations
 import os
 import tempfile
 from datetime import datetime
-from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -25,7 +24,6 @@ from backend.retrieval.service import RetrievalResult, RetrievalService
 from backend.shared.models.assessment import EvidenceReference
 from backend.shared.models.clients import Client
 from backend.shared.models.events import Event, EventCategory, EventClassification, EventSeverity
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

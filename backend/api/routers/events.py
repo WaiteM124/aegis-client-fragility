@@ -10,7 +10,6 @@ GET  /events/{id} — Event detail with classification and assessments.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
@@ -30,11 +29,11 @@ class IngestEventRequest(BaseModel):
     title: str = Field(..., min_length=5, max_length=500)
     raw_content: str = Field(..., min_length=10)
     event_date: datetime
-    source_url: Optional[str] = None
-    location: Optional[str] = None
+    source_url: str | None = None
+    location: str | None = None
     affected_regions: list[str] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
-    idempotency_key: Optional[str] = Field(
+    idempotency_key: str | None = Field(
         None,
         description=(
             "Caller-supplied deduplication key. "

@@ -15,12 +15,10 @@ Usage (emulator):
 from __future__ import annotations
 
 import asyncio
-import json
 from datetime import datetime
-from typing import Optional
 
 from ...shared.logging import get_logger
-from ...shared.models.events import Event, EventClassification, EventStatus
+from ...shared.models.events import Event, EventClassification
 from ...shared.ports.event_store import EventStorePort
 
 logger = get_logger("persistence.firestore.events")
@@ -55,7 +53,7 @@ class FirestoreEventStore(EventStorePort):
         doc_ref = self._db.collection(_EVENTS).document(event.id)
         await asyncio.to_thread(doc_ref.set, data)
 
-    async def get_event(self, event_id: str) -> Optional[Event]:
+    async def get_event(self, event_id: str) -> Event | None:
         doc_ref = self._db.collection(_EVENTS).document(event_id)
         snap = await asyncio.to_thread(doc_ref.get)
         if not snap.exists:
@@ -66,7 +64,7 @@ class FirestoreEventStore(EventStorePort):
         self,
         limit: int = 50,
         offset: int = 0,
-        status: Optional[str] = None,
+        status: str | None = None,
     ) -> list[Event]:
         def _query():
             col = self._db.collection(_EVENTS)
@@ -103,7 +101,7 @@ class FirestoreEventStore(EventStorePort):
         doc_ref = self._db.collection(_CLASSIFICATIONS).document(classification.id)
         await asyncio.to_thread(doc_ref.set, data)
 
-    async def get_classification(self, event_id: str) -> Optional[EventClassification]:
+    async def get_classification(self, event_id: str) -> EventClassification | None:
         def _query():
             return list(
                 self._db.collection(_CLASSIFICATIONS)

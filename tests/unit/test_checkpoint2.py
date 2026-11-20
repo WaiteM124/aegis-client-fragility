@@ -18,19 +18,16 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import os
-import tempfile
 import uuid
+from collections.abc import Awaitable, Callable
 from datetime import datetime
-from typing import Awaitable, Callable, Optional
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from backend.persistence.message_bus.in_memory import InMemoryMessageBus
 from backend.shared.config import Settings
 from backend.shared.models.events import Event, EventStatus
-
 
 # ---------------------------------------------------------------------------
 # Shared helpers
@@ -599,7 +596,7 @@ class TestWorkerAckNackRaise:
         event = _make_event()
         event_msg = json.loads(event.model_dump_json())
 
-        exc_raised: Optional[Exception] = None
+        exc_raised: Exception | None = None
         try:
             await worker._handle_message(event_msg, "corr-raise-test")
         except RuntimeError as exc:
@@ -679,7 +676,7 @@ class TestWorkerAckNackRaise:
         # Both messages should be processed; the bus absorbs the exception
         try:
             await asyncio.wait_for(good_event_processed.wait(), timeout=5.0)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pytest.fail("Good event was not processed — bus may have stopped after exception")
 
         assert fail_called, "Failing handler should have been invoked"

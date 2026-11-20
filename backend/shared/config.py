@@ -7,8 +7,6 @@ Secrets (API keys, credentials) must never appear in source code.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -38,7 +36,7 @@ class Settings(BaseSettings):
     message_bus_type: str = "in_memory"
     message_bus_backend: str = "in_memory"
     pubsub_project_id: str = "aegis-local"
-    pubsub_emulator_host: Optional[str] = "localhost:8085"
+    pubsub_emulator_host: str | None = "localhost:8085"
 
     # Topic and subscription names
     events_topic: str = "aegis-events"
@@ -48,7 +46,7 @@ class Settings(BaseSettings):
     # ── Model provider ────────────────────────────────────────────────────────
     # Options: deterministic | gemini | vertex
     model_provider: str = "deterministic"
-    gemini_api_key: Optional[str] = None
+    gemini_api_key: str | None = None
     gemini_model: str = "gemini-1.5-flash"
 
     # ── Retrieval ─────────────────────────────────────────────────────────────
@@ -74,7 +72,7 @@ class Settings(BaseSettings):
     )
 
 
-_settings: Optional[Settings] = None
+_settings: Settings | None = None
 
 
 def get_settings() -> Settings:

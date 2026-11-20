@@ -11,8 +11,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .models.clients import Client, Project
 from .logging import get_logger
+from .models.clients import Client, Project
 
 logger = get_logger("data_loader")
 

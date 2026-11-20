@@ -20,10 +20,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .dependencies import Container
-from .routers import dashboard, events, health
 from ..shared.config import get_settings
 from ..shared.logging import configure_logging, get_logger
+from .dependencies import Container
+from .routers import dashboard, events, health
 
 logger = get_logger("api")
 

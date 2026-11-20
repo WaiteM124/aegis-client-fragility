@@ -9,15 +9,15 @@ Unlike unit/integration tests, evaluation tests are allowed to be slow
 and may be excluded from CI with:  pytest -m "not evaluation"
 """
 
-import pytest
 from datetime import datetime
 
+import pytest
+
+from backend.decision_engine.risk_scorer import RiskScorer
 from backend.event_processing.classifier import RuleBasedClassifier
 from backend.event_processing.normaliser import EventNormaliser
-from backend.decision_engine.risk_scorer import RiskScorer
-from backend.shared.models.clients import Client, ClientExposure
-from backend.shared.models.events import Event, EventSeverity
-
+from backend.shared.models.clients import ClientExposure
+from backend.shared.models.events import Event
 
 pytestmark = pytest.mark.evaluation
 

@@ -2,7 +2,6 @@
 Unit tests for the event normaliser.
 """
 
-import pytest
 from datetime import datetime
 
 from backend.event_processing.normaliser import EventNormaliser, _normalise_regions

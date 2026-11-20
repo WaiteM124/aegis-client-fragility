@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from typing import Optional
 
 from ...shared.logging import get_logger
 from ...shared.ports.message_bus import MessageBusPort, MessageHandler
@@ -55,7 +54,7 @@ class InMemoryMessageBus(MessageBusPort):
         topic: str,
         message: dict,
         correlation_id: str,
-        attributes: Optional[dict[str, str]] = None,
+        attributes: dict[str, str] | None = None,
     ) -> str:
         queue = self._get_queue(topic)
         message_id = str(uuid.uuid4())
@@ -101,7 +100,7 @@ class InMemoryMessageBus(MessageBusPort):
         while True:
             try:
                 envelope = await asyncio.wait_for(queue.get(), timeout=1.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
             except asyncio.CancelledError:
                 logger.info("Consumer cancelled", extra={"subscription": subscription})

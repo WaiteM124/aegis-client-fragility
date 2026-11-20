@@ -12,12 +12,14 @@ No external services required.
 import asyncio
 import os
 import tempfile
+from datetime import datetime
+
 import pytest
 
 from backend.assessment.service import AssessmentService
 from backend.decision_engine.risk_scorer import RiskScorer
 from backend.event_processing.worker import EventProcessingWorker
-from backend.ingestion.service import IngestionService, DuplicateEventError
+from backend.ingestion.service import DuplicateEventError, IngestionService
 from backend.model_gateway.deterministic import DeterministicModelProvider
 from backend.persistence.knowledge_repository.lexical import LexicalKnowledgeRepository
 from backend.persistence.message_bus.in_memory import InMemoryMessageBus
@@ -26,9 +28,6 @@ from backend.persistence.sqlite.event_store import SQLiteEventStore
 from backend.retrieval.service import RetrievalService
 from backend.shared.config import Settings
 from backend.shared.models.clients import Client, Project
-from backend.shared.models.events import EventStatus
-from datetime import datetime
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

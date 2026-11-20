@@ -11,14 +11,13 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
 from .events import utcnow
 
 
-class RiskLevel(str, Enum):
+class RiskLevel(str, Enum):  # noqa: UP042
     MINIMAL = "minimal"
     LOW = "low"
     MODERATE = "moderate"
@@ -39,7 +38,7 @@ class RiskScore(BaseModel):
     assessment_id: str
     event_id: str
     client_id: str
-    project_id: Optional[str] = None
+    project_id: str | None = None
 
     # ── Component scores (0 – 100) ───────────────────────────────────────────
     overall_score: float = Field(ge=0.0, le=100.0)

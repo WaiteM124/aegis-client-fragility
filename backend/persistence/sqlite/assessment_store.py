@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
-from typing import Optional
 
 import aiosqlite
 
@@ -71,7 +70,7 @@ CREATE INDEX IF NOT EXISTS idx_exposures_event     ON client_exposures(event_id)
 class SQLiteAssessmentStore(AssessmentStorePort):
     def __init__(self, db_path: str) -> None:
         self._db_path = db_path
-        self._db: Optional[aiosqlite.Connection] = None
+        self._db: aiosqlite.Connection | None = None
 
     async def initialise(self) -> None:
         self._db = await aiosqlite.connect(self._db_path)
@@ -119,7 +118,7 @@ class SQLiteAssessmentStore(AssessmentStorePort):
         )
         await self._db.commit()
 
-    async def get_assessment(self, assessment_id: str) -> Optional[ImpactAssessment]:
+    async def get_assessment(self, assessment_id: str) -> ImpactAssessment | None:
         async with self._db.execute(
             "SELECT * FROM assessments WHERE id = ?", (assessment_id,)
         ) as cur:
@@ -128,8 +127,8 @@ class SQLiteAssessmentStore(AssessmentStorePort):
 
     async def list_assessments(
         self,
-        event_id: Optional[str] = None,
-        client_id: Optional[str] = None,
+        event_id: str | None = None,
+        client_id: str | None = None,
         limit: int = 50,
     ) -> list[ImpactAssessment]:
         conditions, params = [], []
@@ -179,7 +178,7 @@ class SQLiteAssessmentStore(AssessmentStorePort):
         )
         await self._db.commit()
 
-    async def get_risk_score(self, assessment_id: str) -> Optional[RiskScore]:
+    async def get_risk_score(self, assessment_id: str) -> RiskScore | None:
         async with self._db.execute(
             "SELECT * FROM risk_scores WHERE assessment_id = ?", (assessment_id,)
         ) as cur:

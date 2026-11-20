@@ -16,12 +16,9 @@ Run with: pytest tests/evaluation/test_model_comparison.py -v -m evaluation
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
-from typing import Type
 
 import pytest
-from pydantic import BaseModel
 
 from backend.assessment.service import AssessmentOutput
 from backend.model_gateway.deterministic import DeterministicModelProvider

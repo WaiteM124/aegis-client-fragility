@@ -17,12 +17,10 @@ import json
 
 import pytest
 from pydantic import BaseModel
-from typing import Optional
 
 from backend.model_gateway.deterministic import DeterministicModelProvider
 from backend.model_gateway.gemini import GeminiModelProvider
 from backend.shared.ports.model_provider import ModelProviderPort
-
 
 # ── Test schemas ──────────────────────────────────────────────────────────────
 
@@ -147,6 +145,6 @@ class TestModelProviderContract:
         r1 = await provider.generate(**kwargs)
         r2 = await provider.generate(**kwargs)
         # Same structure (not necessarily identical text, but same field types)
-        assert type(r1) == type(r2)
+        assert type(r1) is type(r2)
         assert isinstance(r1.key_risks, list)
         assert isinstance(r2.key_risks, list)

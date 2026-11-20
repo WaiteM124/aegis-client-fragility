@@ -2,8 +2,9 @@
 Unit tests for the rule-based event classifier.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from backend.event_processing.classifier import RuleBasedClassifier
 from backend.shared.models.events import Event, EventCategory, EventSeverity

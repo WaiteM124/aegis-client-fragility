@@ -15,7 +15,6 @@ It is a thin write-and-publish layer.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from ..shared.config import get_settings
 from ..shared.logging import get_logger
@@ -50,11 +49,11 @@ class IngestionService:
         title: str,
         raw_content: str,
         event_date: datetime,
-        source_url: Optional[str] = None,
-        location: Optional[str] = None,
-        affected_regions: Optional[list[str]] = None,
-        tags: Optional[list[str]] = None,
-        idempotency_key: Optional[str] = None,
+        source_url: str | None = None,
+        location: str | None = None,
+        affected_regions: list[str] | None = None,
+        tags: list[str] | None = None,
+        idempotency_key: str | None = None,
     ) -> Event:
         """
         Persist and publish a new global event.

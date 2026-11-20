@@ -10,9 +10,10 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
-from ..ingestion.service import IngestionService
 from ..assessment.service import AssessmentService
 from ..decision_engine.risk_scorer import RiskScorer
+from ..event_processing.worker import EventProcessingWorker
+from ..ingestion.service import IngestionService
 from ..model_gateway.deterministic import DeterministicModelProvider
 from ..model_gateway.gemini import GeminiModelProvider
 from ..persistence.knowledge_repository.lexical import LexicalKnowledgeRepository
@@ -20,13 +21,12 @@ from ..persistence.message_bus.in_memory import InMemoryMessageBus
 from ..persistence.message_bus.pubsub_emulator import PubSubEmulatorMessageBus
 from ..persistence.sqlite.assessment_store import SQLiteAssessmentStore
 from ..persistence.sqlite.event_store import SQLiteEventStore
-from ..shared.ports.event_store import EventStorePort
-from ..shared.ports.assessment_store import AssessmentStorePort
 from ..retrieval.service import RetrievalService
-from ..event_processing.worker import EventProcessingWorker
 from ..shared.config import Settings
 from ..shared.data_loader import load_synthetic_data
 from ..shared.logging import get_logger
+from ..shared.ports.assessment_store import AssessmentStorePort
+from ..shared.ports.event_store import EventStorePort
 from ..shared.ports.message_bus import MessageBusPort
 from ..shared.ports.model_provider import ModelProviderPort
 
@@ -53,7 +53,7 @@ class Container:
     worker: EventProcessingWorker
 
     @classmethod
-    async def create(cls, settings: Settings) -> "Container":
+    async def create(cls, settings: Settings) -> Container:
         # ── Persistence ───────────────────────────────────────────────────────
         os.makedirs(settings.knowledge_base_path, exist_ok=True)
 
@@ -65,6 +65,7 @@ class Container:
             # is not installed (falls back gracefully to SQLite).
             try:
                 import os as _os
+
                 import google.cloud.firestore as _firestore  # noqa: PLC0415
 
                 emulator_host = settings.firestore_emulator_host or _os.getenv(
@@ -73,8 +74,8 @@ class Container:
                 _os.environ["FIRESTORE_EMULATOR_HOST"] = emulator_host
                 db = _firestore.Client(project="aegis-local")
 
-                from ..persistence.firestore.event_store import FirestoreEventStore
                 from ..persistence.firestore.assessment_store import FirestoreAssessmentStore
+                from ..persistence.firestore.event_store import FirestoreEventStore
 
                 event_store = FirestoreEventStore(db)
                 assessment_store = FirestoreAssessmentStore(db)

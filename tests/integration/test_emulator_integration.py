@@ -75,7 +75,7 @@ async def test_publish_consume_ack_cycle():
             asyncio.shield(task),
             timeout=3.0,
         )
-    except (asyncio.TimeoutError, asyncio.CancelledError):
+    except (TimeoutError, asyncio.CancelledError):
         pass
     finally:
         task.cancel()
@@ -124,7 +124,7 @@ async def test_nack_causes_redelivery():
     )
     try:
         await asyncio.wait_for(asyncio.shield(task), timeout=10.0)
-    except (asyncio.TimeoutError, asyncio.CancelledError):
+    except (TimeoutError, asyncio.CancelledError):
         pass
     finally:
         task.cancel()

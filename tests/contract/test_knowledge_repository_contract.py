@@ -19,7 +19,6 @@ import pytest
 from backend.persistence.knowledge_repository.lexical import LexicalKnowledgeRepository
 from backend.shared.ports.knowledge_repository import KnowledgeRepositoryPort
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 

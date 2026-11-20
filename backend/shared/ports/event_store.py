@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from ..models.events import Event, EventClassification
 
@@ -20,7 +19,7 @@ class EventStorePort(ABC):
         ...
 
     @abstractmethod
-    async def get_event(self, event_id: str) -> Optional[Event]:
+    async def get_event(self, event_id: str) -> Event | None:
         ...
 
     @abstractmethod
@@ -28,7 +27,7 @@ class EventStorePort(ABC):
         self,
         limit: int = 50,
         offset: int = 0,
-        status: Optional[str] = None,
+        status: str | None = None,
     ) -> list[Event]:
         ...
 
@@ -47,7 +46,7 @@ class EventStorePort(ABC):
         ...
 
     @abstractmethod
-    async def get_classification(self, event_id: str) -> Optional[EventClassification]:
+    async def get_classification(self, event_id: str) -> EventClassification | None:
         ...
 
     # ── Aggregation ───────────────────────────────────────────────────────────

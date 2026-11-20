@@ -5,12 +5,11 @@ from __future__ import annotations
 import json
 import os
 from datetime import datetime
-from typing import Optional
 
 import aiosqlite
 
 from ...shared.logging import get_logger
-from ...shared.models.events import Event, EventClassification, EventStatus
+from ...shared.models.events import Event, EventClassification
 from ...shared.ports.event_store import EventStorePort
 
 logger = get_logger("persistence.sqlite.events")
@@ -60,7 +59,7 @@ CREATE INDEX IF NOT EXISTS idx_classifications_event
 class SQLiteEventStore(EventStorePort):
     def __init__(self, db_path: str) -> None:
         self._db_path = db_path
-        self._db: Optional[aiosqlite.Connection] = None
+        self._db: aiosqlite.Connection | None = None
 
     async def initialise(self) -> None:
         os.makedirs(os.path.dirname(self._db_path) or ".", exist_ok=True)
@@ -113,7 +112,7 @@ class SQLiteEventStore(EventStorePort):
         )
         await self._db.commit()
 
-    async def get_event(self, event_id: str) -> Optional[Event]:
+    async def get_event(self, event_id: str) -> Event | None:
         async with self._db.execute(
             "SELECT * FROM events WHERE id = ?", (event_id,)
         ) as cur:
@@ -124,7 +123,7 @@ class SQLiteEventStore(EventStorePort):
         self,
         limit: int = 50,
         offset: int = 0,
-        status: Optional[str] = None,
+        status: str | None = None,
     ) -> list[Event]:
         if status:
             sql = (
@@ -176,7 +175,7 @@ class SQLiteEventStore(EventStorePort):
         )
         await self._db.commit()
 
-    async def get_classification(self, event_id: str) -> Optional[EventClassification]:
+    async def get_classification(self, event_id: str) -> EventClassification | None:
         async with self._db.execute(
             """
             SELECT * FROM event_classifications

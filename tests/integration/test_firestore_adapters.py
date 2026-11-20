@@ -16,9 +16,8 @@ from datetime import datetime
 
 import pytest
 
-from backend.shared.models.assessment import EvidenceReference, ImpactAssessment
-from backend.shared.models.clients import ClientExposure
-from backend.shared.models.events import Event, EventCategory, EventClassification, EventSeverity
+from backend.shared.models.assessment import ImpactAssessment
+from backend.shared.models.events import Event
 from backend.shared.models.scoring import RiskScore
 
 _SKIP = pytest.mark.skipif(
@@ -50,7 +49,9 @@ async def event_store(firestore_db):
 
 @pytest.fixture
 async def assessment_store(firestore_db):
-    from backend.persistence.firestore.assessment_store import FirestoreAssessmentStore  # noqa: PLC0415
+    from backend.persistence.firestore.assessment_store import (
+        FirestoreAssessmentStore,  # noqa: PLC0415
+    )
 
     store = FirestoreAssessmentStore(firestore_db)
     await store.initialise()
