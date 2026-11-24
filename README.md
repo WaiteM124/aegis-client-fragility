@@ -1,4 +1,4 @@
-# Aegis Global Intelligence
+# Finds structural fragility in a client's dependencies: concentration, contagion, convexity and optionality. No prediction.
 
 **Fragility & Convexity Intelligence Platform**
 
