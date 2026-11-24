@@ -171,7 +171,7 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `data/synthetic` | Synthetic clients, projects, regional profiles, industry context, intelligence reports |
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |
 | `infrastructure` | Dockerfiles and Cloud Run service YAML for the API and the worker |
-| `docs/decisions` | ADRs 001–004 |
+| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013; engineering ADRs 001–004) |
 | `tests` | Unit, integration, contract, and evaluation tests |
 
 ### Port and adapter matrix
@@ -190,15 +190,19 @@ Configuration is via environment variables or `.env`. Important switches: `MODEL
 
 ## Design decisions and trade-offs
 
-These are recorded in the ADRs and summarised here.
+Full index and format: [docs/decisions/README.md](docs/decisions/README.md). Summarised here.
+
+**Product positioning and no prediction** ([ADR-005](docs/decisions/ADR-005-product-positioning.md), [ADR-006](docs/decisions/ADR-006-no-prediction.md)). Aegis is Client Fragility & Stress Testing: the dependency graph is primary; events are stressors only. Metrics flag structural weakness; they do not forecast.
+
+**No blended fragility score; ruin is hard red** ([ADR-008](docs/decisions/ADR-008-no-blended-fragility-score.md), [ADR-009](docs/decisions/ADR-009-ruin-hard-red-flag.md)). Four groups report worst-member status. Ruin cannot be averaged away.
 
 **Ports, not adapters, in business logic** ([ADR-001](docs/decisions/ADR-001-local-persistence.md), [ADR-002](docs/decisions/ADR-002-model-provider-abstraction.md)). Services depend on interfaces. The container in `backend/api/dependencies.py` is where concrete adapters are constructed. SQLite was chosen as the default store so local development and tests need no Docker; Firestore can be selected without changing service code.
 
-**Business decisions and mathematical calculations stay deterministic** ([ADR-002](docs/decisions/ADR-002-model-provider-abstraction.md)). Client matching, classification, and risk scoring are independently testable and are not left to the model. Model output must validate against a Pydantic schema or it is rejected. Provider name and model version are stored on each assessment. As the platform evolves, LLMs are intended to support evidence interpretation, profile elicitation and consequence analysis on the same terms.
+**Business decisions and mathematical calculations stay deterministic** ([ADR-007](docs/decisions/ADR-007-ai-never-scores.md), [ADR-002](docs/decisions/ADR-002-model-provider-abstraction.md)). Client matching, classification, risk scoring, and fragility metrics are independently testable and are not left to the model. Model output must validate against a Pydantic schema or it is rejected. Provider name and model version are stored on each assessment. As the platform evolves, LLMs are intended to support evidence interpretation, profile elicitation and consequence analysis on the same terms.
 
 **Async ingestion** ([ADR-003](docs/decisions/ADR-003-async-processing.md)). `POST /api/v1/events` persists and enqueues, then returns `202`. Callers poll for status. This isolates ingestion from assessment failures and allows the worker to scale independently.
 
-**Cloud Run API and worker as separate services** ([ADR-004](docs/decisions/ADR-004-deployment.md)). The API is ingress-facing; the worker is intended to consume the queue. Production persistence is Firestore; production messaging is Pub/Sub. Local development can stay on SQLite and the in-memory bus, or opt into emulators. Secrets are intended to live in Secret Manager in production, not in the repository.
+**Cloud Run API and worker as separate services** ([ADR-004](docs/decisions/ADR-004-deployment.md); longer-term target [ADR-012](docs/decisions/ADR-012-target-gcp-platform.md)). The API is ingress-facing; the worker is intended to consume the queue. Production persistence is Firestore; production messaging is Pub/Sub. Local development can stay on SQLite and the in-memory bus, or opt into emulators. Secrets are intended to live in Secret Manager in production, not in the repository.
 
 **Trade-offs already accepted in the ADRs.** SQLite concurrency is enough for a local proof of the pipeline, not for a large multi-writer deployment. Cloud Run worker cold starts of one to three seconds are treated as acceptable for this workload. The Firestore Python SDK is synchronous and is wrapped with `asyncio.to_thread`.
 
@@ -261,7 +265,7 @@ frontend/          React + TypeScript dashboard
 data/synthetic/    Local knowledge base and client/project fixtures
 data/evaluation/   Labelled evaluation sets
 docs/architecture/ Component map
-docs/decisions/    ADR-001 to ADR-004
+docs/decisions/    ADR index (005–013 product; 001–004 engineering)
 infrastructure/    Dockerfiles and Cloud Run YAML
 tests/             unit, integration, contract, evaluation
 ```
@@ -269,7 +273,17 @@ tests/             unit, integration, contract, evaluation
 ## Documentation
 
 - [Architecture overview](docs/architecture/overview.md)
+- [Architecture Decision Records (index)](docs/decisions/README.md)
 - [ADR-001 Local persistence](docs/decisions/ADR-001-local-persistence.md)
 - [ADR-002 Model provider abstraction](docs/decisions/ADR-002-model-provider-abstraction.md)
 - [ADR-003 Asynchronous processing](docs/decisions/ADR-003-async-processing.md)
 - [ADR-004 Deployment](docs/decisions/ADR-004-deployment.md)
+- [ADR-005 Product positioning](docs/decisions/ADR-005-product-positioning.md)
+- [ADR-006 No prediction](docs/decisions/ADR-006-no-prediction.md)
+- [ADR-007 AI never produces scores](docs/decisions/ADR-007-ai-never-scores.md)
+- [ADR-008 No blended fragility score](docs/decisions/ADR-008-no-blended-fragility-score.md)
+- [ADR-009 Ruin hard red flag](docs/decisions/ADR-009-ruin-hard-red-flag.md)
+- [ADR-010 One file per metric](docs/decisions/ADR-010-one-file-per-metric.md)
+- [ADR-011 Stress ladder](docs/decisions/ADR-011-stress-ladder.md)
+- [ADR-012 Target GCP platform](docs/decisions/ADR-012-target-gcp-platform.md) (Proposed)
+- [ADR-013 Hormuz case study dropped](docs/decisions/ADR-013-hormuz-case-study-dropped.md)

@@ -26,7 +26,7 @@ Single source of truth for humans and AI agents (including Cursor) working in th
 | `frontend/` | React + TypeScript + Vite + Tailwind + TanStack Query dashboard |
 | `data/synthetic/` | Synthetic clients, projects, regional profiles, industry context |
 | `data/evaluation/` | Labelled, adversarial, and held-out evaluation event sets |
-| `docs/` | Architecture overview and ADRs 001–004 |
+| `docs/` | Architecture overview and ADRs ([docs/decisions/](docs/decisions/)) |
 | `infrastructure/` | Dockerfiles and Cloud Run service YAML |
 | `tests/` | `unit/`, `integration/`, `contract/`, `evaluation/` |
 | `.github/workflows/ci.yml` | PR/push CI: ruff + pytest (backend); oxlint + build (frontend) |
@@ -39,7 +39,7 @@ Stack: **Python 3.12+**, FastAPI, Pydantic v2, pytest, ruff; **Node 18+** (CI us
 
 1. **No prediction.** Aegis finds structural weaknesses regardless of which shock arrives. Do not add forecasting, event probabilities, fitted tails, or historical-correlation estimates into metrics. Do not use predictive framing in docs, API copy, or UI text (avoid “likely”, “will happen”, “probability of X”).
 2. **No blended fragility score.** Never invent a weighted or blended single fragility number across metric groups. Each group reports the **worst** member metric’s red / amber / green status. **Ruin is a hard red flag** — it cannot be averaged away.
-3. **AI / LLMs never produce scores.** All numeric scores and status colours come from deterministic, tested Python. LLMs may help with evidence interpretation, profile elicitation, and narrative consequence analysis; model output must validate against a Pydantic schema or be rejected. Business decisions and maths stay independently testable (see ADR-002).
+3. **AI / LLMs never produce scores.** All numeric scores and status colours come from deterministic, tested Python. LLMs may help with evidence interpretation, profile elicitation, and narrative consequence analysis; model output must validate against a Pydantic schema or be rejected. Business decisions and maths stay independently testable (see [ADR-007](docs/decisions/ADR-007-ai-never-scores.md), [ADR-002](docs/decisions/ADR-002-model-provider-abstraction.md)).
 4. **One file per metric.** Each fragility metric lives in its own module with:
    - a `compute(graph, scenario) -> MetricResult` function;
    - a module docstring that states the **formula** and its **plain-language meaning**.
@@ -128,4 +128,4 @@ Pub/Sub and Firestore integration tests skip unless `PUBSUB_EMULATOR_HOST` / `FI
 - [CONTRIBUTING.md](CONTRIBUTING.md) — short human setup and PR conventions
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
-- [docs/decisions/](docs/decisions/) — ADR-001 … ADR-004
+- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013; engineering ADRs 001–004)
