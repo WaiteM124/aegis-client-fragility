@@ -1,0 +1,69 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "aegis_classifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "event_id", "order": "ASCENDING" },
+        { "fieldPath": "classified_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_assessments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "event_id", "order": "ASCENDING" },
+        { "fieldPath": "assessed_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_assessments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "client_id", "order": "ASCENDING" },
+        { "fieldPath": "assessed_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_risk_scores",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "assessment_id", "order": "ASCENDING" },
+        { "fieldPath": "scored_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_risk_scores",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "event_id", "order": "ASCENDING" },
+        { "fieldPath": "scored_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_exposures",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "event_id", "order": "ASCENDING" },
+        { "fieldPath": "client_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_exposures",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "assessment_id", "order": "ASCENDING" },
+        { "fieldPath": "client_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "aegis_events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "ingested_at", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
