@@ -1,0 +1,18 @@
+# Buffer absorbs small shocks; larger shocks accelerate loss → fragile / concave.
+name: fragile_buffered
+nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+  - id: client
+    kind: buyer
+edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 15
+    stress_response: buffered

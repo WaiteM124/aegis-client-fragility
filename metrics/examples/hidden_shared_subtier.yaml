@@ -1,0 +1,45 @@
+# Two tier-1 suppliers look diversified, but both depend on the same sub-tier.
+name: hidden_shared_subtier
+nodes:
+  - id: subtier
+    kind: supplier
+    type: wafer
+    region: asia
+    technology: fab
+  - id: tier1_a
+    kind: asset
+    type: assembler
+    region: asia
+    technology: smt
+  - id: tier1_b
+    kind: asset
+    type: assembler
+    region: europe
+    technology: smt
+  - id: client
+    kind: buyer
+edges:
+  - source: subtier
+    target: tier1_a
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: subtier
+    target: tier1_b
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: tier1_a
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 5
+  - source: tier1_b
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 5

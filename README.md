@@ -4,7 +4,7 @@
 
 External events can expose structural weaknesses in organisations and live projects. Conventional risk scoring focuses on event severity and geographical exposure, often overlooking the underlying characteristics that determine whether an organisation can absorb, adapt to, or benefit from disruption. Aegis addresses this through organisational fragility characterisation: understanding dependencies, concentration, substitutability, operational slack, nonlinear thresholds and interdependencies. Drawing on Taleb's concepts of fragility, concavity and convexity, the objective is to understand not simply what might happen, but why an organisation may be structurally vulnerable to it.
 
-This is a platform in active development, with a local zero-dependency path, optional Google Cloud adapters, and a Cloud Run deployment. The repository contains the working event-processing pipeline, a React dashboard, unit, integration, contract and evaluation tests, and deployment manifests. The existing infrastructure provides the foundation for evolving Aegis into a continuous organisational fragility characterisation and event-driven stress-testing platform. Nonlinear fragility measurement, convexity characterisation and antifragility assessment remain areas for implementation and empirical validation.
+This is a platform in active development, with a local zero-dependency path, optional Google Cloud adapters, and a Cloud Run deployment. The repository contains the working event-processing pipeline, a React dashboard, unit, integration, contract and evaluation tests, and deployment manifests. Alongside the API, a self-contained `metrics/` package computes structural-fragility readings (concentration, contagion, convexity, optionality) on YAML dependency graphs — locally, with no cloud services. Those metrics find structural weaknesses; they do not forecast events.
 
 <!-- TODO: measured evaluation scores, latency, and cost once a live-model run is recorded -->
 
@@ -16,6 +16,24 @@ This is a platform in active development, with a local zero-dependency path, opt
 - pip
 - (optional) Docker, for Compose and emulators
 - (optional) Node.js 18+, for the dashboard
+
+### Structural-fragility metrics (local)
+
+Plain Python, no API or cloud. From the repo root after `pip install -r requirements.txt`:
+
+```bash
+# One metric
+PYTHONPATH=. python -m metrics.hhi --graph metrics/examples/four_equal_suppliers.yaml
+
+# Every metric, grouped (Concentration / Contagion / Convexity / Optionality)
+# No blended score — each group shows its worst status; ruin forces red.
+PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml
+
+# Tests for the metrics package
+PYTHONPATH=. python -m pytest metrics/tests -q
+```
+
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`.
 
 ### Backend
 
@@ -103,7 +121,7 @@ docker-compose --profile firestore up
 
 A FastAPI service accepts external events and returns `202 Accepted`. An asynchronous worker then normalises and classifies events, retrieves supporting evidence, and generates schema-validated assessment text. Client matching, classification and risk scoring are deterministic. Persistence and messaging sit behind port interfaces, with SQLite and an in-memory bus for local development, and Firestore / Pub/Sub adapters for Google Cloud Run.
 
-The intended evolution of this pipeline is to generate schema-validated shock profiles and evaluate their interaction with persistent, client-specific Fragility Registers. Structured intelligence models would characterise organisational dependencies, resilience capacity, potential concavity, convexity and critical thresholds. A deterministic stress-testing engine would evaluate nonlinear response functions, slack depletion, threshold crossings and potential cascading consequences. LLMs support evidence interpretation, profile elicitation and consequence analysis, while business decisions and mathematical calculations remain independently testable and deterministic. Those fragility, convexity and antifragility measures are not yet implemented in this tree.
+The intended evolution of this pipeline is to generate schema-validated shock profiles and evaluate their interaction with persistent, client-specific Fragility Registers. The `metrics/` package already provides the deterministic structural readings (HHI, monoculture, SPOFs, cascade depth, Taleb convexity / Jensen gap, ruin, optionality, slack) for YAML dependency graphs. Structured intelligence models would characterise organisational dependencies for those registers; LLMs support evidence interpretation and profile elicitation, while business decisions and mathematical calculations remain independently testable and deterministic.
 
 The diagram below is the pipeline that is in the repository today.
 
@@ -142,6 +160,7 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `backend/model_gateway` | `DeterministicModelProvider` (default) and `GeminiModelProvider` |
 | `backend/persistence` | SQLite and Firestore stores; in-memory and Pub/Sub emulator buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, configuration, logging |
+| `metrics/` | Structural-fragility metrics on YAML dependency graphs (HHI, monoculture, SPOF, cascade depth, convexity, ruin, optionality, slack). No forecasting, no blended score. |
 | `frontend` | React, TypeScript, Vite, Tailwind, TanStack Query dashboard: dashboard, events, event detail, assessments, submit event |
 | `data/synthetic` | Synthetic clients, projects, regional profiles, industry context, intelligence reports |
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |

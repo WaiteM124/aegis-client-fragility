@@ -1,0 +1,16 @@
+name: single_supplier
+nodes:
+  - id: s1
+    kind: supplier
+    type: semiconductor
+    region: asia
+    technology: cmos
+  - id: client
+    kind: buyer
+edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0

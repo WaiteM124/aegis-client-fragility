@@ -1,0 +1,27 @@
+name: one_route
+nodes:
+  - id: s1
+    kind: supplier
+    type: fuel
+    region: gulf
+    technology: refine
+  - id: route_only
+    kind: route
+    type: pipeline
+    region: north
+    technology: pipe
+  - id: client
+    kind: buyer
+edges:
+  - source: s1
+    target: route_only
+    share: 1.0
+    flow: 100
+    capacity: 110
+    buffer: 5
+  - source: route_only
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 110
+    buffer: 5
