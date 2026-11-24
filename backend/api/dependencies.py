@@ -63,6 +63,7 @@ class Container:
         if settings.persistence_backend in ("firestore", "firestore_emulator"):
             try:
                 import google.cloud.firestore as _firestore  # noqa: PLC0415
+
                 from ..persistence.firestore.assessment_store import FirestoreAssessmentStore
                 from ..persistence.firestore.event_store import FirestoreEventStore
 
