@@ -2,8 +2,8 @@
 #
 # Assumptions:
 # - Python 3.12, matching pyproject.toml / inventory.
-# - ruff is configured in pyproject.toml but is not in requirements.txt, so this
-#   workflow installs it separately.
+# - ruff is configured in pyproject.toml and pinned in requirements.txt
+#   (same pin installed below for an explicit lint toolchain).
 # - Default CI excludes tests marked "evaluation", matching the project README.
 #   Unmarked tests under tests/evaluation/ will still run; they use the
 #   deterministic provider and local fixtures, no API key.
@@ -12,6 +12,7 @@
 # - Frontend job assumes Node 22 and that `npm run lint` (oxlint) and
 #   `npm run build` succeed with the lockfile in frontend/.
 # - This workflow does not deploy and does not use repository secrets.
+# - No ruff format --check yet (avoids mass-reformat); follow-up if desired.
 
 name: CI
 
@@ -37,7 +38,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install ruff
 
       - name: Lint with ruff
         run: ruff check backend/ tests/

@@ -1,0 +1,15 @@
+---
+description: Frontend standards for the React dashboard
+globs: frontend/**/*.ts,frontend/**/*.tsx,frontend/**/*.css
+alwaysApply: false
+---
+
+# Frontend standards
+
+Canonical detail: `AGENTS.md`.
+
+- Stack: React + TypeScript + Vite + Tailwind + TanStack Query. Match existing `frontend/src` layout (`api/`, `components/`, `hooks/`, `pages/`, `types/`).
+- **No predictive copy.** UI describes structural fragility and assessments — not forecasts or probabilities of events.
+- Do not invent or display a blended single fragility score. Respect red/amber/green and ruin-as-hard-red semantics when metrics UI lands.
+- Type API responses; keep fetch logic in `frontend/src/api` and hooks. Use `VITE_API_BASE` for local API (`frontend/.env.example`).
+- Before finishing: `npm run lint` (oxlint) and `npm run build` from `frontend/`.

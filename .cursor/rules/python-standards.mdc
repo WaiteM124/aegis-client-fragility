@@ -1,0 +1,16 @@
+---
+description: Python engineering standards for backend and tests
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Python standards
+
+Canonical detail: `AGENTS.md`.
+
+- Target **Python 3.12+**. Use type hints on public APIs; **Pydantic v2** models at API, persistence, and model-provider boundaries.
+- Prefer async FastAPI / asyncio patterns already used in `backend/`. Services depend on ports, not concrete stores or providers.
+- Logging via `backend.shared.logging.get_logger` — structured extras (`event_id`, correlation ids); never log secrets.
+- Tests are the spec: known-answer cases for scoring and metrics. Place tests under `tests/unit`, `tests/integration`, `tests/contract`, or `tests/evaluation` as appropriate.
+- Before finishing: `ruff check backend/ tests/` and `PYTHONPATH=. pytest` for the affected suite (CI default excludes `-m evaluation`).
+- Do not mass-reformat unrelated files. Do not bump dependency or model versions unless the task asks for it.

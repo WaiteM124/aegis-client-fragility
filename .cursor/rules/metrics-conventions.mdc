@@ -1,0 +1,15 @@
+---
+description: Conventions for deterministic fragility metrics
+globs: "**/metrics/**/*.py,**/test*metric*.py"
+alwaysApply: false
+---
+
+# Metrics conventions
+
+Canonical detail: `AGENTS.md` product principles.
+
+- **One module per metric** with `compute(graph, scenario) -> MetricResult`.
+- Module docstring must state the **formula** and its **plain-language meaning**.
+- Metrics are **deterministic** only — no LLM calls, no forecasting, no fitted distributions, no historical-correlation estimates inside `compute`.
+- Status is red / amber / green per metric. Group roll-up = **worst** member status. **Ruin → hard red**; never average or weight into a single blended fragility score.
+- Add known-answer unit tests alongside any new or changed metric. Do not delete or skip failing metric tests to pass CI.

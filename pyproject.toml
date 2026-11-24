@@ -30,4 +30,6 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
-ignore = ["E501"]
+# E501: line length handled by formatter preference / readability.
+# UP038: isinstance(X, (A, B)) → X | Y; deferred to avoid mass edits on existing code.
+ignore = ["E501", "UP038"]

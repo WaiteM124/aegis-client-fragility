@@ -1,0 +1,15 @@
+---
+description: Non-negotiable Aegis product and contribution principles
+alwaysApply: true
+---
+
+# Aegis core principles
+
+Canonical detail: `AGENTS.md`.
+
+- **No prediction.** Find structural weaknesses; do not forecast events, fit tails, or estimate historical correlations in metrics. No predictive framing in docs or UI copy.
+- **No blended fragility score.** Each metric group reports its worst member’s red/amber/green status. Ruin is a hard red flag.
+- **LLMs never produce scores.** Metrics and risk maths are deterministic, tested Python. Model output is schema-validated narrative/support only.
+- **Ports over adapters.** Domain code depends on `backend/shared/ports/`; wire adapters in the DI/bootstrap layer only.
+- **Do not weaken tests** to green CI. Keep PRs small and scoped. No secrets in the repo.
+- Prefer matching existing patterns. State assumptions in the PR. When rules conflict, `AGENTS.md` wins.
