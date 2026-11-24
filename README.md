@@ -1,6 +1,6 @@
-# Finds structural fragility in a client's dependencies: concentration, contagion, convexity and optionality. No prediction.
+# Aegis: Client Fragility & Stress Testing
 
-**Fragility & Convexity Intelligence Platform**
+**Finds structural fragility in a client's dependencies: concentration, contagion, convexity and optionality. No prediction.**
 
 External events can expose structural weaknesses in organisations and live projects. Conventional risk scoring focuses on event severity and geographical exposure, often overlooking the underlying characteristics that determine whether an organisation can absorb, adapt to, or benefit from disruption. Aegis addresses this through organisational fragility characterisation: understanding dependencies, concentration, substitutability, operational slack, nonlinear thresholds and interdependencies. Drawing on Taleb's concepts of fragility, concavity and convexity, the objective is to understand not simply what might happen, but why an organisation may be structurally vulnerable to it.
 
@@ -20,7 +20,7 @@ This is a platform in active development, with a local zero-dependency path, opt
 ### Backend
 
 ```bash
-cd aegis-global-intelligence
+cd aegis-client-fragility
 pip install -r requirements.txt
 cp .env.example .env
 PYTHONPATH=. python -m backend.main
