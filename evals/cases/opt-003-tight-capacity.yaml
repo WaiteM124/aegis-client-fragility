@@ -1,0 +1,40 @@
+id: opt-003-tight-capacity
+description: "Slight headroom only \u2014 slack amber/red territory."
+weakness: low_optionality_slack
+is_control: false
+detecting_metrics:
+- slack
+graph:
+  name: opt-003-tight-capacity
+  nodes:
+  - id: s1
+    kind: supplier
+    type: chem
+    region: asia
+    technology: batch
+  - id: s2
+    kind: supplier
+    type: chem
+    region: americas
+    technology: batch
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 52
+    buffer: 0
+  - source: s2
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 52
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: green
+  Convexity: green
+  Optionality: red

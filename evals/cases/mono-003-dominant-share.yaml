@@ -1,0 +1,41 @@
+id: mono-003-dominant-share
+description: "Two suppliers but one holds 90% share \u2014 HHI and monoculture flag."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- hhi
+- monoculture
+graph:
+  name: mono-003-dominant-share
+  nodes:
+  - id: s1
+    kind: supplier
+    type: chip
+    region: asia
+    technology: cmos
+  - id: s2
+    kind: supplier
+    type: chip
+    region: asia
+    technology: cmos
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.9
+    flow: 90
+    capacity: 90
+    buffer: 0
+  - source: s2
+    target: client
+    share: 0.1
+    flow: 10
+    capacity: 10
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: green
+  Convexity: green
+  Optionality: red

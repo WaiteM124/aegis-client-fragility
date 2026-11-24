@@ -1,0 +1,1338 @@
+{
+  "generated_at": "2026-11-24T14:44:49.131911+00:00",
+  "principle": "Evals measure structural weakness detection, not prediction. No event forecasting.",
+  "summary": {
+    "n_cases": 31,
+    "n_controls": 6,
+    "n_weakness_cases": 25,
+    "recall": {
+      "hhi": 1.0,
+      "monoculture": 1.0,
+      "single_points_of_failure": 1.0,
+      "cascade_depth": 1.0,
+      "convexity": 1.0,
+      "ruin": 1.0,
+      "optionality": 1.0,
+      "slack": 1.0
+    },
+    "false_flag_rate": {
+      "hhi": 0.0,
+      "monoculture": 0.0,
+      "single_points_of_failure": 0.0,
+      "cascade_depth": 0.0,
+      "convexity": 0.0,
+      "ruin": 0.0,
+      "optionality": 0.0,
+      "slack": 0.0
+    },
+    "group_accuracy": 1.0,
+    "controls_flagged_red": 0,
+    "metric_expectation_accuracy": 1.0
+  },
+  "diagnostics": {
+    "detect_totals": {
+      "cascade_depth": 4,
+      "single_points_of_failure": 7,
+      "optionality": 4,
+      "slack": 5,
+      "convexity": 3,
+      "ruin": 4,
+      "monoculture": 8,
+      "hhi": 7
+    },
+    "detect_hits": {
+      "cascade_depth": 4,
+      "single_points_of_failure": 7,
+      "optionality": 4,
+      "slack": 5,
+      "convexity": 3,
+      "ruin": 4,
+      "monoculture": 8,
+      "hhi": 7
+    },
+    "recall_misses": [],
+    "group_mismatches": [],
+    "control_red_cases": [],
+    "metric_expectation_mismatches": []
+  },
+  "cases": [
+    {
+      "id": "cascade-001-depth2",
+      "weakness": "deep_cascade_chain",
+      "is_control": false,
+      "detecting_metrics": [
+        "cascade_depth",
+        "single_points_of_failure",
+        "optionality",
+        "slack"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "red",
+        "cascade_depth": "amber",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 2.0,
+        "cascade_depth": 2.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "cascade-002-depth3",
+      "weakness": "deep_cascade_chain",
+      "is_control": false,
+      "detecting_metrics": [
+        "cascade_depth",
+        "single_points_of_failure"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "red",
+        "cascade_depth": "amber",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 3.0,
+        "cascade_depth": 3.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "cascade-003-depth4-red",
+      "weakness": "deep_cascade_chain",
+      "is_control": false,
+      "detecting_metrics": [
+        "cascade_depth",
+        "single_points_of_failure"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "red",
+        "cascade_depth": "red",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 4.0,
+        "cascade_depth": 4.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "cascade-004-branching-deep",
+      "weakness": "deep_cascade_chain",
+      "is_control": false,
+      "detecting_metrics": [
+        "cascade_depth"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "amber",
+        "single_points_of_failure": "green",
+        "cascade_depth": "amber",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 0.52,
+        "monoculture": 0.6,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 3.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-001-four-diversified",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "green",
+        "monoculture": "green",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.25,
+        "monoculture": 0.25,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 4.0,
+        "slack": 0.8
+      },
+      "group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-002-three-diversified",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "green",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.3333333333333333,
+        "monoculture": 0.3333333333333333,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 3.0,
+        "slack": 0.7365269461077845
+      },
+      "group_status": {
+        "Concentration": "amber",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "amber",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-003-parallel-independent",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "amber",
+        "single_points_of_failure": "green",
+        "cascade_depth": "amber",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 0.5,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 2.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.9
+      },
+      "group_status": {
+        "Concentration": "amber",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "amber",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-004-five-equal",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "green",
+        "monoculture": "green",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.20000000000000004,
+        "monoculture": 0.2,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 5.0,
+        "slack": 1.05
+      },
+      "group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-005-redundant-deep",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "amber",
+        "single_points_of_failure": "green",
+        "cascade_depth": "amber",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 0.5,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 2.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 1.0
+      },
+      "group_status": {
+        "Concentration": "amber",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "amber",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "control-006-linear-buffered-diverse",
+      "weakness": "none",
+      "is_control": true,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "green",
+        "monoculture": "green",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.25,
+        "monoculture": 0.25,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 4.0,
+        "slack": 1.4
+      },
+      "group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "green",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "convex-001-buffered-fragile",
+      "weakness": "concave_loss_ladder",
+      "is_control": false,
+      "detecting_metrics": [
+        "convexity"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 50.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.15
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "convex-002-cliff-fragile",
+      "weakness": "concave_loss_ladder",
+      "is_control": false,
+      "detecting_metrics": [
+        "convexity",
+        "ruin"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "red",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 166.66666666666669,
+        "ruin": 1.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "convex-003-buffered-multi-edge",
+      "weakness": "concave_loss_ladder",
+      "is_control": false,
+      "detecting_metrics": [
+        "convexity"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 86.66666666666667,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.24
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mix-001-dual-concentrated",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "monoculture"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 10.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.12
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mix-002-chain-with-bypass",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "hhi",
+        "monoculture"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "amber",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 2.0,
+        "convexity": 90.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.2
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mix-003-one-supplier-high-slack",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "hhi",
+        "monoculture",
+        "optionality"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 1.5
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mono-001-single-supplier",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "hhi",
+        "monoculture",
+        "slack"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mono-002-single-fuel",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "hhi",
+        "monoculture",
+        "optionality",
+        "slack"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mono-003-dominant-share",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "hhi",
+        "monoculture"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 0.8200000000000001,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "mono-004-same-region-type",
+      "weakness": "single_supplier_monoculture",
+      "is_control": false,
+      "detecting_metrics": [
+        "monoculture"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 0.3333333333333333,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 113.33333333333334,
+        "ruin": 0.0,
+        "optionality": 3.0,
+        "slack": 0.2599748005039898
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "red",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "opt-001-one-route",
+      "weakness": "low_optionality_slack",
+      "is_control": false,
+      "detecting_metrics": [
+        "optionality",
+        "single_points_of_failure"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "red",
+        "cascade_depth": "amber",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 2.0,
+        "cascade_depth": 2.0,
+        "convexity": 40.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.15
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "red",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "opt-002-zero-slack",
+      "weakness": "low_optionality_slack",
+      "is_control": false,
+      "detecting_metrics": [
+        "slack"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "opt-003-tight-capacity",
+      "weakness": "low_optionality_slack",
+      "is_control": false,
+      "detecting_metrics": [
+        "slack"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "green",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 1.0,
+        "single_points_of_failure": 0.0,
+        "cascade_depth": 1.0,
+        "convexity": -4.263256414560601e-14,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.04
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "green",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "ruin-001-below-floor-cliff",
+      "weakness": "ruin_below_survival_floor",
+      "is_control": false,
+      "detecting_metrics": [
+        "ruin"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "red",
+        "ruin": "red",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 166.66666666666669,
+        "ruin": 1.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "ruin-002-below-floor-high-yaml",
+      "weakness": "ruin_below_survival_floor",
+      "is_control": false,
+      "detecting_metrics": [
+        "ruin"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "red",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 1.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "ruin-003-just-above-floor",
+      "weakness": "ruin_just_above_survival_floor",
+      "is_control": false,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {
+        "ruin": "green"
+      }
+    },
+    {
+      "id": "ruin-004-well-above-low-floor",
+      "weakness": "ruin_just_above_survival_floor",
+      "is_control": false,
+      "detecting_metrics": [],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": 0.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "green",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {
+        "ruin": "green"
+      }
+    },
+    {
+      "id": "ruin-005-decelerating-still-ruins",
+      "weakness": "ruin_below_survival_floor",
+      "is_control": false,
+      "detecting_metrics": [
+        "ruin"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "green",
+        "convexity": "green",
+        "ruin": "red",
+        "optionality": "amber",
+        "slack": "red"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 1.0,
+        "convexity": -39.9999999999998,
+        "ruin": 1.0,
+        "optionality": 1.0,
+        "slack": 0.0
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "red"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "spof-001-hidden-subtier",
+      "weakness": "hidden_single_point_of_failure",
+      "is_control": false,
+      "detecting_metrics": [
+        "single_points_of_failure",
+        "hhi"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "amber",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 2.0,
+        "convexity": 100.0,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.2
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "spof-002-shared-hub",
+      "weakness": "hidden_single_point_of_failure",
+      "is_control": false,
+      "detecting_metrics": [
+        "single_points_of_failure"
+      ],
+      "metric_status": {
+        "hhi": "amber",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "amber",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "amber",
+        "slack": "amber"
+      },
+      "metric_value": {
+        "hhi": 0.5,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 2.0,
+        "convexity": 40.0,
+        "ruin": 0.0,
+        "optionality": 1.0,
+        "slack": 0.15
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "amber"
+      },
+      "expected_metric_status": {}
+    },
+    {
+      "id": "spof-003-dual-route-shared-source",
+      "weakness": "hidden_single_point_of_failure",
+      "is_control": false,
+      "detecting_metrics": [
+        "single_points_of_failure",
+        "hhi",
+        "monoculture"
+      ],
+      "metric_status": {
+        "hhi": "red",
+        "monoculture": "red",
+        "single_points_of_failure": "amber",
+        "cascade_depth": "amber",
+        "convexity": "red",
+        "ruin": "green",
+        "optionality": "green",
+        "slack": "green"
+      },
+      "metric_value": {
+        "hhi": 1.0,
+        "monoculture": 1.0,
+        "single_points_of_failure": 1.0,
+        "cascade_depth": 2.0,
+        "convexity": 33.333333333333336,
+        "ruin": 0.0,
+        "optionality": 2.0,
+        "slack": 0.6
+      },
+      "group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "green"
+      },
+      "expected_group_status": {
+        "Concentration": "red",
+        "Contagion": "amber",
+        "Convexity": "red",
+        "Optionality": "green"
+      },
+      "expected_metric_status": {}
+    }
+  ]
+}

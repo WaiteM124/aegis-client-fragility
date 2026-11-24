@@ -1,0 +1,40 @@
+id: mix-001-dual-concentrated
+description: "Two equal suppliers same everything \u2014 HHI amber, monoculture red."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- monoculture
+graph:
+  name: mix-001-dual-concentrated
+  nodes:
+  - id: s1
+    kind: supplier
+    type: chip
+    region: taiwan
+    technology: cmos
+  - id: s2
+    kind: supplier
+    type: chip
+    region: taiwan
+    technology: cmos
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 1
+  - source: s2
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 1
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: green
+  Convexity: red
+  Optionality: amber

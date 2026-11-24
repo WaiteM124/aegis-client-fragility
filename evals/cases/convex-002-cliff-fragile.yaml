@@ -1,0 +1,31 @@
+id: convex-002-cliff-fragile
+description: "Cliff stress profile \u2014 accelerating loss and ruin at 50%."
+weakness: concave_loss_ladder
+is_control: false
+detecting_metrics:
+- convexity
+- ruin
+graph:
+  name: convex-002-cliff-fragile
+  nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+    stress_response: cliff
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: red

@@ -1,0 +1,31 @@
+id: ruin-005-decelerating-still-ruins
+description: "Decelerating profile is antifragile on convexity but remaining at \u03B4\
+  =0.5 is 25% \u2014 still below the 0.5 survival floor."
+weakness: ruin_below_survival_floor
+is_control: false
+detecting_metrics:
+- ruin
+graph:
+  name: ruin-005-decelerating-still-ruins
+  nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+    stress_response: decelerating
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: red

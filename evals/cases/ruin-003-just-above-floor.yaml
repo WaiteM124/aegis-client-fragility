@@ -1,0 +1,31 @@
+id: ruin-003-just-above-floor
+description: "Linear ladder leaves exactly 50% remaining at default floor 0.5 \u2014\
+  \ strict inequality means NOT ruin (just at/above floor)."
+weakness: ruin_just_above_survival_floor
+is_control: false
+detecting_metrics: []
+expected_metric_status:
+  ruin: green
+graph:
+  name: ruin-003-just-above-floor
+  nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+    stress_response: linear
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: green
+  Optionality: red

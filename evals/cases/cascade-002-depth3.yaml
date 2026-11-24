@@ -1,0 +1,52 @@
+id: cascade-002-depth3
+description: "Four-node chain \u2014 cascade depth 3 (amber)."
+weakness: deep_cascade_chain
+is_control: false
+detecting_metrics:
+- cascade_depth
+- single_points_of_failure
+graph:
+  name: cascade-002-depth3
+  nodes:
+  - id: n0
+    kind: supplier
+    type: raw
+    region: asia
+    technology: extract
+  - id: n1
+    kind: asset
+    type: mill
+    region: asia
+    technology: grind
+  - id: n2
+    kind: asset
+    type: plant
+    region: asia
+    technology: refine
+  - id: client
+    kind: buyer
+  edges:
+  - source: n0
+    target: n1
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+  - source: n1
+    target: n2
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+  - source: n2
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: red
+  Convexity: green
+  Optionality: red

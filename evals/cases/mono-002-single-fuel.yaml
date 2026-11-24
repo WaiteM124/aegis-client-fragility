@@ -1,0 +1,33 @@
+id: mono-002-single-fuel
+description: "Single fuel supplier with zero buffer \u2014 concentration red."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- hhi
+- monoculture
+- optionality
+- slack
+graph:
+  name: mono-002-single-fuel
+  nodes:
+  - id: s1
+    kind: supplier
+    type: fuel
+    region: gulf
+    technology: refine
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 80
+    capacity: 80
+    buffer: 0
+    stress_response: linear
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: green
+  Optionality: red

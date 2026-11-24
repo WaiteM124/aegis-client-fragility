@@ -1,0 +1,32 @@
+id: mix-003-one-supplier-high-slack
+description: "Single supplier but large slack \u2014 still concentration weakness."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- hhi
+- monoculture
+- optionality
+graph:
+  name: mix-003-one-supplier-high-slack
+  nodes:
+  - id: s1
+    kind: supplier
+    type: power
+    region: nordic
+    technology: hydro
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 200
+    buffer: 50
+    stress_response: linear
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: green
+  Optionality: amber

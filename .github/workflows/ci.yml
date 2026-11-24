@@ -1,12 +1,14 @@
-# Lint and test the Aegis backend and frontend.
+# Lint and test the Aegis backend and frontend; run the metrics eval gate.
 #
 # Assumptions:
 # - Python 3.12, matching pyproject.toml / inventory.
 # - ruff is configured in pyproject.toml and pinned in requirements.txt
 #   (same pin installed below for an explicit lint toolchain).
-# - Default CI excludes tests marked "evaluation", matching the project README.
+# - Default backend CI excludes tests marked "evaluation", matching the project README.
 #   Unmarked tests under tests/evaluation/ will still run; they use the
 #   deterministic provider and local fixtures, no API key.
+# - eval-gate runs labelled metrics evals (weakness detection, not prediction)
+#   and offline pytest -m evaluation (deterministic / stub Gemini; no secrets).
 # - Pub/Sub and Firestore integration tests skip unless emulator env vars are set.
 # - PYTHONPATH=. is required, as in the Makefile.
 # - Frontend job assumes Node 22 and that `npm run lint` (oxlint) and
@@ -40,10 +42,32 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint with ruff
-        run: ruff check backend/ tests/ metrics/
+        run: ruff check backend/ tests/ metrics/ evals/
 
       - name: Run tests
         run: PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation" -v
+
+  eval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Metrics eval suite (weakness detection, not prediction)
+        run: PYTHONPATH=. python evals/run_evals.py
+
+      - name: Offline evaluation pytest (-m evaluation)
+        run: PYTHONPATH=. pytest tests/evaluation/ -m evaluation -v
 
   frontend:
     runs-on: ubuntu-latest

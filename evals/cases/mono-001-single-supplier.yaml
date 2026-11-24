@@ -1,0 +1,31 @@
+id: mono-001-single-supplier
+description: "Single supplier carries 100% share \u2014 classic monoculture / HHI=1."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- hhi
+- monoculture
+- slack
+graph:
+  name: mono-001-single-supplier
+  nodes:
+  - id: s1
+    kind: supplier
+    type: semiconductor
+    region: asia
+    technology: cmos
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: green
+  Optionality: red

@@ -31,9 +31,13 @@ PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml
 
 # Tests for the metrics package
 PYTHONPATH=. python -m pytest metrics/tests -q
+
+# Labelled weakness-detection eval suite (not prediction) — see ADR-014
+PYTHONPATH=. python evals/run_evals.py
+# or: make eval-gate
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`.
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
 **Ruin survival floor.** Ruin fires when remaining deliverable flow at any stress-ladder rung is strictly below `floor × F₀`. Default floor is **0.5** (a client is usually finished well before total loss). Override per graph with top-level YAML `survival_floor:`, or on the CLI with `--survival-floor` (wins over YAML):
 
@@ -171,7 +175,8 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `data/synthetic` | Synthetic clients, projects, regional profiles, industry context, intelligence reports |
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |
 | `infrastructure` | Dockerfiles and Cloud Run service YAML for the API and the worker |
-| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013; engineering ADRs 001–004) |
+| `evals/` | Deterministic metrics eval suite (labelled graphs, baseline, CI `eval-gate`) — weakness detection, not prediction ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)) |
+| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013; engineering ADRs 001–004; eval gate ADR-014) |
 | `tests` | Unit, integration, contract, and evaluation tests |
 
 ### Port and adapter matrix
@@ -192,7 +197,7 @@ Configuration is via environment variables or `.env`. Important switches: `MODEL
 
 Full index and format: [docs/decisions/README.md](docs/decisions/README.md). Summarised here.
 
-**Product positioning and no prediction** ([ADR-005](docs/decisions/ADR-005-product-positioning.md), [ADR-006](docs/decisions/ADR-006-no-prediction.md)). Aegis is Client Fragility & Stress Testing: the dependency graph is primary; events are stressors only. Metrics flag structural weakness; they do not forecast.
+**Product positioning and no prediction** ([ADR-005](docs/decisions/ADR-005-product-positioning.md), [ADR-006](docs/decisions/ADR-006-no-prediction.md)). Aegis is Client Fragility & Stress Testing: the dependency graph is primary; events are stressors only. Metrics flag structural weakness; they do not forecast. CI’s `eval-gate` measures that detection quality on labelled graphs ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)).
 
 **No blended fragility score; ruin is hard red** ([ADR-008](docs/decisions/ADR-008-no-blended-fragility-score.md), [ADR-009](docs/decisions/ADR-009-ruin-hard-red-flag.md)). Four groups report worst-member status. Ruin cannot be averaged away.
 
@@ -214,14 +219,16 @@ PYTHONPATH=. pytest tests/unit/
 PYTHONPATH=. pytest tests/integration/
 PYTHONPATH=. pytest tests/contract/
 PYTHONPATH=. pytest tests/ -m "not evaluation"
+make eval-gate                              # metrics eval suite + offline -m evaluation
 ```
 
-Or `make test`, `make test-unit`, `make test-integration`, `make test-contract`, and `make lint` (`ruff check backend/ tests/`).
+Or `make test`, `make test-unit`, `make test-integration`, `make test-contract`, and `make lint` (`ruff check backend/ tests/ metrics/ evals/`).
 
 - Unit tests cover models, the classifier, the normaliser, the scorer, and client matching.
 - Integration tests cover the event and assessment pipelines and the dashboard API. Pub/Sub emulator and Firestore adapter tests skip unless `PUBSUB_EMULATOR_HOST` or `FIRESTORE_EMULATOR_HOST` is set.
 - Contract tests lock port behaviour for the knowledge repository, model provider, and retrieval.
-- Evaluation tests in `tests/evaluation/` exercise labelled, adversarial, and held-out events. Several are marked `evaluation` so they can be excluded from the default CI run. They use the deterministic provider and local data; they do not require a live Gemini key.
+- Evaluation tests in `tests/evaluation/` exercise labelled, adversarial, and held-out events. Several are marked `evaluation` so they can be excluded from the default backend CI job; the **`eval-gate`** job runs them offline (deterministic provider / stub Gemini; no API key).
+- The metrics eval suite in `evals/` checks that fragility metrics correctly **flag** known structural weaknesses on labelled graphs (recall, false-flag rate on robust controls, group-status accuracy). It does not forecast events ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)).
 
 `ruff` is configured in `pyproject.toml` but is not listed in `requirements.txt`, so install it separately for local linting (`pip install ruff`).
 
@@ -262,10 +269,12 @@ The root README previously marked checkpoints 2–4 as pending. The code is ahea
 ```
 backend/           API, ingestion, worker, assessment, retrieval, scoring, adapters
 frontend/          React + TypeScript dashboard
+metrics/           Structural-fragility metrics (no forecasting)
+evals/             Labelled metrics eval suite + CI eval-gate (ADR-014)
 data/synthetic/    Local knowledge base and client/project fixtures
 data/evaluation/   Labelled evaluation sets
 docs/architecture/ Component map
-docs/decisions/    ADR index (005–013 product; 001–004 engineering)
+docs/decisions/    ADR index (005–013 product; 001–004 engineering; 014 eval gate)
 infrastructure/    Dockerfiles and Cloud Run YAML
 tests/             unit, integration, contract, evaluation
 ```
@@ -287,3 +296,4 @@ tests/             unit, integration, contract, evaluation
 - [ADR-011 Stress ladder](docs/decisions/ADR-011-stress-ladder.md)
 - [ADR-012 Target GCP platform](docs/decisions/ADR-012-target-gcp-platform.md) (Proposed)
 - [ADR-013 Hormuz case study dropped](docs/decisions/ADR-013-hormuz-case-study-dropped.md)
+- [ADR-014 Eval gate (weakness detection, not prediction)](docs/decisions/ADR-014-eval-gate-weakness-detection.md)

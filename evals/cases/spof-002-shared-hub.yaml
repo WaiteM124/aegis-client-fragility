@@ -1,0 +1,51 @@
+id: spof-002-shared-hub
+description: Two suppliers feed one shared logistics hub before the client.
+weakness: hidden_single_point_of_failure
+is_control: false
+detecting_metrics:
+- single_points_of_failure
+graph:
+  name: spof-002-shared-hub
+  nodes:
+  - id: s1
+    kind: supplier
+    type: ore
+    region: africa
+    technology: mine
+  - id: s2
+    kind: supplier
+    type: ore
+    region: americas
+    technology: mine
+  - id: hub
+    kind: asset
+    type: port
+    region: europe
+    technology: bulk
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: hub
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: s2
+    target: hub
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: hub
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 110
+    buffer: 5
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: amber

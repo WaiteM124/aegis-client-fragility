@@ -1,0 +1,65 @@
+id: control-006-linear-buffered-diverse
+description: "Four diversified linear edges with capacity headroom \u2014 robust."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-006-linear-buffered-diverse
+  nodes:
+  - id: s1
+    kind: supplier
+    type: alpha
+    region: north
+    technology: x
+  - id: s2
+    kind: supplier
+    type: beta
+    region: south
+    technology: y
+  - id: s3
+    kind: supplier
+    type: gamma
+    region: east
+    technology: z
+  - id: s4
+    kind: supplier
+    type: delta
+    region: west
+    technology: w
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 50
+    buffer: 10
+    stress_response: linear
+  - source: s2
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 50
+    buffer: 10
+    stress_response: linear
+  - source: s3
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 50
+    buffer: 10
+    stress_response: linear
+  - source: s4
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 50
+    buffer: 10
+    stress_response: linear
+expected_metric_status: {}
+expected_group_status:
+  Concentration: green
+  Contagion: green
+  Convexity: green
+  Optionality: green

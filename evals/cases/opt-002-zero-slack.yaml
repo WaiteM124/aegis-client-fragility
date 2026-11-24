@@ -1,0 +1,40 @@
+id: opt-002-zero-slack
+description: "Capacity equals flow, buffer 0 \u2014 slack red."
+weakness: low_optionality_slack
+is_control: false
+detecting_metrics:
+- slack
+graph:
+  name: opt-002-zero-slack
+  nodes:
+  - id: s1
+    kind: supplier
+    type: parts
+    region: asia
+    technology: cnc
+  - id: s2
+    kind: supplier
+    type: parts
+    region: europe
+    technology: cnc
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 50
+    buffer: 0
+  - source: s2
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 50
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: green
+  Convexity: green
+  Optionality: red

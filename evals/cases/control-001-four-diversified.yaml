@@ -1,0 +1,61 @@
+id: control-001-four-diversified
+description: "Four equal diversified suppliers with slack \u2014 robust control."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-001-four-diversified
+  nodes:
+  - id: s1
+    kind: supplier
+    type: semiconductor
+    region: asia
+    technology: cmos
+  - id: s2
+    kind: supplier
+    type: optics
+    region: europe
+    technology: photonics
+  - id: s3
+    kind: supplier
+    type: chemicals
+    region: americas
+    technology: bulk
+  - id: s4
+    kind: supplier
+    type: logistics
+    region: africa
+    technology: freight
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s2
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s3
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s4
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+expected_metric_status: {}
+expected_group_status:
+  Concentration: green
+  Contagion: green
+  Convexity: green
+  Optionality: green
