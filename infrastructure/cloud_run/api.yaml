@@ -44,7 +44,7 @@ spec:
             - name: PUBSUB_PROJECT_ID
               value: "exalted-cell-475019-b7"
             - name: MESSAGE_BUS_TYPE
-              value: "in_memory"
+              value: "pubsub"
             # No public dashboard origin is recorded in this repository.
             # Set CORS_ALLOWED_ORIGINS to that origin before applying this
             # manifest, otherwise browsers will be limited to localhost Vite
