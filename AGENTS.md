@@ -19,7 +19,7 @@ Single source of truth for humans and AI agents (including Cursor) working in th
 | `backend/assessment` | Client matching, retrieval, model call, persist assessment |
 | `backend/retrieval` | Evidence retrieval against the knowledge repository |
 | `backend/decision_engine` | Deterministic risk scorer (event impact scoring — distinct from fragility metrics) |
-| `backend/metrics` | Deterministic fragility metrics (`compute(graph, scenario) -> MetricResult`); one file per metric (package may land via a concurrent PR) |
+| `metrics/` | Deterministic structural-fragility metrics (`compute(graph, scenario) -> MetricResult`); one file per metric; YAML examples and package tests under `metrics/examples/`, `metrics/tests/` |
 | `backend/model_gateway` | `DeterministicModelProvider` (default) and `GeminiModelProvider` |
 | `backend/persistence` | SQLite / Firestore stores; in-memory / Pub/Sub buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, config, structured logging |
@@ -100,10 +100,10 @@ Docker: `docker-compose up --build`. Optional: `--profile pubsub` / `--profile f
 ### Test and lint
 
 ```bash
-make lint                                    # ruff check backend/ tests/
-PYTHONPATH=. pytest tests/ -m "not evaluation"   # default CI set
+make lint                                    # ruff check backend/ tests/ metrics/
+PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation"   # default CI set
 make test-unit | make test-integration | make test-contract
-PYTHONPATH=. pytest tests/                   # includes evaluation (deterministic; no API key)
+PYTHONPATH=. pytest tests/ metrics/tests/    # includes evaluation (deterministic; no API key)
 ```
 
 Frontend: `npm run lint` (oxlint), `npm run build`.

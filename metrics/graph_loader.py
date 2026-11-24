@@ -27,6 +27,8 @@ def load_graph_spec(path: str | Path) -> DependencyGraphSpec:
 def spec_to_networkx(spec: DependencyGraphSpec) -> nx.DiGraph:
     """Build a directed NetworkX graph from a DependencyGraphSpec."""
     g = nx.DiGraph(name=spec.name, client_id=spec.client_id)
+    if spec.survival_floor is not None:
+        g.graph["survival_floor"] = float(spec.survival_floor)
     for node in spec.nodes:
         g.add_node(
             node.id,

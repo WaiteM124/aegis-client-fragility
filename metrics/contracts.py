@@ -85,6 +85,9 @@ class DependencyGraphSpec(BaseModel):
     edges: list[EdgeSpec]
     # Optional explicit client/buyer id; otherwise inferred as the sole buyer
     client_id: str | None = None
+    # Client-level ruin floor: remaining flow fraction of F0 below which is ruin.
+    # When omitted, metrics.thresholds.RuinThresholds.survival_floor (default 0.5) applies.
+    survival_floor: float | None = Field(default=None, ge=0.0, le=1.0)
 
     @model_validator(mode="after")
     def _resolve_client(self) -> DependencyGraphSpec:

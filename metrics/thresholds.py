@@ -65,10 +65,17 @@ class ConvexityThresholds:
 
 @dataclass(frozen=True)
 class RuinThresholds:
-    """Ruin is binary: any ladder rung that crosses the floor is red."""
+    """Ruin is binary: any ladder rung that crosses the floor is red.
 
-    # Remaining deliverable flow fraction below this = point of no return
-    survival_floor: float = 0.0
+    survival_floor is the minimum remaining deliverable-flow *fraction*
+    of baseline F₀ the client can tolerate. Default 0.5: the client is
+    treated as past the point of no return once remaining flow falls
+    strictly below half of baseline (a client is usually finished well
+    before total loss). Override per graph via YAML ``survival_floor``,
+    via ``Scenario.survival_floor``, or ``--survival-floor`` on the CLI.
+    """
+
+    survival_floor: float = 0.5
 
 
 @dataclass(frozen=True)

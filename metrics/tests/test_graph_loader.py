@@ -13,3 +13,10 @@ def test_load_four_equal(examples_dir):
 def test_stress_response_preserved(examples_dir):
     g = load_graph(examples_dir / "ruin_cliff.yaml")
     assert g["s1"]["client"]["stress_response"] == "cliff"
+
+
+def test_survival_floor_preserved(examples_dir):
+    g = load_graph(examples_dir / "high_survival_floor.yaml")
+    assert g.graph["survival_floor"] == 0.6
+    g2 = load_graph(examples_dir / "single_supplier.yaml")
+    assert "survival_floor" not in g2.graph

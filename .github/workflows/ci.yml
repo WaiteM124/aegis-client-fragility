@@ -40,10 +40,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint with ruff
-        run: ruff check backend/ tests/
+        run: ruff check backend/ tests/ metrics/
 
       - name: Run tests
-        run: PYTHONPATH=. pytest tests/ -m "not evaluation" -v
+        run: PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation" -v
 
   frontend:
     runs-on: ubuntu-latest

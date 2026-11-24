@@ -35,6 +35,12 @@ PYTHONPATH=. python -m pytest metrics/tests -q
 
 Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`.
 
+**Ruin survival floor.** Ruin fires when remaining deliverable flow at any stress-ladder rung is strictly below `floor × F₀`. Default floor is **0.5** (a client is usually finished well before total loss). Override per graph with top-level YAML `survival_floor:`, or on the CLI with `--survival-floor` (wins over YAML):
+
+```bash
+PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yaml --survival-floor 0.6
+```
+
 ### Backend
 
 ```bash

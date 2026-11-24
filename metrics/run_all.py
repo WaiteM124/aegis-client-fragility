@@ -103,8 +103,20 @@ def main(argv: list[str] | None = None) -> None:
         description="Run all Aegis structural-fragility metrics (no blended score)."
     )
     add_common_args(parser)
+    parser.add_argument(
+        "--survival-floor",
+        type=float,
+        default=None,
+        metavar="FRAC",
+        help=(
+            "Ruin when remaining flow < FRAC × baseline at any ladder rung. "
+            "Overrides graph YAML and the default (0.5)."
+        ),
+    )
     args = parser.parse_args(argv)
     graph, scenario = load_graph_and_scenario(args)
+    if args.survival_floor is not None:
+        scenario = scenario.model_copy(update={"survival_floor": args.survival_floor})
     print(format_grouped(run_all(graph, scenario)))
 
 

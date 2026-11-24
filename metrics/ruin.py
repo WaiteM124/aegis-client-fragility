@@ -6,23 +6,31 @@ Using the same stress ladder as convexity (δ ∈ {0.10, 0.20, 0.50}):
 
     F₀ = deliverable inbound flow to the client
     F(δ) = deliverable flow after structural stress at intensity δ
-    floor = scenario.survival_floor if set, else thresholds.ruin.survival_floor
-            (default 0.0)
+
+Survival floor resolution (first match wins):
+
+    1. ``scenario.survival_floor`` (also set by CLI ``--survival-floor``)
+    2. graph YAML / ``graph.graph["survival_floor"]`` (client-level override)
+    3. ``thresholds.ruin.survival_floor`` (documented default **0.5**)
 
 Ruin iff any δ in the ladder satisfies:
 
-    F(δ) ≤ floor * F₀     when F₀ > 0 and floor > 0
-    F(δ) ≤ 0              when floor == 0
+    F(δ) < floor × F₀     when F₀ > 0
     or F₀ ≤ 0             (no deliverable baseline)
+
+Strict inequality: remaining exactly equal to the floor is not ruin.
+A 60% loss (remaining 40%) triggers at floor 0.5; a 40% loss does not.
 
 Value = 1.0 if ruin, else 0.0.
 
 Meaning
 -------
 Ruin is a hard structural red flag: under the stress ladder, deliverable
-flow crosses the survival floor (point of no return). Not a probability
-of ruin — it flags that the graph's flow accounting admits a
-zero/below-floor state at a listed stress intensity.
+flow falls below the client's survival floor (point of no return). The
+default floor is half of baseline because a client is usually finished
+well before total loss. This is not a probability of ruin — it flags that
+the graph's flow accounting admits a below-floor state at a listed stress
+intensity.
 
 Status
 ------
@@ -44,7 +52,22 @@ from metrics.stress import ensure_flow, stress_ladder_losses
 from metrics.thresholds import STRESS_LADDER, THRESHOLDS, Thresholds
 
 METRIC = "ruin"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
+
+
+def resolve_survival_floor(
+    graph: nx.DiGraph,
+    scenario: Scenario | None = None,
+    thresholds: Thresholds | None = None,
+) -> float:
+    """Resolve survival floor: scenario → graph YAML → thresholds default."""
+    thresholds = thresholds or THRESHOLDS
+    if scenario is not None and scenario.survival_floor is not None:
+        return float(scenario.survival_floor)
+    graph_floor = graph.graph.get("survival_floor")
+    if graph_floor is not None:
+        return float(graph_floor)
+    return float(thresholds.ruin.survival_floor)
 
 
 def compute(
@@ -54,9 +77,7 @@ def compute(
     ladder: tuple[float, ...] = STRESS_LADDER,
 ) -> MetricResult:
     thresholds = thresholds or THRESHOLDS
-    floor = thresholds.ruin.survival_floor
-    if scenario is not None and scenario.survival_floor is not None:
-        floor = scenario.survival_floor
+    floor = resolve_survival_floor(graph, scenario, thresholds)
 
     g = graph
     if scenario is not None:
@@ -74,11 +95,9 @@ def compute(
     if f0 <= 0:
         crossed = [f"delta={d}" for d in ladder]
     else:
+        threshold_flow = floor * f0
         for delta, f in remaining.items():
-            if floor <= 0.0:
-                if f <= 0.0:
-                    crossed.append(f"delta={delta}")
-            elif f <= floor * f0 + 1e-15:
+            if f < threshold_flow:
                 crossed.append(f"delta={delta}")
 
     is_ruin = len(crossed) > 0
@@ -93,14 +112,15 @@ def compute(
             "remaining": {str(k): v for k, v in remaining.items()},
             "losses": {str(k): v for k, v in losses.items()},
             "survival_floor": floor,
+            "threshold_flow": floor * f0 if f0 > 0 else 0.0,
             "crossed_rungs": crossed,
         },
         meaning=(
-            ("RUIN: a stress-ladder rung crossed the survival floor. ")
+            ("RUIN: a stress-ladder rung fell below the survival floor. ")
             if is_ruin
-            else "No ladder rung crossed the survival floor. "
+            else "No ladder rung fell below the survival floor. "
         )
-        + "Hard structural flag — not a probability of ruin.",
+        + f"Floor={floor:.2f} of baseline. Hard structural flag — not a probability of ruin.",
         unit="flag",
     )
 
@@ -114,7 +134,11 @@ def main(argv: list[str] | None = None) -> None:
         "--survival-floor",
         type=float,
         default=None,
-        help="Fraction of baseline flow at/below which is ruin (default from thresholds).",
+        metavar="FRAC",
+        help=(
+            "Ruin when remaining flow < FRAC × baseline F0 at any ladder rung. "
+            "Overrides graph YAML and the default (0.5 in metrics.thresholds)."
+        ),
     )
     args = parser.parse_args(argv)
     graph, scenario = load_graph_and_scenario(args)

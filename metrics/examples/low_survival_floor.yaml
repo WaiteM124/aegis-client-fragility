@@ -1,0 +1,19 @@
+# Client tolerates down to 30% of baseline — 50% stress leaves 50% → no ruin.
+name: low_survival_floor
+survival_floor: 0.3
+nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+  - id: client
+    kind: buyer
+edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+    stress_response: linear
