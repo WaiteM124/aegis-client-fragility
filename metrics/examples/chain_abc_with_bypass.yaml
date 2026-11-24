@@ -1,0 +1,45 @@
+# Same as chain_abc plus A → D → C, so B is no longer a SPOF.
+name: chain_abc_with_bypass
+nodes:
+  - id: A
+    kind: supplier
+    type: ore
+    region: africa
+    technology: open-pit
+  - id: B
+    kind: asset
+    type: refinery
+    region: africa
+    technology: smelt
+  - id: D
+    kind: route
+    type: corridor
+    region: africa
+    technology: rail
+  - id: C
+    kind: buyer
+edges:
+  - source: A
+    target: B
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: B
+    target: C
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: A
+    target: D
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: D
+    target: C
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0

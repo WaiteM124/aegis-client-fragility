@@ -26,10 +26,10 @@ test-contract:  ## Run contract tests only
 	PYTHONPATH=. $(PYTEST) tests/contract/
 
 lint:  ## Run ruff linter
-	ruff check backend/ tests/
+	ruff check backend/ tests/ metrics/
 
 format:  ## Format code with ruff
-	ruff format backend/ tests/
+	ruff format backend/ tests/ metrics/
 
 check: lint test  ## Lint and test
 

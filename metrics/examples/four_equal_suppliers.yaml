@@ -1,0 +1,49 @@
+name: four_equal_suppliers
+nodes:
+  - id: s1
+    kind: supplier
+    type: semiconductor
+    region: asia
+    technology: cmos
+  - id: s2
+    kind: supplier
+    type: semiconductor
+    region: europe
+    technology: cmos
+  - id: s3
+    kind: supplier
+    type: optics
+    region: americas
+    technology: photonics
+  - id: s4
+    kind: supplier
+    type: chemicals
+    region: africa
+    technology: bulk
+  - id: client
+    kind: buyer
+edges:
+  - source: s1
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s2
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s3
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5
+  - source: s4
+    target: client
+    share: 0.25
+    flow: 25
+    capacity: 40
+    buffer: 5

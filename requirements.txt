@@ -4,6 +4,10 @@ uvicorn[standard]>=0.30.0
 pydantic>=2.8.0
 pydantic-settings>=2.4.0
 
+# ── Structural-fragility metrics (local, no cloud) ────────────────────────────
+networkx>=3.3
+PyYAML>=6.0.1
+
 # ── Async persistence ─────────────────────────────────────────────────────────
 aiosqlite>=0.20.0
 

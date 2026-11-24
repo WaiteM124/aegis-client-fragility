@@ -1,0 +1,28 @@
+# A → B → C : B is a single point of failure between supplier A and buyer C.
+name: chain_abc
+nodes:
+  - id: A
+    kind: supplier
+    type: ore
+    region: africa
+    technology: open-pit
+  - id: B
+    kind: asset
+    type: refinery
+    region: africa
+    technology: smelt
+  - id: C
+    kind: buyer
+edges:
+  - source: A
+    target: B
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+  - source: B
+    target: C
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
