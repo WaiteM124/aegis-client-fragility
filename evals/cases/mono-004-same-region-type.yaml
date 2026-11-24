@@ -1,0 +1,51 @@
+id: mono-004-same-region-type
+description: "Three equal-share suppliers, all same type and region \u2014 monoculture."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- monoculture
+graph:
+  name: mono-004-same-region-type
+  nodes:
+  - id: s1
+    kind: supplier
+    type: api
+    region: india
+    technology: ferment
+  - id: s2
+    kind: supplier
+    type: api
+    region: india
+    technology: ferment
+  - id: s3
+    kind: supplier
+    type: api
+    region: india
+    technology: ferment
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.3333333333333333
+    flow: 33.333
+    capacity: 40
+    buffer: 2
+  - source: s2
+    target: client
+    share: 0.3333333333333333
+    flow: 33.333
+    capacity: 40
+    buffer: 2
+  - source: s3
+    target: client
+    share: 0.3333333333333333
+    flow: 33.334
+    capacity: 40
+    buffer: 2
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: green
+  Convexity: red
+  Optionality: green

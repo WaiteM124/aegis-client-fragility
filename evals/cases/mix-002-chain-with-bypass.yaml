@@ -1,0 +1,58 @@
+id: mix-002-chain-with-bypass
+description: "Chain with bypass \u2014 optionality green but concentration still red."
+weakness: single_supplier_monoculture
+is_control: false
+detecting_metrics:
+- hhi
+- monoculture
+graph:
+  name: mix-002-chain-with-bypass
+  nodes:
+  - id: A
+    kind: supplier
+    type: ore
+    region: africa
+    technology: open-pit
+  - id: B
+    kind: asset
+    type: refinery
+    region: africa
+    technology: smelt
+  - id: D
+    kind: asset
+    type: alt_refinery
+    region: europe
+    technology: smelt
+  - id: C
+    kind: buyer
+  edges:
+  - source: A
+    target: B
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+  - source: B
+    target: C
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+  - source: A
+    target: D
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+  - source: D
+    target: C
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: amber

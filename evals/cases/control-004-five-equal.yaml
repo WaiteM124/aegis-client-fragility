@@ -1,0 +1,72 @@
+id: control-004-five-equal
+description: "Five equal diversified suppliers \u2014 strong robust control."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-004-five-equal
+  nodes:
+  - id: s1
+    kind: supplier
+    type: a
+    region: r1
+    technology: t1
+  - id: s2
+    kind: supplier
+    type: b
+    region: r2
+    technology: t2
+  - id: s3
+    kind: supplier
+    type: c
+    region: r3
+    technology: t3
+  - id: s4
+    kind: supplier
+    type: d
+    region: r4
+    technology: t4
+  - id: s5
+    kind: supplier
+    type: e
+    region: r5
+    technology: t5
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.2
+    flow: 20
+    capacity: 35
+    buffer: 6
+  - source: s2
+    target: client
+    share: 0.2
+    flow: 20
+    capacity: 35
+    buffer: 6
+  - source: s3
+    target: client
+    share: 0.2
+    flow: 20
+    capacity: 35
+    buffer: 6
+  - source: s4
+    target: client
+    share: 0.2
+    flow: 20
+    capacity: 35
+    buffer: 6
+  - source: s5
+    target: client
+    share: 0.2
+    flow: 20
+    capacity: 35
+    buffer: 6
+expected_metric_status: {}
+expected_group_status:
+  Concentration: green
+  Contagion: green
+  Convexity: green
+  Optionality: green

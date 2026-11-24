@@ -1,0 +1,58 @@
+id: spof-001-hidden-subtier
+description: Two tier-1 assemblers look redundant but share one sub-tier supplier.
+weakness: hidden_single_point_of_failure
+is_control: false
+detecting_metrics:
+- single_points_of_failure
+- hhi
+graph:
+  name: spof-001-hidden-subtier
+  nodes:
+  - id: subtier
+    kind: supplier
+    type: wafer
+    region: asia
+    technology: fab
+  - id: tier1_a
+    kind: asset
+    type: assembler
+    region: asia
+    technology: smt
+  - id: tier1_b
+    kind: asset
+    type: assembler
+    region: europe
+    technology: smt
+  - id: client
+    kind: buyer
+  edges:
+  - source: subtier
+    target: tier1_a
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: subtier
+    target: tier1_b
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 0
+  - source: tier1_a
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 5
+  - source: tier1_b
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 60
+    buffer: 5
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: amber

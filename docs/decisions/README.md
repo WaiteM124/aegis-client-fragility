@@ -32,6 +32,12 @@ Keep ADRs short and plain. Link related ADRs. Cross-check `metrics/` and `backen
 | [ADR-012](ADR-012-target-gcp-platform.md) | Target platform is GCP | Proposed | 2026-11-22 |
 | [ADR-013](ADR-013-hormuz-case-study-dropped.md) | Strait of Hormuz case study dropped | Accepted | 2026-11-22 – 2026-11-23 |
 
+### Eval / CI
+
+| ADR | Title | Status | Date |
+|---|---|---|---|
+| [ADR-014](ADR-014-eval-gate-weakness-detection.md) | Eval gate measures weakness detection, not prediction | Accepted | 2026-11-24 |
+
 ### Earlier engineering ADRs
 
 | ADR | Title | Status | Date |

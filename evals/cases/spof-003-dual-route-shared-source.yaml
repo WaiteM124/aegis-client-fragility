@@ -1,0 +1,60 @@
+id: spof-003-dual-route-shared-source
+description: "Two parallel routes from one supplier \u2014 supplier is the hidden\
+  \ SPOF."
+weakness: hidden_single_point_of_failure
+is_control: false
+detecting_metrics:
+- single_points_of_failure
+- hhi
+- monoculture
+graph:
+  name: spof-003-dual-route-shared-source
+  nodes:
+  - id: s1
+    kind: supplier
+    type: fuel
+    region: gulf
+    technology: refine
+  - id: route_n
+    kind: route
+    type: pipeline
+    region: north
+    technology: pipe
+  - id: route_s
+    kind: route
+    type: tanker
+    region: south
+    technology: ship
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: route_n
+    share: 0.5
+    flow: 50
+    capacity: 70
+    buffer: 10
+  - source: route_n
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 70
+    buffer: 10
+  - source: s1
+    target: route_s
+    share: 0.5
+    flow: 50
+    capacity: 70
+    buffer: 10
+  - source: route_s
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 70
+    buffer: 10
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: red
+  Optionality: green

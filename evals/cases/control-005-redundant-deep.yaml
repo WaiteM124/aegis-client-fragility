@@ -1,0 +1,61 @@
+id: control-005-redundant-deep
+description: "Two short parallel chains from diversified suppliers \u2014 robust."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-005-redundant-deep
+  nodes:
+  - id: s1
+    kind: supplier
+    type: metal
+    region: africa
+    technology: mine
+  - id: s2
+    kind: supplier
+    type: polymer
+    region: europe
+    technology: poly
+  - id: a1
+    kind: asset
+    type: smelter
+    region: africa
+    technology: smelt
+  - id: b1
+    kind: asset
+    type: mixer
+    region: europe
+    technology: blend
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: a1
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 20
+  - source: a1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 20
+  - source: s2
+    target: b1
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 20
+  - source: b1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 20
+expected_metric_status: {}
+expected_group_status:
+  Concentration: amber
+  Contagion: amber
+  Convexity: green
+  Optionality: green

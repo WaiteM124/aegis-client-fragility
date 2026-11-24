@@ -1,4 +1,4 @@
-.PHONY: help install dev test test-unit test-integration lint format check clean
+.PHONY: help install dev test test-unit test-integration lint format check clean eval-gate
 
 PYTHON := python
 PYTEST := pytest
@@ -25,11 +25,15 @@ test-integration:  ## Run integration tests only
 test-contract:  ## Run contract tests only
 	PYTHONPATH=. $(PYTEST) tests/contract/
 
+eval-gate:  ## Metrics eval suite + offline -m evaluation (no API keys)
+	PYTHONPATH=. $(PYTHON) evals/run_evals.py
+	PYTHONPATH=. $(PYTEST) tests/evaluation/ -m evaluation -v
+
 lint:  ## Run ruff linter
-	ruff check backend/ tests/ metrics/
+	ruff check backend/ tests/ metrics/ evals/
 
 format:  ## Format code with ruff
-	ruff format backend/ tests/ metrics/
+	ruff format backend/ tests/ metrics/ evals/
 
 check: lint test  ## Lint and test
 

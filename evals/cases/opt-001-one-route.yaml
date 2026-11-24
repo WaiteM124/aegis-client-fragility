@@ -1,0 +1,41 @@
+id: opt-001-one-route
+description: "Single corridor via one route node \u2014 low optionality."
+weakness: low_optionality_slack
+is_control: false
+detecting_metrics:
+- optionality
+- single_points_of_failure
+graph:
+  name: opt-001-one-route
+  nodes:
+  - id: s1
+    kind: supplier
+    type: fuel
+    region: gulf
+    technology: refine
+  - id: route_only
+    kind: route
+    type: pipeline
+    region: north
+    technology: pipe
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: route_only
+    share: 1.0
+    flow: 100
+    capacity: 110
+    buffer: 5
+  - source: route_only
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 110
+    buffer: 5
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: red
+  Convexity: red
+  Optionality: amber

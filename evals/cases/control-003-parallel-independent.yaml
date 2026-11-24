@@ -1,0 +1,62 @@
+id: control-003-parallel-independent
+description: "Two independent supplier\u2192route\u2192client corridors \u2014 no\
+  \ shared SPOF."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-003-parallel-independent
+  nodes:
+  - id: s1
+    kind: supplier
+    type: fuel
+    region: gulf
+    technology: pipe_refine
+  - id: s2
+    kind: supplier
+    type: biofuel
+    region: north_sea
+    technology: ship_blend
+  - id: route_n
+    kind: route
+    type: pipeline
+    region: north
+    technology: pipe
+  - id: route_s
+    kind: route
+    type: tanker
+    region: south
+    technology: ship
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: route_n
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 15
+  - source: route_n
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 15
+  - source: s2
+    target: route_s
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 15
+  - source: route_s
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 80
+    buffer: 15
+expected_metric_status: {}
+expected_group_status:
+  Concentration: amber
+  Contagion: amber
+  Convexity: green
+  Optionality: green

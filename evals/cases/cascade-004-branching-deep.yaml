@@ -1,0 +1,73 @@
+id: cascade-004-branching-deep
+description: "Two deep chains merge at client \u2014 longest cascade still deep."
+weakness: deep_cascade_chain
+is_control: false
+detecting_metrics:
+- cascade_depth
+graph:
+  name: cascade-004-branching-deep
+  nodes:
+  - id: s_a
+    kind: supplier
+    type: metal
+    region: africa
+    technology: mine
+  - id: s_b
+    kind: supplier
+    type: polymer
+    region: europe
+    technology: poly
+  - id: a1
+    kind: asset
+    type: smelter
+    region: africa
+    technology: smelt
+  - id: a2
+    kind: asset
+    type: fab
+    region: africa
+    technology: cast
+  - id: b1
+    kind: asset
+    type: mixer
+    region: europe
+    technology: blend
+  - id: client
+    kind: buyer
+  edges:
+  - source: s_a
+    target: a1
+    share: 0.6
+    flow: 60
+    capacity: 60
+    buffer: 0
+  - source: a1
+    target: a2
+    share: 0.6
+    flow: 60
+    capacity: 60
+    buffer: 0
+  - source: a2
+    target: client
+    share: 0.6
+    flow: 60
+    capacity: 60
+    buffer: 0
+  - source: s_b
+    target: b1
+    share: 0.4
+    flow: 40
+    capacity: 40
+    buffer: 0
+  - source: b1
+    target: client
+    share: 0.4
+    flow: 40
+    capacity: 40
+    buffer: 0
+expected_metric_status: {}
+expected_group_status:
+  Concentration: red
+  Contagion: amber
+  Convexity: green
+  Optionality: red

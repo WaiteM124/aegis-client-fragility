@@ -1,0 +1,53 @@
+id: control-002-three-diversified
+description: "Three diversified suppliers with headroom \u2014 robust control."
+weakness: none
+is_control: true
+detecting_metrics: []
+graph:
+  name: control-002-three-diversified
+  nodes:
+  - id: s1
+    kind: supplier
+    type: steel
+    region: europe
+    technology: blast
+  - id: s2
+    kind: supplier
+    type: polymer
+    region: americas
+    technology: poly
+  - id: s3
+    kind: supplier
+    type: glass
+    region: asia
+    technology: float
+  - id: client
+    kind: buyer
+  edges:
+  - source: s1
+    target: client
+    share: 0.3333333333333333
+    flow: 33.3
+    capacity: 50
+    buffer: 8
+    stress_response: linear
+  - source: s2
+    target: client
+    share: 0.3333333333333333
+    flow: 33.3
+    capacity: 50
+    buffer: 8
+    stress_response: linear
+  - source: s3
+    target: client
+    share: 0.3333333333333333
+    flow: 33.4
+    capacity: 50
+    buffer: 8
+    stress_response: linear
+expected_metric_status: {}
+expected_group_status:
+  Concentration: amber
+  Contagion: green
+  Convexity: green
+  Optionality: green

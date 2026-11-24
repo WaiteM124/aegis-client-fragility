@@ -26,10 +26,11 @@ Single source of truth for humans and AI agents (including Cursor) working in th
 | `frontend/` | React + TypeScript + Vite + Tailwind + TanStack Query dashboard |
 | `data/synthetic/` | Synthetic clients, projects, regional profiles, industry context |
 | `data/evaluation/` | Labelled, adversarial, and held-out evaluation event sets |
+| `evals/` | Deterministic metrics eval suite: labelled graphs (`evals/cases/`), runner (`evals/run_evals.py`), `baseline.json` / `results.json` |
 | `docs/` | Architecture overview and ADRs ([docs/decisions/](docs/decisions/)) |
 | `infrastructure/` | Dockerfiles and Cloud Run service YAML |
 | `tests/` | `unit/`, `integration/`, `contract/`, `evaluation/` |
-| `.github/workflows/ci.yml` | PR/push CI: ruff + pytest (backend); oxlint + build (frontend) |
+| `.github/workflows/ci.yml` | PR/push CI: ruff + pytest (backend); oxlint + build (frontend); `eval-gate` (metrics evals + offline `-m evaluation`) |
 
 Stack: **Python 3.12+**, FastAPI, Pydantic v2, pytest, ruff; **Node 18+** (CI uses 22) for the dashboard. Local default path needs no cloud credentials (`MODEL_PROVIDER=deterministic`, SQLite, in-memory bus, lexical retrieval).
 
@@ -100,15 +101,26 @@ Docker: `docker-compose up --build`. Optional: `--profile pubsub` / `--profile f
 ### Test and lint
 
 ```bash
-make lint                                    # ruff check backend/ tests/ metrics/
-PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation"   # default CI set
+make lint                                    # ruff check backend/ tests/ metrics/ evals/
+PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation"   # default backend CI set
 make test-unit | make test-integration | make test-contract
 PYTHONPATH=. pytest tests/ metrics/tests/    # includes evaluation (deterministic; no API key)
+make eval-gate                               # metrics eval suite + offline -m evaluation
 ```
 
 Frontend: `npm run lint` (oxlint), `npm run build`.
 
-Pub/Sub and Firestore integration tests skip unless `PUBSUB_EMULATOR_HOST` / `FIRESTORE_EMULATOR_HOST` are set. Evaluation tests under `tests/evaluation/` may be marked `evaluation` and are excluded from the default CI job by design.
+Pub/Sub and Firestore integration tests skip unless `PUBSUB_EMULATOR_HOST` / `FIRESTORE_EMULATOR_HOST` are set. Evaluation tests under `tests/evaluation/` marked `evaluation` are excluded from the default backend CI job; the **`eval-gate`** job runs them because they are offline (deterministic provider / stub Gemini, no API keys).
+
+### Metrics eval suite (weakness detection, not prediction)
+
+See [ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md). Labelled synthetic dependency graphs in `evals/cases/` encode known structural weaknesses (monoculture, hidden SPOF, deep cascade, concave ladder, ruin below/above the survival floor, low optionality/slack) plus robust controls that must not be flagged red. The runner reports per-metric detection recall, false-flag rate on controls, and group-status accuracy; it writes `evals/results.json` and fails if metrics regress below `evals/baseline.json` or any control is red.
+
+```bash
+PYTHONPATH=. python evals/run_evals.py       # prints report, writes results.json, checks baseline
+```
+
+Do not frame eval results as forecasts. Metric formula bugs found by the suite are fixed in a separate commit from harness/case changes.
 
 ---
 
@@ -128,4 +140,4 @@ Pub/Sub and Firestore integration tests skip unless `PUBSUB_EMULATOR_HOST` / `FI
 - [CONTRIBUTING.md](CONTRIBUTING.md) — short human setup and PR conventions
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
-- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013; engineering ADRs 001–004)
+- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013; engineering ADRs 001–004; eval gate ADR-014)
