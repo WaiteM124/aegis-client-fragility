@@ -60,35 +60,39 @@ class Container:
         event_store: EventStorePort
         assessment_store: AssessmentStorePort
 
-        if settings.persistence_backend == "firestore_emulator":
-            # Lazy import so the module loads even when google-cloud-firestore
-            # is not installed (falls back gracefully to SQLite).
+        if settings.persistence_backend in ("firestore", "firestore_emulator"):
             try:
-                import os as _os
-
                 import google.cloud.firestore as _firestore  # noqa: PLC0415
-
-                emulator_host = settings.firestore_emulator_host or _os.getenv(
-                    "FIRESTORE_EMULATOR_HOST", "localhost:8086"
-                )
-                _os.environ["FIRESTORE_EMULATOR_HOST"] = emulator_host
-                db = _firestore.Client(project="aegis-local")
 
                 from ..persistence.firestore.assessment_store import FirestoreAssessmentStore
                 from ..persistence.firestore.event_store import FirestoreEventStore
+
+                if settings.persistence_backend == "firestore_emulator":
+                    emulator_host = settings.firestore_emulator_host or os.getenv(
+                        "FIRESTORE_EMULATOR_HOST", "localhost:8086"
+                    )
+                    os.environ["FIRESTORE_EMULATOR_HOST"] = emulator_host
+                    db = _firestore.Client(project="aegis-local")
+                    logger.info(
+                        "Persistence backend: Firestore emulator",
+                        extra={"emulator_host": emulator_host},
+                    )
+                else:
+                    # Production Firestore — uses ADC (Application Default Credentials)
+                    gcp_project = os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT")
+                    db = _firestore.Client(project=gcp_project)
+                    logger.info(
+                        "Persistence backend: Firestore (production)",
+                        extra={"project": gcp_project},
+                    )
 
                 event_store = FirestoreEventStore(db)
                 assessment_store = FirestoreAssessmentStore(db)
                 await event_store.initialise()
                 await assessment_store.initialise()
-                logger.info(
-                    "Persistence backend: Firestore emulator",
-                    extra={"emulator_host": emulator_host},
-                )
+
             except ImportError:
-                logger.warning(
-                    "google-cloud-firestore not installed; falling back to SQLite"
-                )
+                logger.warning("google-cloud-firestore not installed; falling back to SQLite")
                 settings = settings.model_copy(update={"persistence_backend": "sqlite"})
                 db_dir = os.path.dirname(settings.sqlite_db_path) or "."
                 os.makedirs(db_dir, exist_ok=True)

@@ -33,6 +33,10 @@ spec:
               value: "INFO"
             - name: PERSISTENCE_BACKEND
               value: "firestore"
+            - name: GCP_PROJECT_ID
+              value: "exalted-cell-475019-b7"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: "exalted-cell-475019-b7"
             - name: GEMINI_API_KEY
               value: "not-set"
             - name: MODEL_PROVIDER
