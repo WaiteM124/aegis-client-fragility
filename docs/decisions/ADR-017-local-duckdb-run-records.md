@@ -31,7 +31,7 @@ Accepted
 ## Consequences
 
 - `duckdb` and `jsonschema` are required for the metrics local path.
-- Analysis starts with saved SQL examples in `docs/metrics-run-queries.md`.
+- Analysis starts with saved SQL in `docs/queries/` (see `docs/metrics-run-queries.md`).
 - CI does not need a shared database; tests use a temporary DuckDB file.
 - Choosing BigQuery later is an import/pipeline concern, not a metrics redesign.
 
