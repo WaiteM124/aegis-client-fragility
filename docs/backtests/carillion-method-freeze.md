@@ -108,6 +108,6 @@ method tag (e.g. `carillion-method-v2`), never a retrofit of
 ## Out of scope of this freeze document
 
 - Building the Carillion dependency model
-- Performing the outcome comparison (see ADR-020; reference list and scoring
-  are separate PRs)
+- Performing the outcome comparison (see ADR-020; draft result:
+  [carillion-scoring-result.md](carillion-scoring-result.md))
 - Creating the git tag (maintainer action on merge)

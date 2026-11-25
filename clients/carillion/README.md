@@ -29,8 +29,9 @@ any event.
    [ADR-020](../../docs/decisions/ADR-020-backtest-scoring.md) (driver-level
    hit-from-evidence / hit-from-unknown / miss / method gap / false flag; no
    blended score). The reference list lives under
-   [`outcome/`](outcome/) (sources + items + mappings); scoring is a
-   separate later PR.
+   [`outcome/`](outcome/) (sources + items + mappings). Draft scoring result:
+   [docs/backtests/carillion-scoring-result.md](../../docs/backtests/carillion-scoring-result.md)
+   (pending Miles’s review).
 8. **No prediction claim:** do not claim prediction, probability, or a blended
    fragility score.
 
