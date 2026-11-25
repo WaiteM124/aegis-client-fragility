@@ -6,6 +6,8 @@ kind: backtest
 data_classification: public
 cut_off_date: "2017-03-01"
 notes: >
-  Public backtest skeleton. Evidence must be published on or before the
-  cut-off. No model numbers in this commit. No prediction claim — results
-  report hits, misses and false flags against structural weakness detection.
+  Public backtest. Evidence must be published on or before the cut-off.
+  Source pack committed; method freeze tag carillion-method-v1 (maintainer
+  tags the merge commit). No model numbers in this commit. No prediction
+  claim — results report hits, misses and false flags against structural
+  weakness detection.

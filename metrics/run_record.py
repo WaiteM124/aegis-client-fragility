@@ -98,10 +98,12 @@ def build_run_record(
     run_id: str | None = None,
     ts_utc: datetime | None = None,
     client_id: str | None = None,
+    method_tag: str | None = None,
 ) -> dict[str, Any]:
     """Run all metrics and assemble a schema-validatable run record.
 
     When ``client_id`` is set, emits ``run_record.v2``; otherwise ``v1``.
+    ``method_tag`` is recorded on v2 when set (locked backtest maps).
     """
     # Local import avoids a circular dependency with metrics.run_all.
     from metrics.run_all import run_all
@@ -172,6 +174,10 @@ def build_run_record(
     }
     if client_id is not None:
         record["client_id"] = client_id
+    if method_tag is not None:
+        if client_id is None:
+            raise ValueError("method_tag requires client_id (run_record.v2)")
+        record["method_tag"] = method_tag
     return record
 
 

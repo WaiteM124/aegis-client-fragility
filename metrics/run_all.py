@@ -184,8 +184,14 @@ def _persist_record(
     store_path: Path | str | None,
     lock: bool,
     output_text: str,
+    method_tag: str | None = None,
 ) -> None:
-    from metrics.client_pack import LockExistsError, client_dir, lock_map
+    from metrics.client_pack import (
+        LockExistsError,
+        client_dir,
+        lock_map,
+        resolve_method_tag,
+    )
     from metrics.run_record import build_run_record, write_run_record
     from metrics.store import load as store_load
 
@@ -195,12 +201,17 @@ def _persist_record(
     else:
         stress = bool(scenario.run_stress_ladder)
 
+    resolved_tag = method_tag
+    if lock and client_id is not None and resolved_tag is None:
+        resolved_tag = resolve_method_tag(client_id=client_id)
+
     record = build_run_record(
         graph_path=graph_path,
         scenario=scenario,
         stress_ladder=stress if stress else False,
         survival_floor=scenario.survival_floor,
         client_id=client_id,
+        method_tag=resolved_tag if lock else None,
     )
 
     resolved_out = out_path
@@ -232,11 +243,14 @@ def _persist_record(
                 client_id=client_id,
                 record_path=resolved_out,
                 output_text=output_text,
+                method_tag=resolved_tag,
             )
         except LockExistsError as exc:
             raise SystemExit(str(exc)) from exc
         print(f"locked map → {rec_dest}")
         print(f"locked output → {out_dest}")
+        if resolved_tag:
+            print(f"method_tag → {resolved_tag}")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -287,7 +301,17 @@ def main(argv: list[str] | None = None) -> None:
         default=False,
         help=(
             "Copy the run record and rendered output into clients/<ID>/maps/ "
-            "with a date stamp. Requires --client. Refuses to overwrite."
+            "with a date stamp. Records method_tag when resolvable. "
+            "Requires --client. Refuses to overwrite."
+        ),
+    )
+    parser.add_argument(
+        "--method-tag",
+        default=None,
+        metavar="TAG",
+        help=(
+            "Git tag naming the frozen method to record on --lock "
+            "(e.g. carillion-method-v1). Defaults to a *-method-v* tag on HEAD."
         ),
     )
     args = parser.parse_args(argv)
@@ -299,6 +323,8 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.lock and not args.client:
         raise SystemExit("--lock requires --client")
+    if args.method_tag and not args.lock:
+        raise SystemExit("--method-tag requires --lock")
 
     # --client writes into clients/<id>/runs/ for traceability; --out/--store/--lock
     # also persist. Plain --graph with neither flag only prints.
@@ -327,6 +353,7 @@ def main(argv: list[str] | None = None) -> None:
             store_path=args.store,
             lock=bool(args.lock),
             output_text=text,
+            method_tag=args.method_tag,
         )
 
 

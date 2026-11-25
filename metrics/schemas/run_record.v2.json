@@ -51,6 +51,11 @@
       "type": "string",
       "minLength": 1
     },
+    "method_tag": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Git tag naming the frozen method used when this run was locked into clients/<id>/maps/ (e.g. carillion-method-v1). Optional for backward compatibility."
+    },
     "probe": {
       "type": "object",
       "additionalProperties": false,
