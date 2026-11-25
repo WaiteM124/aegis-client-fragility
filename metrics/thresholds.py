@@ -1,9 +1,10 @@
 """Configurable default status thresholds for structural-fragility metrics.
 
 Status meanings (shared across metrics):
-  green — structurally diversified / buffered / optional relative to the metric
-  amber — material structural weakness present
-  red   — severe structural weakness; for ruin, a hard point-of-no-return flag
+  green      — structurally diversified / buffered / optional relative to the metric
+  amber      — material structural weakness present
+  red        — severe structural weakness; for ruin, a hard point-of-no-return flag
+  not_tested — explicit probe / required data missing; never counted as a pass
 
 Thresholds are structural cut-points, not probabilities or forecasts.
 Override by editing this module or passing custom Thresholds into compute().
@@ -33,10 +34,17 @@ class MonocultureThresholds:
 
 @dataclass(frozen=True)
 class SpofThresholds:
-    """Count of single points of failure. Any SPOF is at least amber."""
+    """Single points of failure.
 
+    Status is driven by criticality (explicit on graph nodes), not raw count:
+      green  — no cut nodes
+      amber  — cut node(s) only on non-critical paths
+      red    — any cut node marked critical (sole supplier / sole critical route / …)
+    """
+
+    # Retained for diagnostics; status no longer uses count cut-offs alone.
     green_max: int = 0
-    amber_max: int = 1  # exactly one SPOF → amber; more → red
+    amber_max: int = 1
 
 
 @dataclass(frozen=True)
@@ -49,23 +57,34 @@ class CascadeDepthThresholds:
 
 @dataclass(frozen=True)
 class ConvexityThresholds:
-    """Acceleration of loss under the stress ladder (second differences).
+    """Harm curvature via symmetric second differences on model output.
 
-    Positive acceleration (concave payoff) → fragile → red/amber.
-    Near-zero → robust → green.
-    Negative (convex payoff / antifragile) → green.
+    Clearly positive curvature → fragile (harm accelerates).
+    Near zero → robust.
+    Clearly negative → antifragile (own flag; not merely green).
+
+    Step sizes are multiples of each input's worst-on-record move.
+    No likelihoods are attached to the scan grid.
     """
 
-    # |acceleration| below this → treat as linear / robust
-    linear_tol: float = 1e-9
-    # fragile if acceleration > amber_min; red if > red_min
-    amber_min: float = 1e-9
+    version: str = "2.0.0"
+    # |curvature| below this → treat as linear / robust
+    linear_tol: float = 1e-6
+    # fragile if mean curvature > amber_min; red if > red_min (scaled by F0)
+    amber_min: float = 1e-6
     red_min: float = 0.05
+    # Relative jump between neighbouring scan steps that counts as a cliff
+    cliff_rel_jump: float = 0.35
+    # Scan-grid multiples of worst-on-record (step sizes d, not scenarios)
+    step_multiples: tuple[float, ...] = (0.25, 0.5, 1.0, 1.5, 2.0)
 
 
 @dataclass(frozen=True)
 class RuinThresholds:
-    """Ruin is binary: any ladder rung that crosses the floor is red.
+    """Ruin is binary when tested: any ladder rung that crosses the floor is red.
+
+    Without an explicit shock / stress-ladder probe, ruin returns NOT_TESTED
+    (silence is not safety).
 
     survival_floor is the minimum remaining deliverable-flow *fraction*
     of baseline F₀ the client can tolerate. Default 0.5: the client is
@@ -76,6 +95,39 @@ class RuinThresholds:
     """
 
     survival_floor: float = 0.5
+
+
+@dataclass(frozen=True)
+class DistanceToRuinThresholds:
+    """Per-input distance to ruin in multiples of worst-on-record.
+
+    Cut-offs are versioned here — not hard-coded in the metric module.
+    Status is per input; never averaged across inputs.
+      red    — ruin multiple <= red_max_multiple
+      amber  — ruin multiple <= amber_max_multiple
+      green  — ruin beyond amber_max_multiple (or no ruin in scan range → green
+               only when the scan completed; missing data → not_tested)
+    """
+
+    version: str = "1.0.0"
+    red_max_multiple: float = 1.0
+    amber_max_multiple: float = 2.0
+    scan_max_multiple: float = 5.0
+    scan_multiples: tuple[float, ...] = (
+        0.25,
+        0.5,
+        0.75,
+        1.0,
+        1.25,
+        1.5,
+        1.75,
+        2.0,
+        2.5,
+        3.0,
+        4.0,
+        5.0,
+    )
+    bisection_iterations: int = 40
 
 
 @dataclass(frozen=True)
@@ -103,6 +155,9 @@ class Thresholds:
     cascade_depth: CascadeDepthThresholds = field(default_factory=CascadeDepthThresholds)
     convexity: ConvexityThresholds = field(default_factory=ConvexityThresholds)
     ruin: RuinThresholds = field(default_factory=RuinThresholds)
+    distance_to_ruin: DistanceToRuinThresholds = field(
+        default_factory=DistanceToRuinThresholds
+    )
     optionality: OptionalityThresholds = field(default_factory=OptionalityThresholds)
     slack: SlackThresholds = field(default_factory=SlackThresholds)
 

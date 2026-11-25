@@ -10,17 +10,23 @@ A non-client node v is a single point of failure (SPOF) if:
 
 Value = number of SPOFs.
 
+Criticality (explicit, not inferred)
+------------------------------------
+Graph nodes may set ``critical: true`` for sole suppliers, sole customer
+routes, or sole sites for a critical output. Criticality is never inferred
+from topology alone — it must be declared in the graph data.
+
+Status
+------
+  green  if count = 0
+  red    if any SPOF is marked critical
+  amber  if SPOFs exist but none are marked critical
+
 Meaning
 -------
 A SPOF is a structural cut-vertex on the supply→client connectivity.
 Removing it isolates the client from all suppliers. This identifies
 where the graph is brittle; it does not estimate the chance of removal.
-
-Status defaults
----------------
-  green  if count = 0
-  amber  if count = 1
-  red    if count ≥ 2
 """
 
 from __future__ import annotations
@@ -34,7 +40,7 @@ from metrics.graph_loader import client_id, supplier_ids
 from metrics.thresholds import THRESHOLDS, Thresholds
 
 METRIC = "single_points_of_failure"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 
 
 def _has_supply_path(graph: nx.DiGraph, suppliers: list[str], client: str) -> bool:
@@ -67,13 +73,22 @@ def find_spofs(graph: nx.DiGraph) -> list[str]:
     return sorted(spofs)
 
 
-def _status(count: int, thresholds: Thresholds) -> Status:
-    t = thresholds.spof
-    if count <= t.green_max:
+def _critical_spofs(graph: nx.DiGraph, spofs: list[str]) -> list[str]:
+    out: list[str] = []
+    for v in spofs:
+        data = graph.nodes.get(v, {})
+        if bool(data.get("critical")):
+            out.append(v)
+    return out
+
+
+def _status(spofs: list[str], critical: list[str], thresholds: Thresholds) -> Status:
+    del thresholds  # count cut-offs retained for diagnostics only
+    if not spofs:
         return Status.GREEN
-    if count <= t.amber_max:
-        return Status.AMBER
-    return Status.RED
+    if critical:
+        return Status.RED
+    return Status.AMBER
 
 
 def compute(
@@ -95,17 +110,27 @@ def compute(
                 g = apply_edge_shock(g, es.source, es.target, es.intensity)
 
     spofs = find_spofs(g)
+    critical = _critical_spofs(g, spofs)
+    noncritical = [v for v in spofs if v not in critical]
     count = len(spofs)
     return MetricResult(
         metric=METRIC,
         version=VERSION,
         value=float(count),
-        status=_status(count, thresholds),
+        status=_status(spofs, critical, thresholds),
         drivers=spofs,
-        inputs={"spofs": spofs, "client_id": client_id(graph), "suppliers": supplier_ids(graph)},
+        inputs={
+            "spofs": spofs,
+            "critical_spofs": critical,
+            "noncritical_spofs": noncritical,
+            "client_id": client_id(graph),
+            "suppliers": supplier_ids(graph),
+        },
         meaning=(
-            f"{count} single point(s) of failure. "
-            "Each listed node cuts all supplier→client paths when removed. "
+            f"{count} single point(s) of failure "
+            f"({len(critical)} critical, {len(noncritical)} non-critical). "
+            "Critical cut nodes (sole supplier / sole critical route) are RED "
+            "on their own; non-critical cut nodes are AMBER. "
             "Structural cut set; not a failure probability."
         ),
         unit="count",

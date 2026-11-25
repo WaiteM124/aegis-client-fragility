@@ -1,18 +1,27 @@
 # At 50% stress the cliff profile zeros deliverable flow → ruin.
 name: ruin_cliff
 nodes:
-  - id: s1
-    kind: supplier
-    type: commodity
-    region: local
-    technology: bulk
-  - id: client
-    kind: buyer
+- id: s1
+  kind: supplier
+  type: commodity
+  region: local
+  technology: bulk
+  critical: true
+- id: client
+  kind: buyer
+  critical: false
 edges:
-  - source: s1
-    target: client
-    share: 1.0
-    flow: 100
-    capacity: 100
-    buffer: 0
-    stress_response: cliff
+- source: s1
+  target: client
+  share: 1.0
+  flow: 100
+  capacity: 100
+  buffer: 0
+  stress_response: cliff
+inputs:
+- id: supply_shock
+  worst_on_record: 0.5
+  lower_bound: 0.0
+  upper_bound: 1.0
+ruin_line:
+  survival_floor: 0.5

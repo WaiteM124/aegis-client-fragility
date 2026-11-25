@@ -12,8 +12,10 @@ graph:
     type: commodity
     region: local
     technology: bulk
+    critical: false
   - id: client
     kind: buyer
+    critical: false
   edges:
   - source: s1
     target: client
@@ -22,6 +24,13 @@ graph:
     capacity: 100
     buffer: 15
     stress_response: buffered
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: red

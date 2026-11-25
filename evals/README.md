@@ -31,7 +31,9 @@ CI job `eval-gate` runs the suite on every PR and also `pytest -m evaluation`
 - Single-supplier / attribute monoculture
 - Hidden single point of failure behind apparent redundancy
 - Deep cascade chains
-- Concave (fragile) loss under the 10/20/50% stress ladder
-- Ruin below the 0.5 survival floor and just at/above it
+- Concave (fragile) harm curvature from model output (worst-on-record scan grid)
+- Cliff / threshold jumps reported separately from smooth curvature
+- Ruin below the 0.5 survival floor and just at/above it (explicit `--stress-ladder` / scenario probe; untested → `not_tested`)
+- Distance to ruin per input (multiples of worst-on-record)
 - Low optionality and slack
-- Well-diversified robust controls (must not be flagged **red**)
+- Well-diversified robust controls (must not be flagged **red**; Convexity group may be `not_tested` without an explicit ruin probe)

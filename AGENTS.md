@@ -114,7 +114,7 @@ Pub/Sub and Firestore integration tests skip unless `PUBSUB_EMULATOR_HOST` / `FI
 
 ### Metrics eval suite (weakness detection, not prediction)
 
-See [ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md). Labelled synthetic dependency graphs in `evals/cases/` encode known structural weaknesses (monoculture, hidden SPOF, deep cascade, concave ladder, ruin below/above the survival floor, low optionality/slack) plus robust controls that must not be flagged red. The runner reports per-metric detection recall, false-flag rate on controls, and group-status accuracy; it writes `evals/results.json` and fails if metrics regress below `evals/baseline.json` or any control is red.
+See [ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md) and [ADR-015](docs/decisions/ADR-015-convexity-distance-to-ruin-not-tested.md). Labelled synthetic dependency graphs in `evals/cases/` encode known structural weaknesses (monoculture, hidden SPOF, deep cascade, fragile harm curvature, ruin below/above the survival floor, low optionality/slack) plus robust controls that must not be flagged red. Ruin without an explicit probe is `not_tested`, never green. The runner reports per-metric detection recall, false-flag rate on controls, and group-status accuracy; it writes `evals/results.json` and fails if metrics regress below `evals/baseline.json` or any control is red.
 
 ```bash
 PYTHONPATH=. python evals/run_evals.py       # prints report, writes results.json, checks baseline

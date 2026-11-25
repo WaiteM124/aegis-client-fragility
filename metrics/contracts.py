@@ -23,6 +23,8 @@ class Status(str, Enum):
     GREEN = "green"
     AMBER = "amber"
     RED = "red"
+    # Explicit probe not configured — never treated as a pass / green.
+    NOT_TESTED = "not_tested"
 
 
 class NodeSpec(BaseModel):
@@ -34,6 +36,10 @@ class NodeSpec(BaseModel):
     type: str | None = None
     region: str | None = None
     technology: str | None = None
+    # Explicit criticality for SPOF status (not inferred).
+    # A cut node on a critical flow (sole supplier, sole route, sole site
+    # for a critical output) must be marked critical=true in the graph data.
+    critical: bool = False
     # Extra free-form attributes preserved for loaders / diagnostics
     attributes: dict[str, Any] = Field(default_factory=dict)
 
@@ -48,6 +54,34 @@ class NodeSpec(BaseModel):
                 attrs.setdefault(key, data[key])
         data = {**data, "attributes": attrs}
         return data
+
+
+class GraphInputSpec(BaseModel):
+    """A named structural stress input (not a forecast).
+
+    ``worst_on_record`` is the size of the largest move observed for this
+    input — used only as a scan-grid anchor for convexity and distance-to-ruin.
+    No likelihood is attached. Bounds clamp physically impossible values
+    (e.g. demand below zero, supplier loss above 100%).
+    """
+
+    id: str
+    worst_on_record: float | None = None
+    lower_bound: float | None = 0.0
+    upper_bound: float | None = 1.0
+
+
+class RuinLineSpec(BaseModel):
+    """Structural ruin thresholds for distance-to-ruin probes.
+
+    Crossing any configured line is absorbing ruin. These are accounting
+    floors, not event probabilities.
+    """
+
+    # Remaining deliverable-flow fraction of baseline below which is ruin.
+    survival_floor: float | None = Field(default=None, ge=0.0, le=1.0)
+    # Optional named cause labels for reporting (which line broke).
+    covenant_breach_flow_fraction: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class EdgeSpec(BaseModel):
@@ -88,6 +122,10 @@ class DependencyGraphSpec(BaseModel):
     # Client-level ruin floor: remaining flow fraction of F0 below which is ruin.
     # When omitted, metrics.thresholds.RuinThresholds.survival_floor (default 0.5) applies.
     survival_floor: float | None = Field(default=None, ge=0.0, le=1.0)
+    # Named stress inputs with worst-on-record anchors (convexity / distance-to-ruin).
+    inputs: list[GraphInputSpec] = Field(default_factory=list)
+    # Explicit ruin lines for distance-to-ruin (survival floor / covenant).
+    ruin_line: RuinLineSpec | None = None
 
     @model_validator(mode="after")
     def _resolve_client(self) -> DependencyGraphSpec:
@@ -126,8 +164,9 @@ class EdgeShock(BaseModel):
 class Scenario(BaseModel):
     """A structural stress probe — not a forecast.
 
-    Omitting shocks means each metric uses its default structural reading
-    of the intact graph (or its built-in stress ladder where applicable).
+    Omitting shocks means structural metrics that need an explicit probe
+    (notably ruin) return NOT_TESTED rather than silently assuming a
+    default ladder. Silence is not safety.
     """
 
     name: str = "default"
@@ -135,6 +174,11 @@ class Scenario(BaseModel):
     edge_shocks: list[EdgeShock] = Field(default_factory=list)
     # Optional override for ruin / convexity survival floor
     survival_floor: float | None = None
+    # Opt-in: run the documented stress ladder as an explicit probe.
+    # Required for ruin to leave NOT_TESTED when no node/edge shocks are set.
+    run_stress_ladder: bool = False
+    # Optional override of ladder intensities when run_stress_ladder is true.
+    stress_ladder: list[float] | None = None
 
 
 class MetricResult(BaseModel):
@@ -168,4 +212,4 @@ class MetricResult(BaseModel):
         return "\n".join(lines)
 
 
-StatusLiteral = Literal["green", "amber", "red"]
+StatusLiteral = Literal["green", "amber", "red", "not_tested"]

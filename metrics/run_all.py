@@ -4,11 +4,12 @@ Groups
 ------
   Concentration — HHI, monoculture
   Contagion     — single points of failure, cascade depth
-  Convexity     — convexity, ruin
+  Convexity     — convexity, ruin, distance_to_ruin
   Optionality   — optionality, slack
 
-Each group shows the status of its **worst** metric (red > amber > green).
-Ruin forces the Convexity group (and the ruin line) to red.
+Each group shows the status of its **worst** metric
+(red > amber > not_tested > green). Ruin forces the Convexity group
+(and the ruin line) to red. NOT_TESTED is never counted as a pass.
 
 No weighted or blended single score is produced. Averaging would hide
 danger and the units differ across metrics.
@@ -21,7 +22,16 @@ from collections.abc import Callable
 
 import networkx as nx
 
-from metrics import cascade_depth, convexity, hhi, monoculture, optionality, ruin, slack
+from metrics import (
+    cascade_depth,
+    convexity,
+    distance_to_ruin,
+    hhi,
+    monoculture,
+    optionality,
+    ruin,
+    slack,
+)
 from metrics import single_points_of_failure as spof
 from metrics.cli_utils import add_common_args, load_graph_and_scenario
 from metrics.contracts import MetricResult, Scenario, Status
@@ -46,6 +56,7 @@ GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
         [
             ("Convexity", convexity.compute),
             ("Ruin", ruin.compute),
+            ("Distance to ruin", distance_to_ruin.compute),
         ],
     ),
     (
@@ -57,7 +68,13 @@ GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
     ),
 ]
 
-_RANK = {Status.GREEN: 0, Status.AMBER: 1, Status.RED: 2}
+# NOT_TESTED outranks GREEN so an untested probe cannot look like a pass.
+_RANK = {
+    Status.GREEN: 0,
+    Status.NOT_TESTED: 1,
+    Status.AMBER: 2,
+    Status.RED: 3,
+}
 
 
 def worst_status(results: list[MetricResult], *, ruin_forces_red: bool = False) -> Status:
@@ -94,6 +111,11 @@ def format_grouped(results: dict[str, list[MetricResult]]) -> str:
             )
             if r.drivers:
                 lines.append(f"      drivers: {', '.join(r.drivers)}")
+            if r.status == Status.NOT_TESTED and r.meaning:
+                # Surface the not-tested reason plainly
+                reason = r.inputs.get("reason") if r.inputs else None
+                if reason:
+                    lines.append(f"      reason: {reason}")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
@@ -115,6 +137,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     args = parser.parse_args(argv)
     graph, scenario = load_graph_and_scenario(args)
+    # --stress-ladder is on common args and already folded into scenario
     if args.survival_floor is not None:
         scenario = scenario.model_copy(update={"survival_floor": args.survival_floor})
     print(format_grouped(run_all(graph, scenario)))

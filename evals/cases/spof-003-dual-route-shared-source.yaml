@@ -15,18 +15,22 @@ graph:
     type: fuel
     region: gulf
     technology: refine
+    critical: true
   - id: route_n
     kind: route
     type: pipeline
     region: north
     technology: pipe
+    critical: false
   - id: route_s
     kind: route
     type: tanker
     region: south
     technology: ship
+    critical: false
   - id: client
     kind: buyer
+    critical: false
   edges:
   - source: s1
     target: route_n
@@ -52,9 +56,16 @@ graph:
     flow: 50
     capacity: 70
     buffer: 10
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: red
-  Contagion: amber
-  Convexity: red
+  Contagion: red
+  Convexity: not_tested
   Optionality: green

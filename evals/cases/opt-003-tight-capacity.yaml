@@ -12,13 +12,16 @@ graph:
     type: chem
     region: asia
     technology: batch
+    critical: false
   - id: s2
     kind: supplier
     type: chem
     region: americas
     technology: batch
+    critical: false
   - id: client
     kind: buyer
+    critical: false
   edges:
   - source: s1
     target: client
@@ -32,9 +35,16 @@ graph:
     flow: 50
     capacity: 52
     buffer: 0
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: red
   Contagion: green
-  Convexity: green
+  Convexity: amber
   Optionality: red

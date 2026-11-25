@@ -20,13 +20,13 @@ This is a property of the graph's flow response under the ladder, not a forecast
 
 ## Status
 
-Accepted
+Accepted (ruin probe). Convexity *classification* from this ladder is superseded by [ADR-015](ADR-015-convexity-distance-to-ruin-not-tested.md) (symmetric second differences on model output, anchored on worst-on-record).
 
 ## Consequences
 
 - Ladder constant: `STRESS_LADDER = (0.10, 0.20, 0.50)` in `metrics/thresholds.py`; shared helpers in `metrics/stress.py`.
-- `metrics/convexity.py` computes acceleration (normalised second differences) and a Jensen gap at the middle rung; status maps fragile / robust / antifragile.
-- `metrics/ruin.py` reuses the same ladder ([ADR-009](ADR-009-ruin-hard-red-flag.md)).
+- `metrics/ruin.py` reuses the same ladder when an **explicit** probe is configured ([ADR-009](ADR-009-ruin-hard-red-flag.md), [ADR-015](ADR-015-convexity-distance-to-ruin-not-tested.md)).
+- Convexity no longer classifies shape from the 10/20/50 ladder alone; see ADR-015.
 
 ## Alternatives rejected
 
