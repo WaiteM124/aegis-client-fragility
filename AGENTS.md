@@ -144,6 +144,6 @@ Do not frame eval results as forecasts. Metric formula bugs found by the suite a
 - [CONTRIBUTING.md](CONTRIBUTING.md) — short human setup and PR conventions
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
-- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–019; engineering ADRs 001–004; eval gate ADR-014)
+- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–020; engineering ADRs 001–004; eval gate ADR-014). Backtest scoring: [ADR-020](docs/decisions/ADR-020-backtest-scoring.md)
 - [`.cursor/skills/`](.cursor/skills/) — Cursor agent skills for Aegis method work
 - [`.cursor/rules/`](.cursor/rules/) — Cursor rules (core principles, plan-first, metrics / Python / frontend)

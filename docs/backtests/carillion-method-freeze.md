@@ -1,8 +1,12 @@
 # Carillion backtest — method freeze (`carillion-method-v1`)
 
 This document defines what is frozen for the Carillion plc public backtest.
-It does **not** forecast insolvency or any event. Results report hits, misses,
-and false flags against structural weakness detection only.
+It does **not** forecast insolvency or any event. Scoring of the locked map
+against post-event structural weaknesses follows
+[ADR-020](../decisions/ADR-020-backtest-scoring.md) (Proposed): driver-level
+categories (hit-from-evidence, hit-from-unknown, miss, method gap, false flag),
+no blended score, no prediction claim. The freeze itself does not perform that
+comparison.
 
 ## Freeze tag
 
@@ -92,8 +96,18 @@ Evidence rules live with the client pack:
 
 See `clients/carillion/README.md`.
 
+## Scoring (separate from this freeze)
+
+Map lock and method tag stay immutable. Outcome comparison rules —
+reference-list procedure, driver-level matching, reporting, integrity, and
+contamination mitigations — live in
+[ADR-020](../decisions/ADR-020-backtest-scoring.md). Findings feed a **new**
+method tag (e.g. `carillion-method-v2`), never a retrofit of
+`carillion-method-v1`.
+
 ## Out of scope of this freeze document
 
 - Building the Carillion dependency model
-- Comparing locked maps with post-cut-off outcomes
+- Performing the outcome comparison (see ADR-020; reference list and scoring
+  are separate PRs)
 - Creating the git tag (maintainer action on merge)
