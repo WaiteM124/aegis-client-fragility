@@ -18,6 +18,7 @@ danger and the units differ across metrics.
 from __future__ import annotations
 
 import argparse
+import sys
 from collections.abc import Callable
 from pathlib import Path
 
@@ -34,8 +35,9 @@ from metrics import (
     slack,
 )
 from metrics import single_points_of_failure as spof
-from metrics.cli_utils import add_common_args, load_graph_and_scenario
+from metrics.cli_utils import add_common_args, build_scenario_from_args
 from metrics.contracts import MetricResult, Scenario, Status
+from metrics.graph_loader import load_graph
 
 GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
     (
@@ -121,11 +123,111 @@ def format_grouped(results: dict[str, list[MetricResult]]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _resolve_graph_jobs(args: argparse.Namespace) -> list[tuple[Path, str | None]]:
+    """Return (graph_path, client_id) jobs for this invocation."""
+    if args.client:
+        from metrics.client_pack import (
+            check_backtest_cut_off,
+            list_model_paths,
+            load_client,
+            load_sources_manifest,
+        )
+
+        client = load_client(args.client)
+        manifest = load_sources_manifest(args.client)
+        check_backtest_cut_off(client, manifest)
+        models = list_model_paths(args.client)
+        if not models:
+            raise SystemExit(
+                f"client {args.client!r} has no model/*.yaml graphs under "
+                f"clients/{args.client}/model/"
+            )
+        if args.graph is not None:
+            raise SystemExit("use either --client or --graph, not both")
+        return [(p, args.client) for p in models]
+    if args.graph is None:
+        raise SystemExit("either --graph PATH or --client ID is required")
+    return [(Path(args.graph), None)]
+
+
+def _persist_record(
+    *,
+    graph_path: Path,
+    scenario: Scenario,
+    client_id: str | None,
+    out_path: Path | None,
+    store_path: Path | str | None,
+    lock: bool,
+    output_text: str,
+) -> None:
+    from metrics.client_pack import LockExistsError, client_dir, lock_map
+    from metrics.run_record import build_run_record, write_run_record
+    from metrics.store import load as store_load
+
+    stress: bool | list[float]
+    if scenario.stress_ladder is not None:
+        stress = list(scenario.stress_ladder)
+    else:
+        stress = bool(scenario.run_stress_ladder)
+
+    record = build_run_record(
+        graph_path=graph_path,
+        scenario=scenario,
+        stress_ladder=stress if stress else False,
+        survival_floor=scenario.survival_floor,
+        client_id=client_id,
+    )
+
+    resolved_out = out_path
+    if resolved_out is None and client_id is not None:
+        runs_dir = client_dir(client_id) / "runs"
+        runs_dir.mkdir(parents=True, exist_ok=True)
+        resolved_out = runs_dir / f"{record['run_id']}.json"
+    if resolved_out is None and store_path is not None:
+        resolved_out = Path(store_path).with_suffix(".last_run.json")
+    if resolved_out is None and lock:
+        raise SystemExit("--lock requires --client (or --out) so a record path exists")
+    assert resolved_out is not None
+    write_run_record(record, resolved_out)
+
+    if store_path is not None:
+        inserted = store_load([resolved_out], db_path=Path(store_path))
+        print(
+            f"run record → {resolved_out} "
+            f"(stored={inserted} new row(s) in {store_path})"
+        )
+    else:
+        print(f"run record → {resolved_out}")
+
+    if lock:
+        if client_id is None:
+            raise SystemExit("--lock requires --client")
+        try:
+            rec_dest, out_dest = lock_map(
+                client_id=client_id,
+                record_path=resolved_out,
+                output_text=output_text,
+            )
+        except LockExistsError as exc:
+            raise SystemExit(str(exc)) from exc
+        print(f"locked map → {rec_dest}")
+        print(f"locked output → {out_dest}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Run all Aegis structural-fragility metrics (no blended score)."
     )
-    add_common_args(parser)
+    add_common_args(parser, graph_required=False)
+    parser.add_argument(
+        "--client",
+        default=None,
+        metavar="ID",
+        help=(
+            "Run models under clients/<ID>/model/, write the record into "
+            "clients/<ID>/runs/, and set client_id on run_record.v2."
+        ),
+    )
     parser.add_argument(
         "--survival-floor",
         type=float,
@@ -141,7 +243,7 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         default=None,
         metavar="PATH",
-        help="Write one JSON run record (run_record.v1) to PATH.",
+        help="Write one JSON run record (run_record.v1/v2) to PATH.",
     )
     parser.add_argument(
         "--store",
@@ -154,47 +256,57 @@ def main(argv: list[str] | None = None) -> None:
             "data/aegis_runs.duckdb). Implies a temp JSON if --out is omitted."
         ),
     )
+    parser.add_argument(
+        "--lock",
+        action="store_true",
+        default=False,
+        help=(
+            "Copy the run record and rendered output into clients/<ID>/maps/ "
+            "with a date stamp. Requires --client. Refuses to overwrite."
+        ),
+    )
     args = parser.parse_args(argv)
-    graph, scenario = load_graph_and_scenario(args)
-    # --stress-ladder is on common args and already folded into scenario
+
+    jobs = _resolve_graph_jobs(args)
+    scenario = build_scenario_from_args(args)
     if args.survival_floor is not None:
         scenario = scenario.model_copy(update={"survival_floor": args.survival_floor})
 
-    results = run_all(graph, scenario)
-    print(format_grouped(results))
+    if args.lock and not args.client:
+        raise SystemExit("--lock requires --client")
 
-    if args.out is None and args.store is None:
-        return
-
-    from metrics.run_record import build_run_record, write_run_record
-    from metrics.store import load as store_load
-
-    stress: bool | list[float]
-    if scenario.stress_ladder is not None:
-        stress = list(scenario.stress_ladder)
-    else:
-        stress = bool(scenario.run_stress_ladder)
-
-    record = build_run_record(
-        graph_path=args.graph,
-        scenario=scenario,
-        stress_ladder=stress if stress else False,
-        survival_floor=scenario.survival_floor,
+    # --client writes into clients/<id>/runs/ for traceability; --out/--store/--lock
+    # also persist. Plain --graph with neither flag only prints.
+    want_record = (
+        args.out is not None
+        or args.store is not None
+        or args.client is not None
+        or args.lock
     )
 
-    out_path = args.out
-    if out_path is None and args.store is not None:
-        # Persist alongside the DB so --store alone still leaves a JSON artifact.
-        out_path = Path(args.store).with_suffix(".last_run.json")
-    assert out_path is not None
-    write_run_record(record, out_path)
+    for graph_path, client_id in jobs:
+        graph = load_graph(graph_path)
+        results = run_all(graph, scenario)
+        text = format_grouped(results)
+        if client_id and len(jobs) > 1:
+            print(f"# model: {graph_path}")
+        print(text, end="")
 
-    if args.store is not None:
-        inserted = store_load([out_path], db_path=Path(args.store))
-        print(f"run record → {out_path} (stored={inserted} new row(s) in {args.store})")
-    else:
-        print(f"run record → {out_path}")
+        if not want_record:
+            continue
+        _persist_record(
+            graph_path=graph_path,
+            scenario=scenario,
+            client_id=client_id,
+            out_path=args.out if len(jobs) == 1 else None,
+            store_path=args.store,
+            lock=bool(args.lock),
+            output_text=text,
+        )
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BrokenPipeError:
+        sys.exit(0)

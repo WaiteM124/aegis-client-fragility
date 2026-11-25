@@ -34,6 +34,7 @@ Keep ADRs short and plain. Link related ADRs. Cross-check `metrics/` and `backen
 | [ADR-015](ADR-015-convexity-distance-to-ruin-not-tested.md) | Convexity from model output; distance to ruin; NOT_TESTED | Accepted | 2026-11-25 |
 | [ADR-016](ADR-016-optionality-node-disjoint-maxflow.md) | Optionality counts node-disjoint corridors (Menger / max-flow) | Accepted | 2026-11-25 |
 | [ADR-017](ADR-017-local-duckdb-run-records.md) | Local DuckDB for metrics run records; BigQuery later | Accepted | 2026-11-25 |
+| [ADR-018](ADR-018-client-packs-and-confidential-data.md) | Per-client packs; confidential data stays out of git | Accepted | 2026-11-25 |
 
 ### Eval / CI
 

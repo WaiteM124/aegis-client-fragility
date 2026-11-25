@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/client.v1.json",
+  "title": "Aegis client pack metadata v1",
+  "description": "Per-client folder metadata. Structural fragility only — no forecasts or blended scores.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "display_name", "kind", "data_classification"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9_-]*$",
+      "description": "Stable client folder id (matches clients/<id>/)."
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["example", "backtest", "live"]
+    },
+    "data_classification": {
+      "type": "string",
+      "enum": ["public", "example", "confidential"],
+      "description": "confidential packs must not commit sources/ or model/ (see ADR-018)."
+    },
+    "cut_off_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Backtest evidence cut-off (inclusive). Required for kind=backtest."
+    },
+    "notes": {
+      "type": ["string", "null"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "kind": { "const": "backtest" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["cut_off_date"],
+        "properties": {
+          "cut_off_date": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  ]
+}

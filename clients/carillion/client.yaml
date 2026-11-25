@@ -1,0 +1,11 @@
+# Carillion plc — public historical backtest skeleton.
+# Method and source pack only at this stage: no dependency-model numbers yet.
+id: carillion
+display_name: Carillion plc (public backtest)
+kind: backtest
+data_classification: public
+cut_off_date: "2017-03-01"
+notes: >
+  Public backtest skeleton. Evidence must be published on or before the
+  cut-off. No model numbers in this commit. No prediction claim — results
+  report hits, misses and false flags against structural weakness detection.

@@ -13,10 +13,15 @@ license = { text = "Proprietary" }
 [tool.hatch.build.targets.wheel]
 packages = ["backend", "metrics"]
 
-# Non-Python assets required at runtime for run records / DuckDB migrations.
+# Non-Python assets required at runtime for run records / DuckDB migrations /
+# client-pack schemas.
 [tool.hatch.build.targets.wheel.force-include]
 "metrics/schemas/run_record.v1.json" = "metrics/schemas/run_record.v1.json"
+"metrics/schemas/run_record.v2.json" = "metrics/schemas/run_record.v2.json"
 "metrics/store/migrations/001_runs.sql" = "metrics/store/migrations/001_runs.sql"
+"metrics/store/migrations/002_client_id.sql" = "metrics/store/migrations/002_client_id.sql"
+"clients/schemas/client.v1.json" = "clients/schemas/client.v1.json"
+"clients/schemas/sources_manifest.v1.json" = "clients/schemas/sources_manifest.v1.json"
 
 [project.optional-dependencies]
 metrics = [
