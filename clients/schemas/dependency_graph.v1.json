@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/dependency_graph.v1.json",
+  "title": "Aegis dependency graph v1 (supply + optional financial sections)",
+  "description": "YAML/JSON dependency graph for structural-fragility metrics. Optional liquidity, covenants, contracts, customers, and energy sections (ADR-019). No forecasts, no blended scores. Unknown financial fields are flagged fragile by metrics — never silently defaulted to safe.",
+  "type": "object",
+  "required": ["nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string" },
+    "client_id": { "type": ["string", "null"] },
+    "survival_floor": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": {
+            "type": "string",
+            "enum": ["supplier", "asset", "route", "buyer"]
+          },
+          "type": { "type": ["string", "null"] },
+          "region": { "type": ["string", "null"] },
+          "technology": { "type": ["string", "null"] },
+          "critical": { "type": "boolean" },
+          "attributes": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "target"],
+        "properties": {
+          "source": { "type": "string" },
+          "target": { "type": "string" },
+          "share": { "type": "number", "minimum": 0, "maximum": 1 },
+          "flow": { "type": "number", "minimum": 0 },
+          "capacity": { "type": "number", "minimum": 0 },
+          "buffer": { "type": "number", "minimum": 0 },
+          "stress_response": {
+            "type": ["string", "null"],
+            "enum": ["buffered", "linear", "decelerating", "cliff", null]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "worst_on_record": { "type": ["number", "null"] },
+          "lower_bound": { "type": ["number", "null"] },
+          "upper_bound": { "type": ["number", "null"] },
+          "source": { "$ref": "#/$defs/source_citation" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ruin_line": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "survival_floor": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "covenant_breach_flow_fraction": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "liquidity": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "cash_on_hand": { "type": ["number", "null"], "minimum": 0 },
+        "committed_facilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "limit"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "limit": { "type": "number", "minimum": 0 },
+              "drawn": { "type": "number", "minimum": 0 },
+              "source": { "$ref": "#/$defs/source_citation" }
+            }
+          }
+        },
+        "fixed_monthly_outflows": { "type": ["number", "null"], "minimum": 0 },
+        "currency": { "type": ["string", "null"] },
+        "source": { "$ref": "#/$defs/source_citation" },
+        "stress_input_id": { "type": ["string", "null"] }
+      }
+    },
+    "covenants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "metric", "limit"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["max", "min"] },
+          "metric": { "type": "string" },
+          "limit": { "type": "number" },
+          "current": { "type": ["number", "null"] },
+          "stress_input_id": { "type": ["string", "null"] },
+          "source": { "$ref": "#/$defs/source_citation" }
+        }
+      }
+    },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "counterparty", "pricing"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "counterparty": { "type": "string" },
+          "revenue_share": { "type": "number", "minimum": 0, "maximum": 1 },
+          "margin": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "pricing": { "type": "string", "enum": ["fixed", "cost_plus"] },
+          "termination_notice_days": {
+            "type": ["integer", "null"],
+            "minimum": 0
+          },
+          "loss_exposure": { "type": ["number", "null"], "minimum": 0 },
+          "input_cost_exposed": { "type": "boolean" },
+          "source": { "$ref": "#/$defs/source_citation" }
+        }
+      }
+    },
+    "customers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "revenue_share"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "revenue_share": { "type": "number", "minimum": 0, "maximum": 1 },
+          "public_sector": { "type": "boolean" },
+          "critical": { "type": "boolean" },
+          "type": { "type": ["string", "null"] },
+          "region": { "type": ["string", "null"] },
+          "source": { "$ref": "#/$defs/source_citation" }
+        }
+      }
+    },
+    "energy": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "cost_share": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "pass_through_pct": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "worst_on_record": { "type": ["number", "null"], "minimum": 0 },
+        "source": { "$ref": "#/$defs/source_citation" },
+        "stress_input_id": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "$defs": {
+    "source_citation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "as_of": { "type": ["string", "null"] },
+        "note": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

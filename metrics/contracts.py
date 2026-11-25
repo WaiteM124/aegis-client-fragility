@@ -27,6 +27,18 @@ class Status(str, Enum):
     NOT_TESTED = "not_tested"
 
 
+class PricingKind(str, Enum):
+    FIXED = "fixed"
+    COST_PLUS = "cost_plus"
+
+
+class CovenantKind(str, Enum):
+    """max = breach when current rises above limit; min = falls below."""
+
+    MAX = "max"
+    MIN = "min"
+
+
 class NodeSpec(BaseModel):
     """A node in the dependency graph."""
 
@@ -56,6 +68,18 @@ class NodeSpec(BaseModel):
         return data
 
 
+class SourceCitation(BaseModel):
+    """Cited source for a financial figure or worst-on-record swing.
+
+    Every swing size in Aegis must come from a cited worst_on_record with
+    source and date. Placeholder EXAMPLE DATA must be labelled as such.
+    """
+
+    label: str
+    as_of: str | None = None  # ISO date YYYY-MM-DD when known
+    note: str | None = None
+
+
 class GraphInputSpec(BaseModel):
     """A named structural stress input (not a forecast).
 
@@ -69,13 +93,115 @@ class GraphInputSpec(BaseModel):
     worst_on_record: float | None = None
     lower_bound: float | None = 0.0
     upper_bound: float | None = 1.0
+    source: SourceCitation | None = None
+
+
+class FacilitySpec(BaseModel):
+    """Committed credit facility (drawn + undrawn = limit)."""
+
+    id: str
+    limit: float = Field(ge=0.0)
+    drawn: float = Field(ge=0.0, default=0.0)
+    source: SourceCitation | None = None
+
+    @model_validator(mode="after")
+    def _drawn_within_limit(self) -> FacilitySpec:
+        if self.drawn > self.limit + 1e-12:
+            raise ValueError(
+                f"facility {self.id!r}: drawn {self.drawn} exceeds limit {self.limit}"
+            )
+        return self
+
+    @property
+    def undrawn(self) -> float:
+        return max(self.limit - self.drawn, 0.0)
+
+
+class LiquiditySpec(BaseModel):
+    """Cash and liquidity headroom (optional financial section).
+
+    Missing cash_on_hand or fixed_monthly_outflows when this section is
+    present is treated as fragile — never silently defaulted to safe.
+    """
+
+    cash_on_hand: float | None = Field(default=None, ge=0.0)
+    committed_facilities: list[FacilitySpec] = Field(default_factory=list)
+    fixed_monthly_outflows: float | None = Field(default=None, ge=0.0)
+    currency: str | None = None
+    source: SourceCitation | None = None
+    # Named graph input whose worst_on_record anchors liquidity stress.
+    stress_input_id: str | None = None
+
+
+class CovenantSpec(BaseModel):
+    """Debt covenant as a structural ruin line (not a probability).
+
+    Distance to breach uses the linked input's cited ``worst_on_record``
+    as the swing size. Missing ``current`` is fragile when the covenants
+    section is present.
+    """
+
+    id: str
+    kind: CovenantKind
+    # Accounting identity name: net_debt_ebitda | interest_cover |
+    # minimum_liquidity | custom
+    metric: str
+    limit: float
+    current: float | None = None
+    stress_input_id: str | None = None
+    source: SourceCitation | None = None
+
+
+class ContractSpec(BaseModel):
+    """Commercial contract on the sales / delivery side."""
+
+    id: str
+    counterparty: str
+    revenue_share: float = Field(ge=0.0, le=1.0)
+    margin: float | None = Field(default=None, ge=0.0, le=1.0)
+    pricing: PricingKind
+    termination_notice_days: int | None = Field(default=None, ge=0)
+    # Onerous-contract / loss provision exposure (absolute units or share).
+    loss_exposure: float | None = Field(default=None, ge=0.0)
+    # Fixed-price contracts with input-cost exposure feed the convexity test.
+    input_cost_exposed: bool = False
+    source: SourceCitation | None = None
+
+
+class CustomerSpec(BaseModel):
+    """Sales-side customer for concentration / SPOF (separate from suppliers)."""
+
+    id: str
+    revenue_share: float = Field(ge=0.0, le=1.0)
+    public_sector: bool = False
+    critical: bool = False
+    type: str | None = None
+    region: str | None = None
+    source: SourceCitation | None = None
+
+
+class EnergySpec(BaseModel):
+    """Energy as an input cost linked to margin (optional).
+
+    ``worst_on_record`` is the largest observed energy-price move (fraction).
+    Unrecovered share = cost_share × (1 − pass_through_pct). Missing fields
+    when the section is present are flagged fragile.
+    """
+
+    cost_share: float | None = Field(default=None, ge=0.0, le=1.0)
+    pass_through_pct: float | None = Field(default=None, ge=0.0, le=1.0)
+    worst_on_record: float | None = Field(default=None, ge=0.0)
+    source: SourceCitation | None = None
+    stress_input_id: str | None = None
 
 
 class RuinLineSpec(BaseModel):
     """Structural ruin thresholds for distance-to-ruin probes.
 
     Crossing any configured line is absorbing ruin. These are accounting
-    floors, not event probabilities.
+    floors / covenants, not event probabilities. Debt covenants listed on
+    the graph (``covenants``) are additional ruin lines; the first to
+    breach (covenant or survival floor) is reported.
     """
 
     # Remaining deliverable-flow fraction of baseline below which is ruin.
@@ -112,7 +238,13 @@ class EdgeSpec(BaseModel):
 
 
 class DependencyGraphSpec(BaseModel):
-    """YAML-serialisable dependency graph input."""
+    """YAML-serialisable dependency graph input.
+
+    Optional financial sections (``liquidity``, ``covenants``, ``contracts``,
+    ``customers``, ``energy``) may be omitted. Existing supply-only graphs
+    remain valid and produce identical structural readings for supply-side
+    metrics. See ADR-019.
+    """
 
     name: str = "unnamed"
     nodes: list[NodeSpec]
@@ -126,6 +258,13 @@ class DependencyGraphSpec(BaseModel):
     inputs: list[GraphInputSpec] = Field(default_factory=list)
     # Explicit ruin lines for distance-to-ruin (survival floor / covenant).
     ruin_line: RuinLineSpec | None = None
+    # Optional financial-side sections (ADR-019). Absent ⇒ related metrics
+    # report NOT_TESTED with optional_section_absent and do not change group status.
+    liquidity: LiquiditySpec | None = None
+    covenants: list[CovenantSpec] = Field(default_factory=list)
+    contracts: list[ContractSpec] = Field(default_factory=list)
+    customers: list[CustomerSpec] = Field(default_factory=list)
+    energy: EnergySpec | None = None
 
     @model_validator(mode="after")
     def _resolve_client(self) -> DependencyGraphSpec:
@@ -143,6 +282,18 @@ class DependencyGraphSpec(BaseModel):
             ids = {n.id for n in self.nodes}
             if self.client_id not in ids:
                 raise ValueError(f"client_id {self.client_id!r} not in nodes")
+        return self
+
+    @model_validator(mode="after")
+    def _customer_shares_reasonable(self) -> DependencyGraphSpec:
+        if not self.customers:
+            return self
+        total = sum(c.revenue_share for c in self.customers)
+        # Allow under-declaration (other customers omitted) but not > 1 + eps.
+        if total > 1.0 + 1e-6:
+            raise ValueError(
+                f"customer revenue_share sum {total} exceeds 1.0"
+            )
         return self
 
 

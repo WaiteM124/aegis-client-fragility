@@ -5,22 +5,22 @@ alwaysApply: true
 
 # Plan first for large or contract-sensitive work
 
-Canonical detail: `AGENTS.md` (workflow for agents). Skills: `.cursor/skills/add-metric/`, `.cursor/skills/review-against-method/`.
+Canonical detail: `AGENTS.md` (workflow for agents). Skills: `.cursor/skills/add-metric/`, `.cursor/skills/review-against-method/`. Financial-side model: [ADR-019](docs/decisions/ADR-019-financial-side-model.md).
 
 Before writing or editing application code, produce a **short written plan** and wait for **explicit approval** when **any** of these apply:
 
 1. The change is expected to touch **more than about three files**.
-2. The change edits **schemas** (e.g. `metrics/schemas/`, `clients/schemas/`, Pydantic contracts that define persisted or API shapes).
-3. The change alters the **run record** shape or **DuckDB migrations** (`metrics/run_record.py`, `metrics/schemas/run_record.*.json`, `metrics/store/migrations/`).
-4. The change modifies **any metric’s logic** (`metrics/*.py` `compute`, thresholds semantics, group registration in `run_all`).
+2. The change edits **schemas** — e.g. `metrics/schemas/`, `clients/schemas/` (including `dependency_graph.v1.json` optional financial sections: `liquidity`, `covenants`, `contracts`, `customers`, `energy`), or Pydantic contracts that define persisted or API shapes (`metrics/contracts.py`).
+3. The change alters the **run record** shape or **DuckDB migrations** (`metrics/run_record.py`, `metrics/schemas/run_record.*.json`, `metrics/store/migrations/`). Adding new metric *names* to the existing run-record array alone is not a migration, but still plan if schema or SQL shape changes.
+4. The change modifies **any metric’s logic** — `metrics/*.py` `compute`, thresholds semantics, group registration in `run_all`, shared financial helpers (`metrics/finance.py`), or covenant / ruin-line behaviour in `ruin` / `distance_to_ruin`. Includes financial-side metrics `runway`, `customer_hhi`, `customer_monoculture`, `customer_spof`, `energy_margin`.
 
 ## What the plan must include
 
 - Goal and non-goals (out of scope).
 - Files expected to change (paths).
 - Contract impact: schema / run record / migrations / eval baseline — yes/no and how.
-- Principle check: no prediction, no blended score, deterministic metrics, unknowns as fragile.
-- Test approach (unit / eval cases) and risks (e.g. concurrent schema PR).
+- Principle check: no prediction; no blended score (including no supplier↔customer merge); deterministic metrics; cited `worst_on_record` only; unknowns as fragile; covenants as additional ruin lines beside `survival_floor` when relevant.
+- Test approach (unit / eval cases) and risks (e.g. concurrent schema PR, supply-only graph backward compatibility).
 
 ## Do not code until approved
 

@@ -5,10 +5,12 @@ from metrics.run_all import format_grouped, run_all, worst_status
 def test_run_all_returns_four_groups(load_example):
     results = run_all(load_example("four_equal_suppliers"))
     assert set(results) == {"Concentration", "Contagion", "Convexity", "Optionality"}
-    # Convexity group now has convexity, ruin, distance_to_ruin
-    assert len(results["Concentration"]) == 2
-    assert len(results["Contagion"]) == 2
-    assert len(results["Convexity"]) == 3
+    # Concentration: supply HHI/monoculture + customer HHI/monoculture
+    assert len(results["Concentration"]) == 4
+    # Contagion: SPOF, cascade depth, customer SPOF
+    assert len(results["Contagion"]) == 3
+    # Convexity: convexity, ruin, distance_to_ruin, runway, energy_margin
+    assert len(results["Convexity"]) == 5
     assert len(results["Optionality"]) == 2
 
 

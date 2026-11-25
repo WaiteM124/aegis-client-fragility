@@ -5,6 +5,7 @@ display_name: ChillCo (EXAMPLE — made-up)
 kind: example
 data_classification: example
 notes: >
-  Made-up EXAMPLE DATA. Supply-side dependency graph only. The current graph
-  schema does not yet model customer concentration, energy-to-margin, or cash
-  covenants as the ruin line. No prediction claim.
+  Made-up EXAMPLE DATA. Supply-side dependency graph plus optional financial
+  sections (liquidity, covenant, contracts, customers, energy) per ADR-019.
+  All figures carry EXAMPLE placeholder sources. No prediction claim. No
+  Carillion numbers here — that pack is built separately and blind.

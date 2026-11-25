@@ -23,6 +23,13 @@ Ruin iff any δ in the ladder satisfies:
 
 Strict inequality: remaining exactly equal to the floor is not ruin.
 
+Debt covenants (optional ``covenants`` section, ADR-019) are additional
+ruin lines. At each probe intensity δ, each covenant's ``current`` is
+moved toward breach by δ × cited ``worst_on_record`` on its linked
+stress input. The **first** line to breach — a covenant id or the
+survival floor — is reported. Missing covenant ``current`` values are
+flagged fragile (ruin red), never silently treated as safe.
+
 When **no** explicit probe is configured, status is ``NOT_TESTED`` —
 silence is not safety. An untested company must never look GREEN.
 
@@ -31,15 +38,16 @@ Value = 1.0 if ruin, else 0.0 (and 0.0 when not tested).
 Meaning
 -------
 Ruin is a hard structural red flag: under an explicit stress probe,
-deliverable flow falls below the client's survival floor. This is not a
-probability of ruin — it flags that the graph's flow accounting admits a
-below-floor state at a listed stress intensity.
+deliverable flow falls below the client's survival floor and/or a debt
+covenant is breached. This is not a probability of ruin — it flags that
+the graph's accounting admits a below-line state at a listed stress
+intensity.
 
 Status
 ------
   not_tested  if no explicit shock / ladder probe is configured
   red         if ruin
-  green       otherwise (explicitly tested and floor held)
+  green       otherwise (explicitly tested and all lines held)
 
 ``run_all`` forces the Convexity group to red whenever ruin is red.
 ``NOT_TESTED`` is never counted as a pass.
@@ -52,6 +60,13 @@ import argparse
 import networkx as nx
 
 from metrics.contracts import MetricResult, Scenario, Status
+from metrics.finance import (
+    covenant_breached,
+    covenant_stressed_value,
+    graph_covenants,
+    has_covenants,
+    input_worst_on_record,
+)
 from metrics.graph_loader import (
     apply_edge_shock,
     apply_node_shock,
@@ -62,7 +77,7 @@ from metrics.stress import ensure_flow, stress_ladder_losses
 from metrics.thresholds import STRESS_LADDER, THRESHOLDS, Thresholds
 
 METRIC = "ruin"
-VERSION = "2.0.0"
+VERSION = "3.0.0"
 
 
 def resolve_survival_floor(
@@ -123,6 +138,29 @@ def _apply_shocks(graph: nx.DiGraph, scenario: Scenario) -> nx.DiGraph:
     return g
 
 
+def _check_covenants_at_delta(
+    graph: nx.DiGraph, delta: float
+) -> tuple[list[str], list[str]]:
+    """Return (breached_covenant_ids, unknown_fragile_ids) at intensity δ."""
+    breached: list[str] = []
+    unknown: list[str] = []
+    if not has_covenants(graph):
+        return breached, unknown
+    for cov in graph_covenants(graph):
+        if cov.current is None:
+            unknown.append(cov.id)
+            continue
+        wor, _ = input_worst_on_record(graph, cov.stress_input_id)
+        if wor is None or wor <= 0:
+            # Covenant present but no cited swing → fragile unknown.
+            unknown.append(cov.id)
+            continue
+        stressed = covenant_stressed_value(cov, float(delta) * float(wor))
+        if stressed is not None and covenant_breached(cov, stressed):
+            breached.append(cov.id)
+    return breached, unknown
+
+
 def _result(
     *,
     is_ruin: bool,
@@ -132,13 +170,26 @@ def _result(
     losses: dict,
     floor: float,
     probe: str,
+    first_breach: str | None = None,
+    covenant_breaches: list[str] | None = None,
+    unknown_covenants: list[str] | None = None,
 ) -> MetricResult:
+    covenant_breaches = covenant_breaches or []
+    unknown_covenants = unknown_covenants or []
+    drivers = list(crossed) if is_ruin else []
+    if first_breach:
+        drivers = [f"first_breach:{first_breach}", *drivers]
+    for cid in covenant_breaches:
+        if f"covenant:{cid}" not in drivers:
+            drivers.append(f"covenant:{cid}")
+    for cid in unknown_covenants:
+        drivers.append(f"unknown_covenant:{cid}")
     return MetricResult(
         metric=METRIC,
         version=VERSION,
         value=1.0 if is_ruin else 0.0,
         status=Status.RED if is_ruin else Status.GREEN,
-        drivers=crossed if is_ruin else [],
+        drivers=drivers,
         inputs={
             "F0": f0,
             "remaining": {str(k): v for k, v in remaining.items()},
@@ -147,13 +198,18 @@ def _result(
             "threshold_flow": floor * f0 if f0 > 0 else 0.0,
             "crossed_rungs": crossed,
             "probe": probe,
+            "first_breach": first_breach,
+            "covenant_breaches": covenant_breaches,
+            "unknown_covenants": unknown_covenants,
         },
         meaning=(
-            ("RUIN: an explicit stress probe fell below the survival floor. ")
-            if is_ruin
-            else "Explicit probe: no rung fell below the survival floor. "
-        )
-        + f"Floor={floor:.2f} of baseline. Hard structural flag — not a probability of ruin.",
+            (
+                f"RUIN: first breach={first_breach or 'survival_floor'}. "
+                if is_ruin
+                else "Explicit probe: survival floor and covenants held. "
+            )
+            + f"Floor={floor:.2f} of baseline. Hard structural flag — not a probability of ruin."
+        ),
         unit="flag",
     )
 
@@ -206,37 +262,95 @@ def compute(
         remaining = {"shocked": f_shocked}
         losses = {"shocked": max(f0_intact - f_shocked, 0.0)}
         crossed: list[str] = []
+        first_breach: str | None = None
+        # Shock intensity: use max node/edge shock as δ for covenant scan.
+        shock_delta = 0.0
+        for ns in scenario.node_shocks:
+            shock_delta = max(shock_delta, float(ns.intensity))
+        for es in scenario.edge_shocks:
+            shock_delta = max(shock_delta, float(es.intensity))
+        cov_hit, cov_unknown = _check_covenants_at_delta(graph, shock_delta)
+        if cov_unknown:
+            # Present but unknowable covenant → fragile ruin flag.
+            return _result(
+                is_ruin=True,
+                crossed=["unknown_covenant"],
+                f0=f0_intact,
+                remaining=remaining,
+                losses=losses,
+                floor=floor,
+                probe="shock",
+                first_breach=f"unknown_covenant:{cov_unknown[0]}",
+                covenant_breaches=cov_hit,
+                unknown_covenants=cov_unknown,
+            )
+        if cov_hit and first_breach is None:
+            first_breach = f"covenant:{cov_hit[0]}"
+            crossed.append("shocked")
         if f0_intact <= 0 or f_shocked < floor * f0_intact:
-            crossed = ["shocked"]
+            crossed = list(dict.fromkeys([*crossed, "shocked"]))
+            if first_breach is None:
+                first_breach = "survival_floor"
         return _result(
-            is_ruin=len(crossed) > 0,
+            is_ruin=len(crossed) > 0 or bool(cov_hit),
             crossed=crossed,
             f0=f0_intact,
             remaining=remaining,
             losses=losses,
             floor=floor,
             probe="shock",
+            first_breach=first_breach,
+            covenant_breaches=cov_hit,
+            unknown_covenants=cov_unknown,
         )
 
     # Ladder probe (optionally after shocks)
     f0, remaining, losses = stress_ladder_losses(g, use_ladder)
     crossed = []
+    first_breach = None
+    all_cov_hits: list[str] = []
+    all_cov_unknown: list[str] = []
     if f0 <= 0:
         crossed = [f"delta={d}" for d in use_ladder]
+        first_breach = "survival_floor"
     else:
         threshold_flow = floor * f0
-        for delta, f in remaining.items():
+        for delta in use_ladder:
+            f = remaining[delta]
+            cov_hit, cov_unknown = _check_covenants_at_delta(graph, float(delta))
+            all_cov_unknown.extend(cov_unknown)
+            if cov_unknown and first_breach is None:
+                first_breach = f"unknown_covenant:{cov_unknown[0]}"
+                crossed.append(f"delta={delta}")
+            if cov_hit:
+                all_cov_hits.extend(cov_hit)
+                if first_breach is None:
+                    first_breach = f"covenant:{cov_hit[0]}"
+                crossed.append(f"delta={delta}")
             if f < threshold_flow:
                 crossed.append(f"delta={delta}")
+                if first_breach is None:
+                    first_breach = "survival_floor"
+
+    # Deduplicate while preserving order
+    crossed = list(dict.fromkeys(crossed))
+    all_cov_hits = list(dict.fromkeys(all_cov_hits))
+    all_cov_unknown = list(dict.fromkeys(all_cov_unknown))
+    is_ruin = len(crossed) > 0 or bool(all_cov_hits) or bool(all_cov_unknown)
+    if all_cov_unknown and first_breach is None:
+        first_breach = f"unknown_covenant:{all_cov_unknown[0]}"
 
     return _result(
-        is_ruin=len(crossed) > 0,
+        is_ruin=is_ruin,
         crossed=crossed,
         f0=f0,
         remaining=remaining,
         losses=losses,
         floor=floor,
         probe="shock+ladder" if has_shocks else "ladder",
+        first_breach=first_breach,
+        covenant_breaches=all_cov_hits,
+        unknown_covenants=all_cov_unknown,
     )
 
 

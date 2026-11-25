@@ -12,5 +12,6 @@ Canonical detail: `AGENTS.md` product principles.
 - Module docstring must state the **formula** and its **plain-language meaning**.
 - Metrics are **deterministic** only — no LLM calls, no forecasting, no fitted distributions, no historical-correlation estimates inside `compute`.
 - Status is red / amber / green / **not_tested** per metric. Group roll-up = **worst** member (`red > amber > not_tested > green`). **Ruin → hard red** when tested; untested ruin is `NOT_TESTED`, never green. Never average or weight into a single blended fragility score.
+- Optional financial sections (`liquidity`, `covenants`, `contracts`, `customers`, `energy` — ADR-019): related metrics (`runway`, `customer_*`, `energy_margin`) return `NOT_TESTED` with `optional_section_absent` when omitted and are excluded from group roll-up. Customer vs supplier concentration stay separate. Covenants are additional ruin lines beside `survival_floor`. Every swing uses a cited `worst_on_record`.
 - Convexity is measured from model output (symmetric second differences on worst-on-record anchors), not from declared edge labels. Distance to ruin is per-input and never averaged.
 - Add known-answer unit tests alongside any new or changed metric. Do not delete or skip failing metric tests to pass CI.

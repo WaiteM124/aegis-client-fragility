@@ -3,11 +3,16 @@
   "min_recall": {
     "hhi": 1.0,
     "monoculture": 1.0,
+    "customer_hhi": 1.0,
+    "customer_monoculture": 1.0,
     "single_points_of_failure": 1.0,
     "cascade_depth": 1.0,
+    "customer_spof": 1.0,
     "convexity": 1.0,
     "ruin": 1.0,
     "distance_to_ruin": 1.0,
+    "runway": 1.0,
+    "energy_margin": 1.0,
     "optionality": 1.0,
     "slack": 1.0
   },
@@ -16,11 +21,16 @@
   "max_false_flag_rate": {
     "hhi": 0.0,
     "monoculture": 0.0,
+    "customer_hhi": 0.0,
+    "customer_monoculture": 0.0,
     "single_points_of_failure": 0.0,
     "cascade_depth": 0.0,
+    "customer_spof": 0.0,
     "convexity": 0.0,
     "ruin": 0.0,
     "distance_to_ruin": 0.0,
+    "runway": 0.0,
+    "energy_margin": 0.0,
     "optionality": 0.0,
     "slack": 0.0
   }

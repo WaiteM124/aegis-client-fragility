@@ -57,7 +57,7 @@ from metrics.stress import apply_uniform_stress, ensure_flow
 from metrics.thresholds import THRESHOLDS, Thresholds
 
 METRIC = "convexity"
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 
 
 def _graph_inputs(graph: nx.DiGraph) -> list[dict[str, Any]]:
@@ -77,16 +77,64 @@ def _clamp(value: float, lo: float | None, hi: float | None) -> tuple[float, boo
     return v, clamped
 
 
+def _contract_input_cost_harm(
+    graph: nx.DiGraph, f0: float
+) -> tuple[Callable[[float], float] | None, list[str]]:
+    """Harm from fixed-price contracts with input-cost exposure.
+
+    Margin absorbs first (buffer); beyond margin, loss_exposure creates
+    accelerating harm (positive second differences → fragile). Unknown
+    margin on an exposed fixed-price contract is flagged fragile.
+    """
+    from metrics.finance import fixed_price_input_exposed_contracts, graph_contracts
+
+    exposed = fixed_price_input_exposed_contracts(graph_contracts(graph))
+    if not exposed:
+        return None, []
+    unknown: list[str] = []
+    for c in exposed:
+        if c.margin is None:
+            unknown.append(c.id)
+
+    def harm(intensity: float) -> float:
+        x = max(0.0, float(intensity))
+        total = 0.0
+        for c in exposed:
+            share = float(c.revenue_share) * max(f0, 1.0)
+            margin = float(c.margin) if c.margin is not None else 0.0
+            # Unknown margin → treat full share as immediately exposed (fragile).
+            if c.margin is None:
+                total += share * x
+                continue
+            absorbed = min(x, margin)
+            total += share * absorbed
+            if x > margin:
+                over = x - margin
+                loss_exp = (
+                    float(c.loss_exposure)
+                    if c.loss_exposure is not None
+                    else share
+                )
+                # Quadratic overshoot into onerous / loss provisions.
+                total += loss_exp * (over**2) / max(margin, 1e-6)
+        return total
+
+    return harm, unknown
+
+
 def _default_harm_fn(graph: nx.DiGraph) -> Callable[[float], float]:
     g0 = ensure_flow(graph)
     f0 = deliverable_flow(g0)
+    contract_harm, _unknown = _contract_input_cost_harm(g0, f0)
 
     def harm(intensity: float) -> float:
         # Intensity is treated as uniform edge-stress δ ∈ [0, 1] after clamp.
         delta = max(0.0, float(intensity))
         g = apply_uniform_stress(g0, delta)
         f = deliverable_flow(g)
-        return max(f0 - f, 0.0)
+        flow_harm = max(f0 - f, 0.0)
+        extra = float(contract_harm(delta)) if contract_harm is not None else 0.0
+        return flow_harm + extra
 
     return harm
 
@@ -148,6 +196,7 @@ def compute(
     harm = harm_fn if harm_fn is not None else _default_harm_fn(g)
     f0 = deliverable_flow(ensure_flow(g))
     scale = f0 if harm_fn is None else 1.0
+    _contract_harm, contract_unknown = _contract_input_cost_harm(g, f0)
 
     per_input: dict[str, Any] = {}
     all_curvatures: list[float] = []
@@ -340,6 +389,11 @@ def compute(
         if worst_shape in {"robust", "antifragile"}:
             worst_shape = "fragile"
 
+    # Fixed-price + input-cost exposure with unknown margin → fragile.
+    if contract_unknown:
+        worst_status = Status.RED
+        worst_shape = "fragile"
+
     drivers = [
         f"shape={worst_shape}",
         f"mean_curvature={mean_all:.6f}",
@@ -348,6 +402,10 @@ def compute(
         drivers.append("ANTIFRAGILE")
     if all_cliffs:
         drivers.append(f"cliffs={len(all_cliffs)}")
+    for cid in contract_unknown:
+        drivers.append(f"unknown_margin:{cid}")
+    if _contract_harm is not None and not contract_unknown:
+        drivers.append("fixed_price_input_cost_exposure")
 
     return MetricResult(
         metric=METRIC,
@@ -365,11 +423,14 @@ def compute(
             "clamped_points": all_clamped,
             "step_multiples": list(t.step_multiples),
             "threshold_version": t.version,
+            "fixed_price_input_exposed": _contract_harm is not None,
+            "unknown_contract_margins": contract_unknown,
         },
         meaning=(
             f"Payoff shape={worst_shape}; mean harm curvature={mean_all:.6f}. "
             "Measured from model output via symmetric second differences "
             "anchored on worst-on-record — not from declared labels. "
+            "Fixed-price input-cost contracts feed this curve when present. "
             "Scan grid has no likelihoods. Not an event forecast."
         ),
         unit="curvature",

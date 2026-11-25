@@ -30,9 +30,20 @@ def spec_to_networkx(spec: DependencyGraphSpec) -> nx.DiGraph:
     if spec.survival_floor is not None:
         g.graph["survival_floor"] = float(spec.survival_floor)
     if spec.inputs:
-        g.graph["inputs"] = [inp.model_dump() for inp in spec.inputs]
+        g.graph["inputs"] = [inp.model_dump(mode="json") for inp in spec.inputs]
     if spec.ruin_line is not None:
-        g.graph["ruin_line"] = spec.ruin_line.model_dump()
+        g.graph["ruin_line"] = spec.ruin_line.model_dump(mode="json")
+    # Optional financial sections (ADR-019). Absent keys mean section omitted.
+    if spec.liquidity is not None:
+        g.graph["liquidity"] = spec.liquidity.model_dump(mode="json")
+    if spec.covenants:
+        g.graph["covenants"] = [c.model_dump(mode="json") for c in spec.covenants]
+    if spec.contracts:
+        g.graph["contracts"] = [c.model_dump(mode="json") for c in spec.contracts]
+    if spec.customers:
+        g.graph["customers"] = [c.model_dump(mode="json") for c in spec.customers]
+    if spec.energy is not None:
+        g.graph["energy"] = spec.energy.model_dump(mode="json")
     for node in spec.nodes:
         g.add_node(
             node.id,
