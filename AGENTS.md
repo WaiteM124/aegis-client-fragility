@@ -19,7 +19,7 @@ Single source of truth for humans and AI agents (including Cursor) working in th
 | `backend/assessment` | Client matching, retrieval, model call, persist assessment |
 | `backend/retrieval` | Evidence retrieval against the knowledge repository |
 | `backend/decision_engine` | Deterministic risk scorer (event impact scoring — distinct from fragility metrics) |
-| `metrics/` | Deterministic structural-fragility metrics (`compute(graph, scenario) -> MetricResult`); one file per metric; YAML examples and package tests under `metrics/examples/`, `metrics/tests/` |
+| `metrics/` | Deterministic structural-fragility metrics (`compute(graph, scenario) -> MetricResult`); one file per metric; YAML examples and package tests under `metrics/examples/`, `metrics/tests/`; run records (`schemas/run_record.v1.json`) and local DuckDB store (`metrics.store`) |
 | `backend/model_gateway` | `DeterministicModelProvider` (default) and `GeminiModelProvider` |
 | `backend/persistence` | SQLite / Firestore stores; in-memory / Pub/Sub buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, config, structured logging |
@@ -140,4 +140,4 @@ Do not frame eval results as forecasts. Metric formula bugs found by the suite a
 - [CONTRIBUTING.md](CONTRIBUTING.md) — short human setup and PR conventions
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
-- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013; engineering ADRs 001–004; eval gate ADR-014)
+- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–017; engineering ADRs 001–004; eval gate ADR-014)

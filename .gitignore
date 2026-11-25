@@ -32,6 +32,10 @@ data/aegis.db
 data/aegis.db-shm
 data/aegis.db-wal
 data/*.db
+data/aegis_runs.duckdb
+data/aegis_runs.duckdb.wal
+data/*.duckdb
+data/*.last_run.json
 
 # ── Node / frontend ───────────────────────────────────────────────────────────
 node_modules/

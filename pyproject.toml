@@ -13,11 +13,18 @@ license = { text = "Proprietary" }
 [tool.hatch.build.targets.wheel]
 packages = ["backend", "metrics"]
 
+# Non-Python assets required at runtime for run records / DuckDB migrations.
+[tool.hatch.build.targets.wheel.force-include]
+"metrics/schemas/run_record.v1.json" = "metrics/schemas/run_record.v1.json"
+"metrics/store/migrations/001_runs.sql" = "metrics/store/migrations/001_runs.sql"
+
 [project.optional-dependencies]
 metrics = [
     "networkx>=3.3",
     "PyYAML>=6.0.1",
     "pydantic>=2.8.0",
+    "duckdb>=1.1.0",
+    "jsonschema>=4.23.0",
 ]
 
 [tool.pytest.ini_options]

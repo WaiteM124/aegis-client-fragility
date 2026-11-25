@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T09:13:08.556049+00:00",
+  "generated_at": "2026-11-25T09:38:22.582320+00:00",
   "principle": "Evals measure structural weakness detection, not prediction. No event forecasting.",
   "summary": {
     "n_cases": 31,
@@ -670,7 +670,7 @@
         "convexity": "red",
         "ruin": "not_tested",
         "distance_to_ruin": "green",
-        "optionality": "green",
+        "optionality": "amber",
         "slack": "amber"
       },
       "metric_value": {
@@ -681,7 +681,7 @@
         "convexity": 10.833333333333334,
         "ruin": 0.0,
         "distance_to_ruin": 3.181818181818926,
-        "optionality": 2.0,
+        "optionality": 1.0,
         "slack": 0.2
       },
       "group_status": {
@@ -1282,7 +1282,7 @@
         "convexity": "red",
         "ruin": "not_tested",
         "distance_to_ruin": "green",
-        "optionality": "green",
+        "optionality": "amber",
         "slack": "amber"
       },
       "metric_value": {
@@ -1293,7 +1293,7 @@
         "convexity": 8.0,
         "ruin": 0.0,
         "distance_to_ruin": 3.3333333333339397,
-        "optionality": 2.0,
+        "optionality": 1.0,
         "slack": 0.2
       },
       "group_status": {
@@ -1370,7 +1370,7 @@
         "convexity": "green",
         "ruin": "not_tested",
         "distance_to_ruin": "green",
-        "optionality": "green",
+        "optionality": "amber",
         "slack": "green"
       },
       "metric_value": {
@@ -1381,20 +1381,20 @@
         "convexity": 0.0,
         "ruin": 0.0,
         "distance_to_ruin": 3.9285714285715585,
-        "optionality": 2.0,
+        "optionality": 1.0,
         "slack": 0.6
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "red",
         "Convexity": "not_tested",
-        "Optionality": "green"
+        "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "red",
         "Convexity": "not_tested",
-        "Optionality": "green"
+        "Optionality": "amber"
       },
       "expected_metric_status": {}
     }

@@ -68,4 +68,5 @@ expected_group_status:
   Concentration: red
   Contagion: red
   Convexity: not_tested
-  Optionality: green
+  # Shared source s1 collapses both routes under node-disjoint optionality (ADR-016).
+  Optionality: amber
