@@ -44,6 +44,7 @@ ALL_METRICS = [
     "cascade_depth",
     "convexity",
     "ruin",
+    "distance_to_ruin",
     "optionality",
     "slack",
 ]
@@ -74,7 +75,9 @@ def load_cases(cases_dir: Path = CASES_DIR) -> list[dict[str, Any]]:
 def evaluate_case(case: dict[str, Any]) -> dict[str, Any]:
     spec = DependencyGraphSpec.model_validate(case["graph"])
     graph = spec_to_networkx(spec)
-    scenario = Scenario(name=case["id"])
+    scenario_raw = dict(case.get("scenario") or {})
+    scenario_raw.setdefault("name", case["id"])
+    scenario = Scenario.model_validate(scenario_raw)
     grouped = run_all(graph, scenario)
 
     metric_results: dict[str, MetricResult] = {}
@@ -102,6 +105,7 @@ def evaluate_case(case: dict[str, Any]) -> dict[str, Any]:
 
 
 def _is_flagged(status: str) -> bool:
+    # NOT_TESTED is never a detection hit / pass
     return status in ("amber", "red")
 
 

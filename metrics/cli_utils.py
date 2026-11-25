@@ -38,6 +38,7 @@ def build_scenario_from_args(args: argparse.Namespace) -> Scenario:
         name=getattr(args, "scenario_name", None) or "cli",
         node_shocks=node_shocks,
         edge_shocks=edge_shocks,
+        run_stress_ladder=bool(getattr(args, "stress_ladder", False)),
     )
 
 
@@ -61,6 +62,15 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
         default=[],
         metavar="SRC>TGT[:INTENSITY]",
         help="Structural edge shock (repeatable). Intensity in [0,1], default 1.",
+    )
+    parser.add_argument(
+        "--stress-ladder",
+        action="store_true",
+        default=False,
+        help=(
+            "Explicitly run the stress-ladder probe (required for ruin to leave "
+            "NOT_TESTED when no shocks are given)."
+        ),
     )
 
 

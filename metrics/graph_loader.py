@@ -29,6 +29,10 @@ def spec_to_networkx(spec: DependencyGraphSpec) -> nx.DiGraph:
     g = nx.DiGraph(name=spec.name, client_id=spec.client_id)
     if spec.survival_floor is not None:
         g.graph["survival_floor"] = float(spec.survival_floor)
+    if spec.inputs:
+        g.graph["inputs"] = [inp.model_dump() for inp in spec.inputs]
+    if spec.ruin_line is not None:
+        g.graph["ruin_line"] = spec.ruin_line.model_dump()
     for node in spec.nodes:
         g.add_node(
             node.id,
@@ -36,6 +40,7 @@ def spec_to_networkx(spec: DependencyGraphSpec) -> nx.DiGraph:
             type=node.type,
             region=node.region,
             technology=node.technology,
+            critical=bool(node.critical),
             **{k: v for k, v in node.attributes.items() if k not in {"type", "region", "technology"}},
         )
     node_ids = set(g.nodes)

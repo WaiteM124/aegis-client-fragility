@@ -1,16 +1,25 @@
 name: single_supplier
 nodes:
-  - id: s1
-    kind: supplier
-    type: semiconductor
-    region: asia
-    technology: cmos
-  - id: client
-    kind: buyer
+- id: s1
+  kind: supplier
+  type: semiconductor
+  region: asia
+  technology: cmos
+  critical: true
+- id: client
+  kind: buyer
+  critical: false
 edges:
-  - source: s1
-    target: client
-    share: 1.0
-    flow: 100
-    capacity: 100
-    buffer: 0
+- source: s1
+  target: client
+  share: 1.0
+  flow: 100
+  capacity: 100
+  buffer: 0
+inputs:
+- id: supply_shock
+  worst_on_record: 0.2
+  lower_bound: 0.0
+  upper_bound: 1.0
+ruin_line:
+  survival_floor: 0.5

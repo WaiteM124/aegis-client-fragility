@@ -11,5 +11,6 @@ Canonical detail: `AGENTS.md` product principles.
 - **One module per metric** with `compute(graph, scenario) -> MetricResult`.
 - Module docstring must state the **formula** and its **plain-language meaning**.
 - Metrics are **deterministic** only — no LLM calls, no forecasting, no fitted distributions, no historical-correlation estimates inside `compute`.
-- Status is red / amber / green per metric. Group roll-up = **worst** member status. **Ruin → hard red**; never average or weight into a single blended fragility score.
+- Status is red / amber / green / **not_tested** per metric. Group roll-up = **worst** member (`red > amber > not_tested > green`). **Ruin → hard red** when tested; untested ruin is `NOT_TESTED`, never green. Never average or weight into a single blended fragility score.
+- Convexity is measured from model output (symmetric second differences on worst-on-record anchors), not from declared edge labels. Distance to ruin is per-input and never averaged.
 - Add known-answer unit tests alongside any new or changed metric. Do not delete or skip failing metric tests to pass CI.

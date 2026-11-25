@@ -27,7 +27,8 @@ PYTHONPATH=. python -m metrics.hhi --graph metrics/examples/four_equal_suppliers
 
 # Every metric, grouped (Concentration / Contagion / Convexity / Optionality)
 # No blended score — each group shows its worst status; ruin forces red.
-PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml
+# Ruin needs an explicit probe (--stress-ladder or shocks); silence is NOT_TESTED.
+PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml --stress-ladder
 
 # Tests for the metrics package
 PYTHONPATH=. python -m pytest metrics/tests -q
@@ -37,13 +38,21 @@ PYTHONPATH=. python evals/run_evals.py
 # or: make eval-gate
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
-**Ruin survival floor.** Ruin fires when remaining deliverable flow at any stress-ladder rung is strictly below `floor × F₀`. Default floor is **0.5** (a client is usually finished well before total loss). Override per graph with top-level YAML `survival_floor:`, or on the CLI with `--survival-floor` (wins over YAML):
+**Status values.** Each metric reports its own status separately: `green` / `amber` / `red` / `not_tested`. `not_tested` means the probe or required data was missing — it is never treated as a pass. Group roll-up is worst-member (`red > amber > not_tested > green`). There is no blended single score.
+
+**Ruin.** Ruin fires only under an **explicit** probe (`--stress-ladder`, scenario shocks, or `ladder=`). Without one it returns `NOT_TESTED`, never green. When tested, ruin is red if remaining deliverable flow at any ladder rung is strictly below `floor × F₀`. Default floor is **0.5**. Override per graph with `survival_floor:` / `ruin_line:`, or `--survival-floor` on the CLI:
 
 ```bash
-PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yaml --survival-floor 0.6
+PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yaml --stress-ladder --survival-floor 0.6
 ```
+
+**Convexity.** Harm curvature from model output via symmetric second differences anchored on each input’s `worst_on_record` (scan grid, no likelihoods). Labels are not the answer. Shapes: fragile / robust / antifragile (antifragile is its own flag). Cliffs (threshold jumps) are reported separately.
+
+**Distance to ruin.** Per input, smallest multiple of worst-on-record at which a configured ruin line is crossed. Never averaged across inputs. Cut-offs are versioned in `DistanceToRuinThresholds` (≤1× red, ≤2× amber by default).
+
+**SPOF.** A cut node marked `critical: true` (sole supplier / sole critical route) is red on its own. Non-critical cut nodes stay amber.
 
 ### Backend
 
@@ -131,7 +140,7 @@ docker-compose --profile firestore up
 
 A FastAPI service accepts external events and returns `202 Accepted`. An asynchronous worker then normalises and classifies events, retrieves supporting evidence, and generates schema-validated assessment text. Client matching, classification and risk scoring are deterministic. Persistence and messaging sit behind port interfaces, with SQLite and an in-memory bus for local development, and Firestore / Pub/Sub adapters for Google Cloud Run.
 
-The intended evolution of this pipeline is to generate schema-validated shock profiles and evaluate their interaction with persistent, client-specific Fragility Registers. The `metrics/` package already provides the deterministic structural readings (HHI, monoculture, SPOFs, cascade depth, Taleb convexity / Jensen gap, ruin, optionality, slack) for YAML dependency graphs. Structured intelligence models would characterise organisational dependencies for those registers; LLMs support evidence interpretation and profile elicitation, while business decisions and mathematical calculations remain independently testable and deterministic.
+The intended evolution of this pipeline is to generate schema-validated shock profiles and evaluate their interaction with persistent, client-specific Fragility Registers. The `metrics/` package already provides the deterministic structural readings (HHI, monoculture, SPOFs, cascade depth, convexity from model output, ruin, distance to ruin, optionality, slack) for YAML dependency graphs. Structured intelligence models would characterise organisational dependencies for those registers; LLMs support evidence interpretation and profile elicitation, while business decisions and mathematical calculations remain independently testable and deterministic.
 
 The diagram below is the pipeline that is in the repository today.
 
@@ -170,13 +179,13 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `backend/model_gateway` | `DeterministicModelProvider` (default) and `GeminiModelProvider` |
 | `backend/persistence` | SQLite and Firestore stores; in-memory and Pub/Sub emulator buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, configuration, logging |
-| `metrics/` | Structural-fragility metrics on YAML dependency graphs (HHI, monoculture, SPOF, cascade depth, convexity, ruin, optionality, slack). No forecasting, no blended score. |
+| `metrics/` | Structural-fragility metrics on YAML dependency graphs (HHI, monoculture, SPOF, cascade depth, convexity, ruin, distance to ruin, optionality, slack). No forecasting, no blended score. |
 | `frontend` | React, TypeScript, Vite, Tailwind, TanStack Query dashboard: dashboard, events, event detail, assessments, submit event |
 | `data/synthetic` | Synthetic clients, projects, regional profiles, industry context, intelligence reports |
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |
 | `infrastructure` | Dockerfiles and Cloud Run service YAML for the API and the worker |
 | `evals/` | Deterministic metrics eval suite (labelled graphs, baseline, CI `eval-gate`) — weakness detection, not prediction ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)) |
-| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013; engineering ADRs 001–004; eval gate ADR-014) |
+| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013, 015; engineering ADRs 001–004; eval gate ADR-014) |
 | `tests` | Unit, integration, contract, and evaluation tests |
 
 ### Port and adapter matrix
@@ -297,3 +306,4 @@ tests/             unit, integration, contract, evaluation
 - [ADR-012 Target GCP platform](docs/decisions/ADR-012-target-gcp-platform.md) (Proposed)
 - [ADR-013 Hormuz case study dropped](docs/decisions/ADR-013-hormuz-case-study-dropped.md)
 - [ADR-014 Eval gate (weakness detection, not prediction)](docs/decisions/ADR-014-eval-gate-weakness-detection.md)
+- [ADR-015 Convexity from model output; distance to ruin; NOT_TESTED](docs/decisions/ADR-015-convexity-distance-to-ruin-not-tested.md)

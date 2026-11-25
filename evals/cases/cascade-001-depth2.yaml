@@ -15,13 +15,16 @@ graph:
     type: ore
     region: africa
     technology: open-pit
+    critical: true
   - id: B
     kind: asset
     type: refinery
     region: africa
     technology: smelt
+    critical: false
   - id: C
     kind: buyer
+    critical: false
   edges:
   - source: A
     target: B
@@ -35,9 +38,16 @@ graph:
     flow: 100
     capacity: 100
     buffer: 0
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: red
   Contagion: red
-  Convexity: green
+  Convexity: not_tested
   Optionality: red

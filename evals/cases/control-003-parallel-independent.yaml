@@ -12,23 +12,28 @@ graph:
     type: fuel
     region: gulf
     technology: pipe_refine
+    critical: false
   - id: s2
     kind: supplier
     type: biofuel
     region: north_sea
     technology: ship_blend
+    critical: false
   - id: route_n
     kind: route
     type: pipeline
     region: north
     technology: pipe
+    critical: false
   - id: route_s
     kind: route
     type: tanker
     region: south
     technology: ship
+    critical: false
   - id: client
     kind: buyer
+    critical: false
   edges:
   - source: s1
     target: route_n
@@ -54,9 +59,16 @@ graph:
     flow: 50
     capacity: 80
     buffer: 15
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: amber
   Contagion: amber
-  Convexity: green
+  Convexity: not_tested
   Optionality: green

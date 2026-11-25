@@ -1,44 +1,55 @@
 name: two_parallel_routes
 nodes:
-  - id: s1
-    kind: supplier
-    type: fuel
-    region: gulf
-    technology: refine
-  - id: route_north
-    kind: route
-    type: pipeline
-    region: north
-    technology: pipe
-  - id: route_south
-    kind: route
-    type: tanker
-    region: south
-    technology: ship
-  - id: client
-    kind: buyer
+- id: s1
+  kind: supplier
+  type: fuel
+  region: gulf
+  technology: refine
+  critical: true
+- id: route_north
+  kind: route
+  type: pipeline
+  region: north
+  technology: pipe
+  critical: false
+- id: route_south
+  kind: route
+  type: tanker
+  region: south
+  technology: ship
+  critical: false
+- id: client
+  kind: buyer
+  critical: false
 edges:
-  - source: s1
-    target: route_north
-    share: 0.5
-    flow: 50
-    capacity: 70
-    buffer: 10
-  - source: route_north
-    target: client
-    share: 0.5
-    flow: 50
-    capacity: 70
-    buffer: 10
-  - source: s1
-    target: route_south
-    share: 0.5
-    flow: 50
-    capacity: 70
-    buffer: 10
-  - source: route_south
-    target: client
-    share: 0.5
-    flow: 50
-    capacity: 70
-    buffer: 10
+- source: s1
+  target: route_north
+  share: 0.5
+  flow: 50
+  capacity: 70
+  buffer: 10
+- source: route_north
+  target: client
+  share: 0.5
+  flow: 50
+  capacity: 70
+  buffer: 10
+- source: s1
+  target: route_south
+  share: 0.5
+  flow: 50
+  capacity: 70
+  buffer: 10
+- source: route_south
+  target: client
+  share: 0.5
+  flow: 50
+  capacity: 70
+  buffer: 10
+inputs:
+- id: supply_shock
+  worst_on_record: 0.2
+  lower_bound: 0.0
+  upper_bound: 1.0
+ruin_line:
+  survival_floor: 0.5

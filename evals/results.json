@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T14:44:49.131911+00:00",
+  "generated_at": "2026-11-25T09:13:08.556049+00:00",
   "principle": "Evals measure structural weakness detection, not prediction. No event forecasting.",
   "summary": {
     "n_cases": 31,
@@ -12,6 +12,7 @@
       "cascade_depth": 1.0,
       "convexity": 1.0,
       "ruin": 1.0,
+      "distance_to_ruin": 1.0,
       "optionality": 1.0,
       "slack": 1.0
     },
@@ -22,6 +23,7 @@
       "cascade_depth": 0.0,
       "convexity": 0.0,
       "ruin": 0.0,
+      "distance_to_ruin": 0.0,
       "optionality": 0.0,
       "slack": 0.0
     },
@@ -72,7 +74,8 @@
         "single_points_of_failure": "red",
         "cascade_depth": "amber",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "red"
       },
@@ -83,19 +86,20 @@
         "cascade_depth": 2.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "red",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "red",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -111,10 +115,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "red",
+        "single_points_of_failure": "amber",
         "cascade_depth": "amber",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "red"
       },
@@ -125,19 +130,20 @@
         "cascade_depth": 3.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "red",
-        "Convexity": "green",
+        "Contagion": "amber",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "red",
-        "Convexity": "green",
+        "Contagion": "amber",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -153,10 +159,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "red",
+        "single_points_of_failure": "amber",
         "cascade_depth": "red",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "red"
       },
@@ -167,19 +174,20 @@
         "cascade_depth": 4.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "red",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "red",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -197,7 +205,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "amber",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "red"
       },
@@ -208,19 +217,20 @@
         "cascade_depth": 3.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 2.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -236,7 +246,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -247,19 +258,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 4.0625000000009095,
         "optionality": 4.0,
         "slack": 0.8
       },
       "group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -275,7 +287,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -284,21 +297,22 @@
         "monoculture": 0.3333333333333333,
         "single_points_of_failure": 0.0,
         "cascade_depth": 1.0,
-        "convexity": 0.0,
+        "convexity": 1.1842378929335004e-14,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 3.0,
         "slack": 0.7365269461077845
       },
       "group_status": {
         "Concentration": "amber",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "amber",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -314,7 +328,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "amber",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -325,19 +340,20 @@
         "cascade_depth": 2.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 4.3750000000009095,
         "optionality": 2.0,
         "slack": 0.9
       },
       "group_status": {
         "Concentration": "amber",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "amber",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -353,7 +369,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -364,19 +381,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 4.4285714285715585,
         "optionality": 5.0,
         "slack": 1.05
       },
       "group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -392,7 +410,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "amber",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -403,19 +422,20 @@
         "cascade_depth": 2.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 4.6875000000009095,
         "optionality": 2.0,
         "slack": 1.0
       },
       "group_status": {
         "Concentration": "amber",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "amber",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -431,7 +451,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -442,19 +463,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 4.0,
         "slack": 1.4
       },
       "group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "green",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}
@@ -472,7 +494,8 @@
         "single_points_of_failure": "amber",
         "cascade_depth": "green",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "amber"
       },
@@ -481,8 +504,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 1.0,
-        "convexity": 50.0,
+        "convexity": 6.666666666666667,
         "ruin": 0.0,
+        "distance_to_ruin": 3.2500000000009095,
         "optionality": 1.0,
         "slack": 0.15
       },
@@ -513,8 +537,9 @@
         "monoculture": "red",
         "single_points_of_failure": "amber",
         "cascade_depth": "green",
-        "convexity": "red",
+        "convexity": "amber",
         "ruin": "red",
+        "distance_to_ruin": "red",
         "optionality": "amber",
         "slack": "red"
       },
@@ -523,8 +548,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 1.0,
-        "convexity": 166.66666666666669,
+        "convexity": -79.16666666666667,
         "ruin": 1.0,
+        "distance_to_ruin": 1.0,
         "optionality": 1.0,
         "slack": 0.0
       },
@@ -555,7 +581,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "amber"
       },
@@ -564,8 +591,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 0.0,
         "cascade_depth": 1.0,
-        "convexity": 86.66666666666667,
+        "convexity": 7.666666666666667,
         "ruin": 0.0,
+        "distance_to_ruin": 3.7000000000007276,
         "optionality": 2.0,
         "slack": 0.24
       },
@@ -595,8 +623,9 @@
         "monoculture": "red",
         "single_points_of_failure": "green",
         "cascade_depth": "green",
-        "convexity": "red",
-        "ruin": "green",
+        "convexity": "amber",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "amber"
       },
@@ -605,21 +634,22 @@
         "monoculture": 1.0,
         "single_points_of_failure": 0.0,
         "cascade_depth": 1.0,
-        "convexity": 10.0,
+        "convexity": 4.333333333333333,
         "ruin": 0.0,
+        "distance_to_ruin": 2.8181818181819835,
         "optionality": 2.0,
         "slack": 0.12
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "red",
+        "Convexity": "amber",
         "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "red",
+        "Convexity": "amber",
         "Optionality": "amber"
       },
       "expected_metric_status": {}
@@ -635,10 +665,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "amber",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "amber"
       },
@@ -647,20 +678,21 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 2.0,
-        "convexity": 90.0,
+        "convexity": 10.833333333333334,
         "ruin": 0.0,
+        "distance_to_ruin": 3.181818181818926,
         "optionality": 2.0,
         "slack": 0.2
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
@@ -678,10 +710,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "green"
       },
@@ -692,19 +725,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 1.5
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "amber"
       },
       "expected_metric_status": {}
@@ -721,10 +755,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "red"
       },
@@ -735,19 +770,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -765,10 +801,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "red"
       },
@@ -779,19 +816,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "green",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -810,7 +848,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "red"
       },
@@ -821,19 +860,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 2.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -851,7 +891,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -860,8 +901,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 0.0,
         "cascade_depth": 1.0,
-        "convexity": 113.33333333333334,
+        "convexity": 12.0,
         "ruin": 0.0,
+        "distance_to_ruin": 3.16666666666697,
         "optionality": 3.0,
         "slack": 0.2599748005039898
       },
@@ -893,7 +935,8 @@
         "single_points_of_failure": "red",
         "cascade_depth": "amber",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "amber"
       },
@@ -902,8 +945,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 2.0,
         "cascade_depth": 2.0,
-        "convexity": 40.0,
+        "convexity": 6.333333333333333,
         "ruin": 0.0,
+        "distance_to_ruin": 2.954545454545496,
         "optionality": 1.0,
         "slack": 0.15
       },
@@ -934,7 +978,8 @@
         "single_points_of_failure": "green",
         "cascade_depth": "green",
         "convexity": "green",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "red"
       },
@@ -945,19 +990,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 2.5000000000004547,
         "optionality": 2.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "not_tested",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -974,8 +1020,9 @@
         "monoculture": "red",
         "single_points_of_failure": "green",
         "cascade_depth": "green",
-        "convexity": "green",
-        "ruin": "green",
+        "convexity": "amber",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "red"
       },
@@ -984,21 +1031,22 @@
         "monoculture": 1.0,
         "single_points_of_failure": 0.0,
         "cascade_depth": 1.0,
-        "convexity": -4.263256414560601e-14,
+        "convexity": 1.3333333333333404,
         "ruin": 0.0,
+        "distance_to_ruin": 2.596153846154266,
         "optionality": 2.0,
         "slack": 0.04
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "green",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_metric_status": {}
@@ -1015,8 +1063,9 @@
         "monoculture": "red",
         "single_points_of_failure": "amber",
         "cascade_depth": "green",
-        "convexity": "red",
+        "convexity": "amber",
         "ruin": "red",
+        "distance_to_ruin": "red",
         "optionality": "amber",
         "slack": "red"
       },
@@ -1025,8 +1074,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 1.0,
-        "convexity": 166.66666666666669,
+        "convexity": -79.16666666666667,
         "ruin": 1.0,
+        "distance_to_ruin": 1.0,
         "optionality": 1.0,
         "slack": 0.0
       },
@@ -1058,6 +1108,7 @@
         "cascade_depth": "green",
         "convexity": "green",
         "ruin": "red",
+        "distance_to_ruin": "red",
         "optionality": "amber",
         "slack": "red"
       },
@@ -1068,6 +1119,7 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 1.0,
+        "distance_to_ruin": 0.8000000000001819,
         "optionality": 1.0,
         "slack": 0.0
       },
@@ -1097,6 +1149,7 @@
         "cascade_depth": "green",
         "convexity": "green",
         "ruin": "green",
+        "distance_to_ruin": "amber",
         "optionality": "amber",
         "slack": "red"
       },
@@ -1107,19 +1160,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 1.0000000000002274,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_metric_status": {
@@ -1138,6 +1192,7 @@
         "cascade_depth": "green",
         "convexity": "green",
         "ruin": "green",
+        "distance_to_ruin": "amber",
         "optionality": "amber",
         "slack": "red"
       },
@@ -1148,19 +1203,20 @@
         "cascade_depth": 1.0,
         "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 1.400000000000091,
         "optionality": 1.0,
         "slack": 0.0
       },
       "group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_group_status": {
         "Concentration": "red",
         "Contagion": "amber",
-        "Convexity": "green",
+        "Convexity": "amber",
         "Optionality": "red"
       },
       "expected_metric_status": {
@@ -1181,6 +1237,7 @@
         "cascade_depth": "green",
         "convexity": "green",
         "ruin": "red",
+        "distance_to_ruin": "red",
         "optionality": "amber",
         "slack": "red"
       },
@@ -1189,8 +1246,9 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 1.0,
-        "convexity": -39.9999999999998,
+        "convexity": -21.875,
         "ruin": 1.0,
+        "distance_to_ruin": 0.5857864376271209,
         "optionality": 1.0,
         "slack": 0.0
       },
@@ -1219,10 +1277,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "amber",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "amber"
       },
@@ -1231,20 +1290,21 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 2.0,
-        "convexity": 100.0,
+        "convexity": 8.0,
         "ruin": 0.0,
+        "distance_to_ruin": 3.3333333333339397,
         "optionality": 2.0,
         "slack": 0.2
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
@@ -1260,10 +1320,11 @@
       "metric_status": {
         "hhi": "amber",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "amber",
         "convexity": "red",
-        "ruin": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "amber",
         "slack": "amber"
       },
@@ -1272,20 +1333,21 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 2.0,
-        "convexity": 40.0,
+        "convexity": 6.333333333333333,
         "ruin": 0.0,
+        "distance_to_ruin": 2.954545454545496,
         "optionality": 1.0,
         "slack": 0.15
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
+        "Contagion": "red",
         "Convexity": "red",
         "Optionality": "amber"
       },
@@ -1303,10 +1365,11 @@
       "metric_status": {
         "hhi": "red",
         "monoculture": "red",
-        "single_points_of_failure": "amber",
+        "single_points_of_failure": "red",
         "cascade_depth": "amber",
-        "convexity": "red",
-        "ruin": "green",
+        "convexity": "green",
+        "ruin": "not_tested",
+        "distance_to_ruin": "green",
         "optionality": "green",
         "slack": "green"
       },
@@ -1315,21 +1378,22 @@
         "monoculture": 1.0,
         "single_points_of_failure": 1.0,
         "cascade_depth": 2.0,
-        "convexity": 33.333333333333336,
+        "convexity": 0.0,
         "ruin": 0.0,
+        "distance_to_ruin": 3.9285714285715585,
         "optionality": 2.0,
         "slack": 0.6
       },
       "group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "red",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_group_status": {
         "Concentration": "red",
-        "Contagion": "amber",
-        "Convexity": "red",
+        "Contagion": "red",
+        "Convexity": "not_tested",
         "Optionality": "green"
       },
       "expected_metric_status": {}

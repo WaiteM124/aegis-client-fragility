@@ -29,6 +29,7 @@ Accepted
 
 - Implemented in `metrics/ruin.py` and `metrics/thresholds.py` (`RuinThresholds.survival_floor = 0.5`). Resolution order: scenario / `--survival-floor` → graph YAML → default.
 - `metrics/run_all.py` forces the Convexity group to red when ruin is red.
+- Without an explicit probe, ruin returns `NOT_TESTED` rather than silently running the ladder ([ADR-015](ADR-015-convexity-distance-to-ruin-not-tested.md)).
 - Related: stress ladder intensities in [ADR-011](ADR-011-stress-ladder.md).
 
 ## Alternatives rejected

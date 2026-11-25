@@ -11,23 +11,28 @@ graph:
     type: alpha
     region: north
     technology: x
+    critical: false
   - id: s2
     kind: supplier
     type: beta
     region: south
     technology: y
+    critical: false
   - id: s3
     kind: supplier
     type: gamma
     region: east
     technology: z
+    critical: false
   - id: s4
     kind: supplier
     type: delta
     region: west
     technology: w
+    critical: false
   - id: client
     kind: buyer
+    critical: false
   edges:
   - source: s1
     target: client
@@ -57,9 +62,16 @@ graph:
     capacity: 50
     buffer: 10
     stress_response: linear
+  ruin_line:
+    survival_floor: 0.5
+  inputs:
+  - id: supply_shock
+    worst_on_record: 0.2
+    lower_bound: 0.0
+    upper_bound: 1.0
 expected_metric_status: {}
 expected_group_status:
   Concentration: green
   Contagion: green
-  Convexity: green
+  Convexity: not_tested
   Optionality: green
