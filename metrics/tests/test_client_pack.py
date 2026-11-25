@@ -125,12 +125,27 @@ def test_chillco_model_lives_under_clients():
     assert not (Path("metrics/examples/chillco.yaml")).exists()
 
 
-def test_carillion_has_no_model_numbers():
-    assert list_model_paths("carillion") == []
+def test_carillion_blind_model_present_and_cut_off_clean():
+    """Blind model from the logged pack; cut-off still holds; citations/gaps present."""
+    from metrics.graph_loader import load_graph_spec
+
+    models = list_model_paths("carillion")
+    assert len(models) == 1
+    assert models[0].name == "carillion.yaml"
+    spec = load_graph_spec(models[0])
+    assert spec.name == "carillion"
+    assert spec.client_id == "carillion"
+    assert spec.liquidity is not None
+    assert spec.customers
+    # No post-cut-off sources; 2016 AR must not appear.
+    client = load_client("carillion")
+    manifest = load_sources_manifest("carillion")
+    check_backtest_cut_off(client, manifest)
+    ids = {s["id"] for s in manifest["sources"]}
+    assert "ar-2016" not in ids
     model_dir = CLIENTS_ROOT / "carillion" / "model"
-    assert model_dir.is_dir()
-    for p in model_dir.iterdir():
-        assert p.name.startswith(".") or p.name == ".gitkeep"
+    assert (model_dir / "CITATIONS.md").is_file()
+    assert (model_dir / "GAPS.md").is_file()
 
 
 def test_confidential_guard_flags_tracked_payload(tmp_path, monkeypatch):
@@ -241,8 +256,8 @@ def test_resolve_method_tag_prefers_explicit():
     )
 
 
-def test_method_freeze_ok_when_no_locked_maps_or_no_tag():
-    # Repo carillion maps/ has only .gitkeep today — guard must pass.
+def test_method_freeze_ok_when_locked_map_matches_tag():
+    # Locked Carillion map (if present) must match carillion-method-v1 metrics tree.
     check_locked_maps_method_freeze()
 
 
