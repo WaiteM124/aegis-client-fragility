@@ -1,0 +1,36 @@
+Aegis structural-fragility metrics
+No forecast — structural weaknesses only. No blended score.
+
+=== Concentration  [RED] ===
+  - hhi                       value=0.30380564476198574  status=AMBER
+      drivers: uk_epf_suppliers, uk_direct_suppliers
+  - monoculture               value=0.7284427284427285  status=RED
+      drivers: region:uk, uk_epf_suppliers, uk_direct_suppliers, back_office_outsourcing_partner
+  - customer_hhi              value=0.35784863470800005  status=AMBER
+      drivers: uk_other_customers
+  - customer_monoculture      value=0.8082150000000001  status=RED
+      drivers: public_sector:false, uk_other_customers, mena_customers, canada_customers, row_customers
+
+=== Contagion  [RED] ===
+  - single_points_of_failure  value=0.0           status=GREEN
+  - cascade_depth             value=3.0           status=AMBER
+      drivers: uk_epf_suppliers
+  - customer_spof             value=2.0           status=RED
+      drivers: uk_infrastructure_services, uk_other_customers, public_sector:uk_infrastructure_services
+
+=== Convexity  [RED] ===
+  - convexity                 value=8788.702287162143  status=RED
+      drivers: shape=fragile, mean_curvature=8788.702287, cliffs=7, unknown_margin:smart_motorways_highways_england, unknown_margin:a14_cambridge_huntingdon
+  - ruin                      value=0.0           status=GREEN
+  - distance_to_ruin          value=1.4140060060060478  status=AMBER
+      drivers: liquidity_shock:1.710x/survival_floor, me_order_book_shock:1.414x/survival_floor, supply_shock:NOT_TESTED, construction_cost_shock:NOT_TESTED
+  - runway                    value=0.0           status=RED
+      drivers: unknown:fixed_monthly_outflows
+  - energy_margin             value=0.0           status=NOT_TESTED
+      reason: optional_section_absent
+
+=== Optionality  [RED] ===
+  - optionality               value=3.0           status=GREEN
+      drivers: path1:back_office_outsourcing_partner→support_services_platform→carillion, path2:canada_suppliers→construction_ex_me_platform→carillion, path3:me_suppliers→me_construction_platform→carillion
+  - slack                     value=0.03218195893390356  status=RED
+      drivers: support_services_platform->carillion

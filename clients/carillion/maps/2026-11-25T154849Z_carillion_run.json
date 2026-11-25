@@ -1,0 +1,156 @@
+{
+  "client_id": "carillion",
+  "git_commit": "7573192056bbc72add49b6f6685ba1c86cfa841f",
+  "graph_name": "carillion",
+  "graph_sha256": "1a4d6cedca1030770b5257deb9a2a957bc6d18cc4b77ffab91b918731216c304",
+  "method_tag": "carillion-method-v1",
+  "metrics": [
+    {
+      "drivers": [
+        "uk_epf_suppliers",
+        "uk_direct_suppliers"
+      ],
+      "metric": "hhi",
+      "status": "amber",
+      "value": 0.30380564476198574,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "region:uk",
+        "uk_epf_suppliers",
+        "uk_direct_suppliers",
+        "back_office_outsourcing_partner"
+      ],
+      "metric": "monoculture",
+      "status": "red",
+      "value": 0.7284427284427285,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "uk_other_customers"
+      ],
+      "metric": "customer_hhi",
+      "status": "amber",
+      "value": 0.35784863470800005,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "public_sector:false",
+        "uk_other_customers",
+        "mena_customers",
+        "canada_customers",
+        "row_customers"
+      ],
+      "metric": "customer_monoculture",
+      "status": "red",
+      "value": 0.8082150000000001,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [],
+      "metric": "single_points_of_failure",
+      "status": "green",
+      "value": 0.0,
+      "version": "2.0.0"
+    },
+    {
+      "drivers": [
+        "uk_epf_suppliers"
+      ],
+      "metric": "cascade_depth",
+      "status": "amber",
+      "value": 3.0,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "uk_infrastructure_services",
+        "uk_other_customers",
+        "public_sector:uk_infrastructure_services"
+      ],
+      "metric": "customer_spof",
+      "status": "red",
+      "value": 2.0,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "shape=fragile",
+        "mean_curvature=8788.702287",
+        "cliffs=7",
+        "unknown_margin:smart_motorways_highways_england",
+        "unknown_margin:a14_cambridge_huntingdon"
+      ],
+      "metric": "convexity",
+      "status": "red",
+      "value": 8788.702287162143,
+      "version": "2.1.0"
+    },
+    {
+      "drivers": [],
+      "metric": "ruin",
+      "status": "green",
+      "value": 0.0,
+      "version": "3.0.0"
+    },
+    {
+      "drivers": [
+        "liquidity_shock:1.710x/survival_floor",
+        "me_order_book_shock:1.414x/survival_floor",
+        "supply_shock:NOT_TESTED",
+        "construction_cost_shock:NOT_TESTED"
+      ],
+      "metric": "distance_to_ruin",
+      "status": "amber",
+      "value": 1.4140060060060478,
+      "version": "2.0.0"
+    },
+    {
+      "drivers": [
+        "unknown:fixed_monthly_outflows"
+      ],
+      "metric": "runway",
+      "status": "red",
+      "value": 0.0,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [],
+      "metric": "energy_margin",
+      "status": "not_tested",
+      "value": 0.0,
+      "version": "1.0.0"
+    },
+    {
+      "drivers": [
+        "path1:back_office_outsourcing_partner\u2192support_services_platform\u2192carillion",
+        "path2:canada_suppliers\u2192construction_ex_me_platform\u2192carillion",
+        "path3:me_suppliers\u2192me_construction_platform\u2192carillion"
+      ],
+      "metric": "optionality",
+      "status": "green",
+      "value": 3.0,
+      "version": "2.0.0"
+    },
+    {
+      "drivers": [
+        "support_services_platform->carillion"
+      ],
+      "metric": "slack",
+      "status": "red",
+      "value": 0.03218195893390356,
+      "version": "1.0.0"
+    }
+  ],
+  "package_version": "0.1.0",
+  "probe": {
+    "stress_ladder": true,
+    "survival_floor": 0.5
+  },
+  "run_id": "d9b7fcfb-e204-465f-b04f-f5793c98925e",
+  "schema_version": "run_record.v2",
+  "ts_utc": "2026-11-25T15:48:49.157Z"
+}

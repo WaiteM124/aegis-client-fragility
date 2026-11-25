@@ -1,0 +1,389 @@
+# Carillion plc — dependency model for the public backtest (cut-off 2017-03-01).
+# Built ONLY from clients/carillion/sources/manifest.yaml. No post-cut-off material.
+# Every figure carries a citation (manifest source id + page/section) in CITATIONS.md.
+# Unknowns are left unknown (fragile) — see GAPS.md. No prediction claim.
+#
+# Units: revenue / activity flows in £ million (GBPm); shares are fractions of
+# group total revenue £5,214.2m (fy-results-2016) unless noted. Supply shares
+# use geographic revenue as a cited activity proxy where named supplier shares
+# are not disclosed.
+name: carillion
+client_id: carillion
+nodes:
+# --- Supply side (aggregated: named individual suppliers not disclosed) ---
+- id: uk_epf_suppliers
+  kind: supplier
+  type: uk_epf_supply
+  region: uk
+  technology: early_payment_facility_panel
+  critical: false
+- id: uk_direct_suppliers
+  kind: supplier
+  type: uk_direct_supply
+  region: uk
+  technology: non_epf_pay
+  critical: false
+- id: me_suppliers
+  kind: supplier
+  type: me_construction_supply
+  region: middle_east
+  technology: building_civil_supply
+  critical: false
+- id: canada_suppliers
+  kind: supplier
+  type: canada_supply
+  region: canada
+  technology: support_and_construction_supply
+  critical: false
+- id: row_suppliers
+  kind: supplier
+  type: row_supply
+  region: rest_of_world
+  technology: other
+  critical: false
+- id: back_office_outsourcing_partner
+  kind: supplier
+  type: back_office_it
+  region: uk
+  technology: outsourced_platform
+  critical: true
+# --- Payment / working-capital corridor ---
+- id: early_payment_facility
+  kind: route
+  type: supplier_payment_facility
+  region: uk
+  technology: epf
+  critical: true
+# --- Operating platforms (reporting segments) ---
+- id: support_services_platform
+  kind: asset
+  type: support_services
+  region: multi
+  technology: fm_infrastructure_services
+  critical: true
+- id: ppp_platform
+  kind: asset
+  type: ppp_investing
+  region: uk_canada
+  technology: government_ppp
+  critical: false
+- id: me_construction_platform
+  kind: asset
+  type: construction
+  region: middle_east
+  technology: building_civil
+  critical: false
+- id: construction_ex_me_platform
+  kind: asset
+  type: construction
+  region: uk_canada
+  technology: building_civil_developments
+  critical: false
+# --- Company ---
+- id: carillion
+  kind: buyer
+  critical: false
+edges:
+# UK external spend: EPF covers 60% (ar-2015); residual 40% direct.
+# UK geographic revenue share 3784.3/5214.2 = 0.7258 (fy-results-2016 note 2).
+- source: uk_epf_suppliers
+  target: early_payment_facility
+  share: 0.4355
+  flow: 435.5
+  capacity: 480.0
+  buffer: 0.0
+- source: early_payment_facility
+  target: support_services_platform
+  share: 0.2613
+  flow: 261.3
+  capacity: 290.0
+  buffer: 0.0
+- source: early_payment_facility
+  target: construction_ex_me_platform
+  share: 0.1742
+  flow: 174.2
+  capacity: 195.0
+  buffer: 0.0
+- source: uk_direct_suppliers
+  target: support_services_platform
+  share: 0.1742
+  flow: 174.2
+  capacity: 195.0
+  buffer: 0.0
+- source: uk_direct_suppliers
+  target: construction_ex_me_platform
+  share: 0.1161
+  flow: 116.1
+  capacity: 130.0
+  buffer: 0.0
+# Middle East geographic share 786.7/5214.2 = 0.1509
+- source: me_suppliers
+  target: me_construction_platform
+  share: 0.1509
+  flow: 150.9
+  capacity: 170.0
+  buffer: 0.0
+# Canada geographic share 596.4/5214.2 = 0.1144
+- source: canada_suppliers
+  target: support_services_platform
+  share: 0.0686
+  flow: 68.6
+  capacity: 80.0
+  buffer: 0.0
+- source: canada_suppliers
+  target: construction_ex_me_platform
+  share: 0.0458
+  flow: 45.8
+  capacity: 55.0
+  buffer: 0.0
+# Rest of world 46.8/5214.2 = 0.0090
+- source: row_suppliers
+  target: support_services_platform
+  share: 0.0090
+  flow: 9.0
+  capacity: 12.0
+  buffer: 0.0
+# Back-office outsourcing partner — disclosed dependency for FM technology
+# platform (fy-results-2016 support-services narrative). Share not disclosed →
+# small structural stub so the critical node is connected; not a revenue share.
+- source: back_office_outsourcing_partner
+  target: support_services_platform
+  share: 0.01
+  flow: 10.0
+  capacity: 12.0
+  buffer: 0.0
+# Segment platforms → company (segment total revenue / group total)
+- source: support_services_platform
+  target: carillion
+  share: 0.5203
+  flow: 2712.7
+  capacity: 2800.0
+  buffer: 0.0
+- source: ppp_platform
+  target: carillion
+  share: 0.0600
+  flow: 313.0
+  capacity: 350.0
+  buffer: 0.0
+- source: me_construction_platform
+  target: carillion
+  share: 0.1282
+  flow: 668.3
+  capacity: 750.0
+  buffer: 0.0
+- source: construction_ex_me_platform
+  target: carillion
+  share: 0.2915
+  flow: 1520.2
+  capacity: 1650.0
+  buffer: 0.0
+inputs:
+# Cited WOR: 2016 average net borrowing £586.5m vs year-end £218.9m →
+# intra-year absorption £367.6m / available liquidity
+# (cash £469.8m + undrawn bank £724.1m = £1,193.9m) ≈ 0.31
+# (fy-results-2016 key figures, cash-flow table, note 9).
+- id: liquidity_shock
+  worst_on_record: 0.31
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: fy-results-2016 — average vs year-end net borrowing / available liquidity
+    as_of: "2017-03-01"
+    note: >
+      WOR = (586.5 − 218.9) / (469.8 + (870.0 − 145.9)) ≈ 0.31.
+      Structural cash-absorption swing observed in 2016 accounts; not a forecast.
+# Cited WOR: Middle East order book + probable orders £0.8bn (2015) → £0.5bn
+# (2016) = 37.5% contraction (fy-results-2016 ME construction section).
+- id: me_order_book_shock
+  worst_on_record: 0.375
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: fy-results-2016 — ME orders+probable £0.8bn to £0.5bn
+    as_of: "2017-03-01"
+    note: >
+      Observed year-on-year contraction of ME construction order book plus
+      probable orders. Structural scan anchor only.
+# No pack figure for a general supplier-interruption intensity → unknown.
+- id: supply_shock
+  worst_on_record: null
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: unknown — no cited general supply-interruption WOR in pack
+    as_of: "2017-03-01"
+    note: Marked unknown; method treats missing WOR as not tested / fragile.
+# No pack figure for a historical construction cost-overrun fraction → unknown.
+- id: construction_cost_shock
+  worst_on_record: null
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: unknown — no cited construction input-cost overrun WOR in pack
+    as_of: "2017-03-01"
+    note: Marked unknown; see GAPS.md.
+ruin_line:
+  # Method-default survival floor (metrics/thresholds.py at carillion-method-v1).
+  # Not a Carillion-disclosed figure.
+  survival_floor: 0.5
+# --- Optional financial sections (ADR-019) ---
+liquidity:
+  cash_on_hand: 469.8
+  currency: GBPm
+  # Not disclosed as a single fixed-monthly figure → null (fragile for runway).
+  fixed_monthly_outflows: null
+  stress_input_id: liquidity_shock
+  committed_facilities:
+  - id: committed_bank_facilities
+    limit: 870.0
+    drawn: 145.9
+    source:
+      label: fy-results-2016 — committed bank facilities £870m; bank loans £145.9m
+      as_of: "2016-12-31"
+      note: >
+        Key figures table (facilities) and note 9 (bank loans). Undrawn =
+        870.0 − 145.9 = 724.1. Main RCF £790m renewed Nov 2015
+        (bank-facility-renewal-2015) plus bilaterals to £870m (ar-2015).
+  - id: schuldschein_jan_2017
+    limit: 112.0
+    drawn: 112.0
+    source:
+      label: schuldschein-refinancing-2017 / fy-results-2016 — £112m Schuldschein
+      as_of: "2017-01-30"
+      note: >
+        Replacement financing for maturing facilities; average maturity ~5 years.
+        Fully drawn term funding — adds no undrawn headroom.
+  source:
+    label: fy-results-2016 — cash £469.8m; facilities; average net borrowing
+    as_of: "2016-12-31"
+    note: >
+      Cash and cash equivalents £469.8m (balance sheet / note 9). Fixed monthly
+      outflows not disclosed as one figure — left null (fragile). USPP £360.8m
+      and convertibles £170.0m are drawn term debt, not undrawn facilities
+      (recorded in GAPS.md / CITATIONS.md).
+# Covenants: wording disclosed without numerical limits → cannot populate
+# schema (limit is required number). See GAPS.md.
+covenants: []
+contracts:
+# Segment-level construction books: accounting note describes final out-turn
+# estimation (contractor bears cost risk once measurable) → pricing fixed.
+- id: construction_ex_me_book
+  counterparty: Construction services customers (ex-Middle East)
+  revenue_share: 0.2915
+  margin: 0.027
+  pricing: fixed
+  termination_notice_days: null
+  loss_exposure: null
+  input_cost_exposed: true
+  source:
+    label: fy-results-2016 — Construction ex-ME revenue £1,520.2m; margin 2.7%; revenue-recognition note
+    as_of: "2016-12-31"
+    note: >
+      Segment revenue / group total; underlying operating margin 2.7%.
+      Revenue-recognition judgement on construction final out-turn.
+- id: me_construction_book
+  counterparty: Middle East construction customers
+  revenue_share: 0.1282
+  margin: 0.024
+  pricing: fixed
+  termination_notice_days: null
+  loss_exposure: null
+  input_cost_exposed: true
+  source:
+    label: fy-results-2016 — ME construction revenue £668.3m; underlying margin 2.4%
+    as_of: "2016-12-31"
+    note: >
+      Segment margin 2.4% (excluding 2015 Oman accommodation reorganisation
+      comparison narrative). Final out-turn estimation as for construction.
+# Named construction packages with target-cost / fixed construction language;
+# contract-level margin not disclosed → margin null (fragile if probed).
+- id: smart_motorways_highways_england
+  counterparty: Highways England (Carillion–Kier JV)
+  revenue_share: 0.0
+  margin: null
+  pricing: fixed
+  termination_notice_days: null
+  loss_exposure: null
+  input_cost_exposed: true
+  source:
+    label: contract-smart-motorways-2015 — target costs; package up to ~£475m
+    as_of: "2015-07-22"
+    note: >
+      RNS states final target costs agreed with Highways England. Carillion
+      share of package not stated as a % of 2016 group revenue — revenue_share
+      left 0.0 so it does not invent concentration; structural fixed-price flag only.
+- id: a14_cambridge_huntingdon
+  counterparty: Highways England (Carillion–Balfour Beatty 50:50 JV)
+  revenue_share: 0.0
+  margin: null
+  pricing: fixed
+  termination_notice_days: null
+  loss_exposure: null
+  input_cost_exposed: true
+  source:
+    label: contract-a14-2015 — £292m package for the JV
+    as_of: "2015-09-21"
+    note: >
+      Construction package under Collaborative Delivery Framework. JV share
+      implies Carillion ~£146m over multi-year delivery — not converted to a
+      2016 revenue_share (would invent an annualisation).
+customers:
+# Partitioned geographic / activity groups; shares sum to 1.0.
+- id: uk_infrastructure_services
+  revenue_share: 0.191785
+  public_sector: true
+  critical: true
+  type: infrastructure_services
+  region: uk
+  source:
+    label: trading-update-2016-12 — upwards of £1bn UK infrastructure-services revenue
+    as_of: "2016-12-07"
+    note: >
+      £1,000m / £5,214.2m ≈ 0.191785. Largely public-sector highways, digital,
+      railways (Autumn Statement context in same update). Lower-bound wording
+      ("upwards of") — share is a floor, not an upper bound.
+- id: uk_other_customers
+  revenue_share: 0.533985
+  public_sector: false
+  critical: false
+  type: mixed_uk
+  region: uk
+  source:
+    label: fy-results-2016 note 2 — UK total revenue £3,784.3m less £1,000m infrastructure floor
+    as_of: "2016-12-31"
+    note: >
+      (3784.3 − 1000) / 5214.2 ≈ 0.533985. Mix of private FM (Nationwide, Centrica,
+      Openreach) and other public FM (Scape, local government, MoD support) —
+      public/private split inside this bucket is unknown (GAPS.md).
+- id: mena_customers
+  revenue_share: 0.150877
+  public_sector: false
+  critical: false
+  type: middle_east_customers
+  region: middle_east
+  source:
+    label: fy-results-2016 note 2 — MENA total revenue from external customers £786.7m
+    as_of: "2016-12-31"
+    note: 786.7 / 5214.2 ≈ 0.150877. Includes government and private; split unknown.
+- id: canada_customers
+  revenue_share: 0.114380
+  public_sector: false
+  critical: false
+  type: canada_customers
+  region: canada
+  source:
+    label: fy-results-2016 note 2 — Canada total revenue from external customers £596.4m
+    as_of: "2016-12-31"
+    note: 596.4 / 5214.2 ≈ 0.114380. Includes public (e.g. Manitoba Hydro) and private.
+- id: row_customers
+  revenue_share: 0.008973
+  public_sector: false
+  critical: false
+  type: other
+  region: rest_of_world
+  source:
+    label: fy-results-2016 note 2 — Rest of the World £46.8m
+    as_of: "2016-12-31"
+    note: 46.8 / 5214.2 ≈ 0.008973.
+# Energy cost-to-margin not disclosed as a % of revenue (energy services is a
+# revenue line). Section omitted → energy_margin NOT_TESTED. See GAPS.md.

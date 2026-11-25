@@ -75,7 +75,9 @@ CI runs `python -m metrics.client_pack --check-method-freeze`. If
 `clients/carillion/maps` contains a locked run record whose `method_tag`
 points at a git tag whose `metrics/*.py` tree (including `thresholds.py`)
 **differs** from the working tree, the check fails with a clear message.
-Maps without `method_tag` are skipped (backward compatible).
+Maps without `method_tag` are skipped (backward compatible). The backend
+job checks out with `fetch-tags: true` and `fetch-depth: 0` so the
+`method_tag` object is present (default shallow PR checkouts omit tags).
 
 ## Source pack and cut-off (not re-tagged by metric changes)
 

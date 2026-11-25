@@ -59,8 +59,7 @@ not as reassuring defaults:
 
 - `client.yaml` — kind `backtest`, classification `public`, cut-off set.
 - `sources/manifest.yaml` — logged public sources (publication_date ≤ cut-off).
-- `model/` — intentionally empty until the method is tagged and a blind model
-  is built (**no Carillion model numbers** in this commit).
-- `maps/` — locked maps go here once a freeze and model exist (`method_tag`
-  recorded on lock).
+- `model/carillion.yaml` — blind dependency model from the source pack only;
+  `model/CITATIONS.md` and `model/GAPS.md` record citations and unknowns.
+- `maps/` — locked maps (`method_tag: carillion-method-v1`); never edited after creation.
 - `runs/` — local run records (gitignored).
