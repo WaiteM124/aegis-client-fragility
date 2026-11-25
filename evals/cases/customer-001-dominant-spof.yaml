@@ -1,0 +1,59 @@
+id: customer-001-dominant-spof
+description: >
+  Single dominant customer on the sales side (critical, ~100% revenue share)
+  must flag customer_spof red. Supplier-side SPOF stays separate — this case
+  has a direct supplier→client edge with no intermediate cut node. Structural
+  weakness detection only; no forecast.
+weakness: customer_sales_spof
+is_control: false
+detecting_metrics:
+- customer_spof
+- customer_hhi
+graph:
+  name: customer-001-dominant-spof
+  nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+    critical: false
+  - id: s2
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+    critical: false
+  - id: client
+    kind: buyer
+    critical: false
+  edges:
+  - source: s1
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+  - source: s2
+    target: client
+    share: 0.5
+    flow: 50
+    capacity: 55
+    buffer: 5
+  customers:
+  - id: mega_buyer
+    revenue_share: 1.0
+    public_sector: true
+    critical: true
+    type: government
+    region: uk
+    source:
+      label: EXAMPLE DATA — eval placeholder dominant customer
+      as_of: "2016-01-01"
+expected_metric_status:
+  customer_spof: red
+  customer_hhi: red
+expected_group_status:
+  Contagion: red
+  Concentration: red
+scenario: {}

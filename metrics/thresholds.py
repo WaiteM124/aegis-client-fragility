@@ -148,6 +148,34 @@ class SlackThresholds:
 
 
 @dataclass(frozen=True)
+class RunwayThresholds:
+    """Liquidity runway in months. Low = fragile cash structure.
+
+    red    if runway_months < red_max_months
+    amber  if runway_months < amber_max_months
+    green  otherwise (when fully specified)
+    """
+
+    version: str = "1.0.0"
+    red_max_months: float = 3.0
+    amber_max_months: float = 6.0
+
+
+@dataclass(frozen=True)
+class EnergyMarginThresholds:
+    """Unrecovered energy cost share linked to margin.
+
+    red    if unrecovered_share > red_min
+    amber  if unrecovered_share > amber_min
+    green  otherwise (when fully specified)
+    """
+
+    version: str = "1.0.0"
+    amber_min: float = 0.05
+    red_min: float = 0.15
+
+
+@dataclass(frozen=True)
 class Thresholds:
     hhi: HHIThresholds = field(default_factory=HHIThresholds)
     monoculture: MonocultureThresholds = field(default_factory=MonocultureThresholds)
@@ -160,6 +188,10 @@ class Thresholds:
     )
     optionality: OptionalityThresholds = field(default_factory=OptionalityThresholds)
     slack: SlackThresholds = field(default_factory=SlackThresholds)
+    runway: RunwayThresholds = field(default_factory=RunwayThresholds)
+    energy_margin: EnergyMarginThresholds = field(
+        default_factory=EnergyMarginThresholds
+    )
 
 
 THRESHOLDS = Thresholds()

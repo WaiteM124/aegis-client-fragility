@@ -20,7 +20,7 @@ Single source of truth for humans and AI agents (including Cursor) working in th
 | `backend/retrieval` | Evidence retrieval against the knowledge repository |
 | `backend/decision_engine` | Deterministic risk scorer (event impact scoring — distinct from fragility metrics) |
 | `metrics/` | Deterministic structural-fragility metrics (`compute(graph, scenario) -> MetricResult`); one file per metric; small test graphs under `metrics/examples/`; package tests under `metrics/tests/`; run records (`schemas/run_record.v1.json` / `v2`) and local DuckDB store (`metrics.store`); client-pack helpers (`metrics.client_pack`) |
-| `clients/` | Per-client packs (`client.yaml`, `model/`, `sources/`, `maps/`, `runs/`); JSON schemas; example ChillCo and Carillion backtest skeleton ([ADR-018](docs/decisions/ADR-018-client-packs-and-confidential-data.md)) |
+| `clients/` | Per-client packs (`client.yaml`, `model/`, `sources/`, `maps/`, `runs/`); JSON schemas (`client.v1`, `sources_manifest.v1`, `dependency_graph.v1` with optional financial sections); example ChillCo and Carillion backtest skeleton ([ADR-018](docs/decisions/ADR-018-client-packs-and-confidential-data.md), [ADR-019](docs/decisions/ADR-019-financial-side-model.md)) |
 | `backend/model_gateway` | `DeterministicModelProvider` (default) and `GeminiModelProvider` |
 | `backend/persistence` | SQLite / Firestore stores; in-memory / Pub/Sub buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, config, structured logging |
@@ -141,4 +141,4 @@ Do not frame eval results as forecasts. Metric formula bugs found by the suite a
 - [CONTRIBUTING.md](CONTRIBUTING.md) — short human setup and PR conventions
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
-- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–018; engineering ADRs 001–004; eval gate ADR-014)
+- [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–019; engineering ADRs 001–004; eval gate ADR-014)

@@ -1,0 +1,61 @@
+id: covenant-001-breaches-before-floor
+description: >
+  Debt covenant (net debt / EBITDA) reaches its limit at 1× cited
+  worst_on_record while the survival floor on deliverable flow sits far
+  below reachable ladder loss. First breach must be the covenant — not the
+  cash/flow floor. Structural weakness detection only; no forecast.
+weakness: covenant_before_survival_floor
+is_control: false
+detecting_metrics:
+- distance_to_ruin
+- ruin
+graph:
+  name: covenant-001-breaches-before-floor
+  nodes:
+  - id: s1
+    kind: supplier
+    type: commodity
+    region: local
+    technology: bulk
+    critical: false
+  - id: client
+    kind: buyer
+    critical: false
+  edges:
+  - source: s1
+    target: client
+    share: 1.0
+    flow: 100
+    capacity: 100
+    buffer: 0
+    stress_response: linear
+  ruin_line:
+    # Very low floor: linear ladder at δ=0.5 leaves F=50 ≥ 0.1×F0 — floor holds.
+    survival_floor: 0.1
+  inputs:
+  - id: leverage_shock
+    # Headroom 0.5 / WOR 0.6 ≈ 0.833× → red (≤1×). At δ=1.0 stressed=3.6 > 3.5.
+    worst_on_record: 0.6
+    lower_bound: 0.0
+    upper_bound: 5.0
+    source:
+      label: EXAMPLE DATA — eval placeholder leverage WOR
+      as_of: "2016-01-01"
+  covenants:
+  - id: net_debt_ebitda
+    kind: max
+    metric: net_debt_ebitda
+    limit: 3.5
+    current: 3.0
+    stress_input_id: leverage_shock
+    source:
+      label: EXAMPLE DATA — eval placeholder covenant
+      as_of: "2016-12-31"
+expected_metric_status:
+  distance_to_ruin: red
+  ruin: red
+expected_group_status:
+  Convexity: red
+scenario:
+  run_stress_ladder: true
+  stress_ladder: [0.5, 1.0]
