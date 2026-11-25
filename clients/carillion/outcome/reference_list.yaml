@@ -1,0 +1,800 @@
+# Carillion outcome reference list (ADR-020).
+# Path: clients/carillion/outcome/reference_list.yaml
+#
+# Each item is a structural weakness named by an authoritative post-event
+# source as causal or contributing. We do not invent weaknesses from
+# hindsight narrative; the source's wording carries the claim.
+#
+# Mapping uses model entity IDs from clients/carillion/model/carillion.yaml
+# and published metric module names only. This file contains no map statuses
+# and no scoring categories (hit / miss / false flag).
+#
+# Metric names (frozen method carillion-method-v1):
+#   Concentration: hhi, monoculture, customer_hhi, customer_monoculture
+#   Contagion:     single_points_of_failure, cascade_depth, customer_spof
+#   Convexity:     convexity, ruin, distance_to_ruin, runway, energy_margin
+#   Optionality:   optionality, slack
+
+schema_version: outcome_reference_list.v1
+client_id: carillion
+procedure: docs/decisions/ADR-020-backtest-scoring.md
+model_id_source: clients/carillion/model/carillion.yaml
+blinding:
+  followed: true
+  statement: >
+    Maps under clients/carillion/maps/ were not opened, read, or grepped.
+    run_all / metric compute was not run for Carillion while producing this list.
+
+items:
+
+  - id: OW-01
+    title: Unsustainable debt-funded acquisitive growth
+    description: >
+      Rising borrowing used to fund acquisitions and growth, leaving an
+      unsustainable debt burden that official sources name as bringing the
+      company down (together with later contract write-downs).
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §§8–9, §14"
+        quote_or_paraphrase: >
+          "Its business model was a relentless dash for cash, driven by
+          acquisitions, rising debt, expansion into new markets and
+          exploitation of suppliers." The committee concludes Carillion
+          "funded its spending spree through debt" and became "increasingly
+          reckless in the pursuit of growth."
+      - source_id: tpr-carillion-s89
+        locator: "Case summary (opening paragraph)"
+        quote_or_paraphrase: >
+          "The Carillion Group went into insolvency in January 2018, brought
+          down by the unsustainable level of its debt and an £845 million
+          write-down in the value of several major long-term construction
+          contracts."
+    mapping:
+      metrics:
+        - runway
+        - distance_to_ruin
+        - ruin
+      drivers:
+        - entity_kind: financial_input
+          entity_id: liquidity_shock
+        - entity_kind: liquidity_facility
+          entity_id: committed_bank_facilities
+      notes: >
+        Hit for later scoring would require RED/AMBER on liquidity /
+        ruin-line metrics whose drivers name these liquidity entities.
+        Acquisition history itself is not a first-class graph object.
+    judgements:
+      - kind: inclusion
+        reason: >
+          Both the joint committee and TPR explicitly name unsustainable debt
+          (from the acquisitive model) as causal / bringing the company down.
+      - kind: mapping
+        reason: >
+          Mapped to liquidity / ruin metrics and liquidity_shock /
+          committed_bank_facilities because those are the model's
+          representation of debt/facility headroom. No separate 'acquisitions'
+          or 'gross debt' entity exists — residual acquisition narrative is
+          not scored as its own driver.
+
+  - id: OW-02
+    title: Thin cash generation and working-capital fragility
+    description: >
+      Structurally weak cash conversion and working capital relative to the
+      scale of recognised profits and liabilities; official sources link this
+      to reliance on short-term cash measures and eventual cash exhaustion.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Chapter 1 §78; §§93–94"
+        quote_or_paraphrase: >
+          Working-capital ratio "remained static at around 1.0 between 2013
+          and 2016"; the committee ties EPF classification to hiding failure
+          "to generate enough cash to support the revenues it was recognising"
+          (reclassified cash conversion ~7% vs reported >100%).
+      - source_id: frc-kpmg-sanctions-2023
+        locator: "Summary of Findings — Decision 1"
+        quote_or_paraphrase: >
+          KPMG "failed to respond to numerous indicators that Carillion's
+          core operations were lossmaking and that it was reliant on short
+          term and unsustainable measures to support its cash flows."
+      - source_id: tpr-carillion-s89
+        locator: "Background; Misleading information"
+        quote_or_paraphrase: >
+          The £845 million provision "put the Group's liquidity under extreme
+          pressure"; later accounts listed trade creditors ~£2 billion and
+          bank debt just below £1 billion.
+    mapping:
+      metrics:
+        - runway
+        - distance_to_ruin
+      drivers:
+        - entity_kind: financial_input
+          entity_id: liquidity_shock
+        - entity_kind: liquidity_section
+          entity_id: liquidity
+      notes: >
+        Model liquidity section and liquidity_shock are the cited cash-stress
+        anchors. fixed_monthly_outflows is null in the blind model — that is
+        a model-data gap for scoring attribution (evidence vs unknown), not
+        decided here.
+    judgements:
+      - kind: inclusion
+        reason: >
+          Sources name weak cash generation / reliance on short-term cash
+          measures as structural and contributing, not merely a late symptom.
+      - kind: mapping
+        reason: >
+          Runway / distance_to_ruin are the method's cash-headroom probes.
+          Not mapped to convexity (contract harm) to keep cash vs contract
+          items distinct.
+
+  - id: OW-03
+    title: Early Payment Facility used as hidden supplier-financed credit
+    description: >
+      Reverse-factoring / early payment facility treated suppliers' payment
+      terms as a credit line that shored up a fragile balance sheet and was
+      not presented as borrowing.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §§39–42, §§91–94"
+        quote_or_paraphrase: >
+          "Suppliers could be paid earlier in return for a fee, a wheeze that
+          Carillion used to effectively borrow more, under the radar."
+          Standard terms of 120 days with EPF at 45 days "opened a line of
+          credit for Carillion, which it used systematically to shore up its
+          fragile balance sheet." Credit-rating agencies argued EPF drawings
+          (~£472–498 million) should have been presented as borrowing; the
+          classification kept them out of a key net-debt covenant test.
+      - source_id: frc-adam-khan-2026
+        locator: "Press notice — Background / Misconduct scope"
+        quote_or_paraphrase: >
+          Misconduct admissions cover "a supply chain finance facility" that
+          was "material to the company's reported financial performance" in
+          the years before collapse.
+      - source_id: frc-kpmg-sanctions-2023
+        locator: "Summary of Findings — Decision 1 (areas of breach)"
+        quote_or_paraphrase: >
+          Audit breaches included work on "Carillion's reported debt and its
+          status as a going concern in 2016, including consideration of
+          Carillion's use of a supply chain finance facility."
+    mapping:
+      metrics:
+        - single_points_of_failure
+        - optionality
+        - cascade_depth
+        - runway
+      drivers:
+        - entity_kind: node
+          entity_id: early_payment_facility
+        - entity_kind: node
+          entity_id: uk_epf_suppliers
+      notes: >
+        The blind model represents EPF as a critical route node between
+        uk_epf_suppliers and operating platforms. A hit requires flagged
+        contagion/optionality/runway results whose drivers name
+        early_payment_facility (and/or uk_epf_suppliers). Accounting
+        misclassification of EPF as non-debt is separately OW-05-adjacent
+        method gap (see OW-11 for covenants).
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee names EPF as a deliberate structural financing practice
+          that propped up the balance sheet; FRC names the SCF facility as
+          material to reported performance.
+      - kind: mapping
+        reason: >
+          early_payment_facility is the explicit model ID. Also listed under
+          runway because the committee frames EPF as liquidity support, but
+          primary driver match is the EPF node.
+
+  - id: OW-04
+    title: Systematic late payment and exploitation of the supply chain
+    description: >
+      Dominant-buyer payment terms (standard 120 days) and invoice practices
+      that treated the extensive supplier network as a financing buffer,
+      named by the committee as part of the unsustainable business model.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §§36–42"
+        quote_or_paraphrase: >
+          "Carillion treated suppliers with contempt, enforcing standard
+          payment terms of 120 days." Conclusion: "Carillion relied on its
+          suppliers… but treated them with contempt… Late payments, the
+          routine quibbling of invoices, and extended delays across reporting
+          periods were company policy." At collapse, ~£2 billion owed to
+          ~30,000 suppliers and other short-term creditors.
+      - source_id: tpr-carillion-s89
+        locator: "Misleading information"
+        quote_or_paraphrase: >
+          Continued trading while distressed was "funded by increased debt
+          and by stretching trade creditors."
+    mapping:
+      metrics:
+        - single_points_of_failure
+        - cascade_depth
+        - hhi
+        - monoculture
+      drivers:
+        - entity_kind: node
+          entity_id: uk_epf_suppliers
+        - entity_kind: node
+          entity_id: uk_direct_suppliers
+        - entity_kind: node
+          entity_id: early_payment_facility
+      notes: >
+        Supplier-side concentration / contagion metrics are the closest
+        probes. Payment-term length itself is not a schema field — see
+        method-gap note in judgements.
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee summary lists exploitation of suppliers in the causal
+          business-model sentence; TPR names stretching trade creditors as
+          how distressed trading was funded.
+      - kind: mapping
+        reason: >
+          Mapped to supplier nodes that exist in the model. Exact '120-day
+          terms' are not representable as a metric input; if only payment
+          terms (not EPF topology) are at issue, residual is a method gap
+          logged under exclusions-adjacent judgement below.
+      - kind: mapping
+        reason: >
+          Kept separate from OW-03 so EPF-as-credit-line and
+          supplier-mistreatment can hit or miss independently at driver
+          level, even though sources intertwine them.
+
+  - id: OW-05
+    title: Aggressive optimistic revenue recognition on construction contracts
+    description: >
+      Systematic optimistic assessments of construction-contract revenue and
+      margins (including overriding peer-review loss estimates), which
+      misrepresented the health of the contract book.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §§81–90, §§95–96"
+        quote_or_paraphrase: >
+          "Carillion's accounts were systematically manipulated to make
+          optimistic assessments of revenue, in defiance of internal
+          controls." Management appraisals used higher margins than peer
+          reviews in 42% of reviewed cases; Royal Liverpool peer review
+          showed a 12.7% loss while management recorded ~4.9% profit,
+          recognising ~£53 million extra revenue later provided against.
+          "Carillion used aggressive accounting policies to present a rosy
+          picture to the markets."
+      - source_id: frc-adam-khan-2026
+        locator: "Press notice"
+        quote_or_paraphrase: >
+          Former finance directors admitted misconduct (recklessness / lack
+          of integrity) in preparing accounting information for "major UK
+          construction contracts" material to reported performance before
+          collapse.
+    mapping:
+      status: not_representable
+      reason: >
+        Method gap: Aegis has no metric for accounting-policy aggressiveness,
+        revenue-recognition bias, or peer-review override. Contract objects
+        carry pricing/margin fields used by convexity, but those probe
+        structural fixed-price / input-cost harm — not whether reported
+        margins were manipulated. Do not map this item to convexity solely
+        because contracts exist; that would conflate accounting misconduct
+        with structural contract shape (see OW-06).
+      metrics: []
+      drivers: []
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee and FRC name optimistic / misstated contract accounting
+          as central to the false picture that preceded the write-downs.
+      - kind: mapping
+        reason: >
+          Explicitly not_representable so scoring reports a method gap,
+          not a miss on convexity.
+
+  - id: OW-06
+    title: Material losses on major long-term construction contracts
+    description: >
+      Large write-downs on major construction / PFI contracts (UK and
+      overseas) that official sources name, with unsustainable debt, as what
+      brought the Group down.
+    evidence:
+      - source_id: tpr-carillion-s89
+        locator: "Case summary"
+        quote_or_paraphrase: >
+          Insolvency "brought down by the unsustainable level of its debt
+          and an £845 million write-down in the value of several major
+          long-term construction contracts."
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §79, Box 3 (Royal Liverpool)"
+        quote_or_paraphrase: >
+          July 2017 profit warning reduced contract values by £845 million
+          (later £1,045 million) — "the company's previous seven years'
+          profits combined." Royal Liverpool Hospital construction contract
+          used as a case study of loss recognition failure.
+      - source_id: nao-carillion-2018
+        locator: "Summary §2 / Part One (portfolio facts)"
+        quote_or_paraphrase: >
+          NAO records high-profile PFI construction projects with large
+          expected annual losses (Aberdeen bypass; Royal Liverpool University
+          Hospital; Midland Metropolitan Hospital). Used as factual support
+          for which contract types carried loss exposure — not as NAO's own
+          causal verdict on company directors (NAO declines that assessment).
+    mapping:
+      metrics:
+        - convexity
+        - distance_to_ruin
+        - ruin
+      drivers:
+        - entity_kind: contract
+          entity_id: construction_ex_me_book
+        - entity_kind: contract
+          entity_id: me_construction_book
+        - entity_kind: financial_input
+          entity_id: construction_cost_shock
+        - entity_kind: node
+          entity_id: construction_ex_me_platform
+        - entity_kind: node
+          entity_id: me_construction_platform
+      notes: >
+        Blind model marks construction books as fixed-price and
+        input_cost_exposed. Named hospitals / Aberdeen are not separate
+        contract IDs — they roll into construction_ex_me_book. ME book is
+        included because sources treat construction-contract losses as a
+        class spanning UK and overseas.
+    judgements:
+      - kind: inclusion
+        reason: >
+          TPR states the write-down (with debt) brought the company down;
+          committee documents the scale and Royal Liverpool case.
+      - kind: mapping
+        reason: >
+          Convexity is the method's fixed-price / input-cost harm probe
+          (ADR-019). construction_cost_shock WOR is null in the blind model
+          — scoring must separate evidence-driven vs unknown-driven flags
+          later; not decided here.
+      - kind: mapping
+        reason: >
+          Distinct from OW-05 (accounting bias). OW-06 is the structural
+          contract-loss exposure itself.
+
+  - id: OW-07
+    title: Reckless Middle East and overseas construction expansion
+    description: >
+      Deliberate expansion into Middle East and other overseas construction
+      markets without strategic control, producing poorly managed contracts
+      the committee rejects as 'a few rogue deals' and instead calls a
+      hubristic strategy contributing to failure.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Chapter 1 §§10–14"
+        quote_or_paraphrase: >
+          "Carillion's forays overseas were largely disastrous." Directors
+          blamed "a few rogue contracts"; the committee finds problems "lay
+          not in a few rogue deals, but in a deliberate, naïve and hubristic
+          strategy" (bidding for 13 Qatar construction contracts 2010–2014).
+          July 2017 lessons-learned pack cited weak supply chain, poor
+          planning, and failure to understand design requirements on the
+          Msheireb (Doha) contract.
+    mapping:
+      metrics:
+        - convexity
+        - customer_monoculture
+        - distance_to_ruin
+      drivers:
+        - entity_kind: contract
+          entity_id: me_construction_book
+        - entity_kind: node
+          entity_id: me_construction_platform
+        - entity_kind: node
+          entity_id: me_suppliers
+        - entity_kind: customer
+          entity_id: mena_customers
+        - entity_kind: financial_input
+          entity_id: me_order_book_shock
+      notes: >
+        Hit requires flagged metrics whose drivers name ME construction /
+        MENA customer / me_order_book_shock entities — not merely a group
+        RED.
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee explicitly rejects the 'few rogue contracts' defence and
+          names overseas expansion strategy as part of the reckless model
+          that caused collapse.
+      - kind: mapping
+        reason: >
+          ME-specific model IDs exist; use them rather than generic
+          construction_ex_me_book so UK and ME hits can diverge.
+
+  - id: OW-08
+    title: Underfunded defined-benefit pension obligations
+    description: >
+      Persistent refusal to adequately fund DB pension scheme deficits
+      (enlarged by acquisitions), treating deficit repair as a low priority
+      relative to dividends and growth.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Summary; Chapter 1 §§22–35"
+        quote_or_paraphrase: >
+          "Long term obligations, such as adequately funding its pension
+          schemes, were treated with contempt." Acquisitions of Mowlem and
+          Alfred McAlpine brought large scheme deficits; recovery-plan
+          negotiations minimised contributions; Finance Director viewed
+          funding pensions as a "waste of money." "Carillion failed in its
+          obligations to honour its pension promises and to take adequate
+          steps to address its pension deficits."
+      - source_id: tpr-carillion-s89
+        locator: "Background; Outcome"
+        quote_or_paraphrase: >
+          13 DB schemes with combined estimated buy-out deficit ~£1.8 billion
+          at end-2016; insolvency had "significant impact on its pension
+          schemes and the benefits savers will receive."
+    mapping:
+      status: not_representable
+      reason: >
+        Method gap: dependency_graph.v1 / ADR-019 has no first-class
+        pensions section, pension-deficit covenant, or pension-funding
+        metric. Known pack gap (no agreed 31 Dec 2016 triennial valuation
+        in the pre-cut-off source pack) does not create a probe. Report as
+        method gap at scoring time — not as a GREEN miss.
+      metrics: []
+      drivers: []
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee names inadequate pension funding as a core causal
+          failure of the business model and board priorities.
+      - kind: mapping
+        reason: >
+          not_representable by design of the frozen method/schema.
+
+  - id: OW-09
+    title: Dividends paid ahead of cash generation and deficit repair
+    description: >
+      Progressive dividend policy that increased payouts even when cash from
+      operations and pension deficit repair did not support them, named as
+      short-term extraction inconsistent with sustainability.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Chapter 1 §§15–21"
+        quote_or_paraphrase: >
+          Board increased the dividend each of 16 years since formation. In
+          final years directors "choosing to pay out more in dividends than
+          the company generated in cash, despite increased borrowing, low
+          levels of investment and a growing pension deficit." 2011–2016:
+          £441 million dividends vs £246 million deficit recovery payments.
+          "We too can find no justification for this reckless approach."
+      - source_id: tpr-carillion-s89
+        locator: "Misleading information"
+        quote_or_paraphrase: >
+          TPR examined whether misleading financial information and
+          "resultant payment of dividends" in 2015–2016 caused material
+          detriment to schemes (concluded CN powers not met, but records
+          dividends as tied to the misstated performance).
+    mapping:
+      status: not_representable
+      reason: >
+        Method gap: no dividend, distribution, or capital-return object in
+        the graph schema or metrics. Cash drain via dividends is not
+        expressible as a driver ID on runway/ruin without inventing model
+        fields outside the freeze.
+      metrics: []
+      drivers: []
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee names the dividend policy as reckless and causal of
+          unsustainability (not merely unfortunate timing).
+      - kind: mapping
+        reason: >
+          not_representable under frozen method.
+
+  - id: OW-10
+    title: Acquisition goodwill carrying values propping the balance sheet
+    description: >
+      Large goodwill balances from acquisitions (Mowlem, Alfred McAlpine,
+      Eaga) that continued to support reported equity until later impairment.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Chapter 1 §7; §79"
+        quote_or_paraphrase: >
+          Goodwill recorded on purchases exceeded purchase prices in the
+          committee's telling of Mowlem / McAlpine / Eaga; "these large and
+          uncertain intangible assets also continued to prop up Carillion's
+          balance sheet for the remainder of its existence." Interim 2017
+          results impaired goodwill by £134 million alongside the contract
+          provisions.
+      - source_id: frc-kpmg-sanctions-2023
+        locator: "Summary of Findings — Decision 1"
+        quote_or_paraphrase: >
+          Audit breaches included "testing of goodwill for impairment"
+          among discrete accounting areas tied to the unreliable audits
+          before demise.
+    mapping:
+      status: not_representable
+      reason: >
+        Method gap: no goodwill, intangible, or balance-sheet equity metric
+        in Aegis. Impairment accounting is outside structural dependency /
+        financial-section probes (ADR-019).
+      metrics: []
+      drivers: []
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee names goodwill as a structural balance-sheet prop tied
+          to the acquisitive model that featured in the demise narrative.
+      - kind: mapping
+        reason: >
+          not_representable under frozen method.
+
+  - id: OW-11
+    title: Debt-covenant headroom eroded by leverage and EPF classification
+    description: >
+      Key lender covenant (net debt to EBITDA) under pressure; EPF drawings
+      excluded from reported net debt meant the test would have been breached
+      earlier if EPF had been classified as borrowing.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Timeline 17 Nov 2017; Chapter 1 §§91–93"
+        quote_or_paraphrase: >
+          Third profit warning announced the company was "heading towards a
+          breach of its debt covenants." Net debt to EBITDA "was a key
+          covenant test between Carillion and its lenders." Had ~£472 million
+          EPF been classified as debt, "it would most likely have breached
+          this covenant test far earlier."
+    mapping:
+      status: not_representable
+      reason: >
+        Covenant-specific weakness has no model covenant entity (blind model
+        covenants: [] empty; numeric limits absent from public facility
+        agreements in the pre-cut-off pack — known gap in
+        clients/carillion/README.md). ADR-019 covenant ruin lines therefore
+        have no Carillion covenant IDs to name. Do not treat survival_floor
+        or runway RED alone as a hit for OW-11 (no covenant / EPF-as-debt
+        driver match).
+      metrics: []
+      drivers: []
+    judgements:
+      - kind: inclusion
+        reason: >
+          Committee names covenant breach trajectory and EPF's effect on the
+          covenant test as part of the financial-structure failure.
+      - kind: mapping
+        reason: >
+          not_representable for the covenant driver itself under the frozen
+          pack. Related liquidity metrics must not be silently credited as
+          OW-11 hits.
+
+  - id: OW-12
+    title: Low-margin fixed-price construction book exposed to cost overruns
+    description: >
+      Construction activities recognised at thin underlying margins with
+      fixed-price / final-out-turn estimation exposure — the structural
+      contract shape that made large provisions possible once costs moved.
+    evidence:
+      - source_id: joint-committee-hc769
+        locator: "Chapter 1 §§83–86"
+        quote_or_paraphrase: >
+          Much of revenue came from multi-year construction contracts
+          accounted by reference to costs incurred vs total forecast costs;
+          "changes to these estimates could give rise to material variances
+          in the amount of revenue and margin recognised." Aggressive
+          minimisation of final-cost estimates kept margins looking intact.
+      - source_id: nao-carillion-2018
+        locator: "Summary §2"
+        quote_or_paraphrase: >
+          Facilities-management-to-central-government unit projected ~1%
+          operating margin (2017), while several PFI construction projects
+          faced large expected annual losses — illustrating thin / negative
+          construction economics in the portfolio the NAO describes.
+    mapping:
+      metrics:
+        - convexity
+      drivers:
+        - entity_kind: contract
+          entity_id: construction_ex_me_book
+        - entity_kind: contract
+          entity_id: me_construction_book
+        - entity_kind: contract
+          entity_id: smart_motorways_highways_england
+        - entity_kind: contract
+          entity_id: a14_cambridge_huntingdon
+        - entity_kind: financial_input
+          entity_id: construction_cost_shock
+      notes: >
+        All four model contracts are pricing: fixed with input_cost_exposed
+        true (Highways England packages carry structural fixed-price flags).
+        Primary probe is convexity on the construction contracts / cost shock.
+        No energy section in the Carillion model — energy_margin not mapped.
+    judgements:
+      - kind: inclusion
+        reason: >
+          Sources name construction estimation / margin structure as the
+          mechanism through which contract losses crystallised. Distinct
+          from OW-05 (manipulation) and complementary to OW-06 (realised
+          write-downs).
+      - kind: mapping
+        reason: >
+          Fixed-price + input_cost_exposed contracts are exactly what
+          ADR-019 / convexity v2.1 is built to probe.
+
+# ---------------------------------------------------------------------------
+# Notable items considered and excluded (with reasons)
+# ---------------------------------------------------------------------------
+
+excluded:
+
+  - id: EX-01
+    title: Public-sector customer concentration as cause of collapse
+    considered_from:
+      - nao-carillion-2018
+      - joint-committee-hc769
+    reason: >
+      NAO and the committee document that Carillion was a major strategic
+      public-sector supplier (~33% of total revenue / ~45% of UK revenue per
+      NAO; ~420–450 government contracts). Those facts explain why the
+      collapse mattered for public services. Neither source names
+      public-sector concentration itself as a causal or contributing
+      structural weakness that brought the company down. Including it would
+      invent a weakness from consequence narrative. (If later scoring wants
+      a discrimination check on customer_* metrics, that is separate from
+      this reference list.)
+
+  - id: EX-02
+    title: Board culture, hubris, and non-executive challenge failures
+    considered_from:
+      - joint-committee-hc769
+    reason: >
+      Committee extensively criticises culture ("making the numbers",
+      "wilful blindness"), non-executive failure to challenge, and named
+      directors. These are governance / conduct failures, not dependency-
+      graph or financial-section structural weaknesses Aegis metrics probe.
+      Excluded to keep the list structural (ADR-020 / ADR-006).
+
+  - id: EX-03
+    title: External audit, internal audit, and Big Four market failures
+    considered_from:
+      - joint-committee-hc769
+      - frc-kpmg-sanctions-2023
+      - frc-kpmg-decision1-2024
+    reason: >
+      KPMG / Deloitte / EY failings and audit-market structure are named as
+      failed external checks. They are not structural weaknesses of
+      Carillion's dependency or financial graph. FRC sources are used only
+      where they record company features (contracts, SCF, cash measures).
+
+  - id: EX-04
+    title: Pensions Regulator and FRC regulatory timidity
+    considered_from:
+      - joint-committee-hc769
+    reason: >
+      Regulator feebleness is a system-level finding about TPR/FRC, not a
+      Carillion structural weakness for map scoring.
+
+  - id: EX-05
+    title: Crown Representative / government contract-award decisions
+    considered_from:
+      - joint-committee-hc769
+      - nao-carillion-2018
+    reason: >
+      About government monitoring and procurement, not Carillion's internal
+      structural fragility. NAO's primary subject. Out of scope for the
+      company reference list.
+
+  - id: EX-06
+    title: Official Receiver detailed causes-of-failure findings
+    considered_from:
+      - beis-or-letter-2018
+    reason: >
+      No public Official Receiver report was found that enumerates
+      structural weaknesses with citable page/paragraph findings comparable
+      to HC 769 or TPR's s.89 report. The BEIS letter and related gov.uk
+      notices confirm investigation duties and later disqualification
+      proceedings, but do not supply extractable causal structural items.
+      Excluded as an item authority (source still logged in sources.yaml).
+
+  - id: EX-07
+    title: Complex 300+ company group structure as a scored weakness
+    considered_from:
+      - joint-committee-hc769
+    reason: >
+      Committee notes ~326 group companies and poor basic records. Complexity
+      hindered insolvency administration and evidenced weak governance, but
+      is not framed as a dependency-graph fragility Aegis can represent
+      (no group-structure metric). Excluded rather than forced into
+      cascade_depth.
+
+  - id: EX-08
+    title: Middle East contracts as the sole or primary cause
+    considered_from:
+      - joint-committee-hc769
+    reason: >
+      Directors' claim that "a few very challenging contracts, predominantly
+      in the Oman and one in Qatar" explain the failure is explicitly
+      rejected by the committee. ME expansion is included as OW-07 as one
+      contributing strategic weakness, not as a sole-cause item that would
+      rewrite the committee's conclusion.
+
+  - id: EX-09
+    title: Insolvency timing, liquidation mechanics, and PPF levy consequences
+    considered_from:
+      - joint-committee-hc769
+      - nao-carillion-2018
+      - tpr-carillion-s89
+    reason: >
+      Outcomes of insolvency (job losses, PPF hit, £150 million government
+      liquidity, creditor recoveries) are consequences, not pre-collapse
+      structural weaknesses. Excluded under ADR-020 extraction rule and
+      ADR-006 (no prediction / no event-proof framing).
+
+  - id: EX-10
+    title: Secondary journalism and credit-rating commentary as sole sources
+    considered_from:
+      - joint-committee-hc769
+    reason: >
+      Committee cites Moody's / S&P views on EPF accounting. Those agencies
+      are not independently listed as ADR-020 source classes. EPF items rely
+      on the committee's own adoption of that analysis, not on journalism or
+      rating reports alone.
+
+# ---------------------------------------------------------------------------
+# Judgement log (cross-cutting)
+# ---------------------------------------------------------------------------
+
+judgement_log:
+
+  - id: J-01
+    topic: source_priority
+    decision: >
+      Prefer joint-committee-hc769 and tpr-carillion-s89 for causal wording.
+      Use nao-carillion-2018 only for factual portfolio structure it records
+      without claiming NAO assessed company-director causation.
+    reason: >
+      NAO §5 explicitly declines assessing Carillion's directors/advisers.
+      ADR-020 requires the source to name the weakness as causal or
+      contributing.
+
+  - id: J-02
+    topic: accounting_vs_structure
+    decision: >
+      Split aggressive revenue accounting (OW-05, not_representable) from
+      structural fixed-price / loss-bearing construction exposure (OW-06,
+      OW-12) and from ME expansion strategy (OW-07).
+    reason: >
+      Avoids mapping accounting misconduct onto convexity, which would
+      create false hits/misses against a metric that does not test books.
+
+  - id: J-03
+    topic: epf_vs_suppliers
+    decision: >
+      Keep OW-03 (EPF as credit line) and OW-04 (supplier mistreatment)
+      separate despite overlapping evidence.
+    reason: >
+      Driver-level scoring (ADR-020) needs distinct mapped entities so a
+      flag on early_payment_facility is not automatically credited as a hit
+      for every supplier narrative, and vice versa.
+
+  - id: J-04
+    topic: covenants
+    decision: >
+      OW-11 is not_representable despite ruin metrics existing.
+    reason: >
+      Empty covenants list and absent public facility agreements mean no
+      covenant driver ID can be named. Counting survival_floor alone would
+      violate driver-level matching.
+
+  - id: J-05
+    topic: no_inference
+    decision: >
+      Do not add items for 'hidden SPOF', 'optionality', or 'customer HHI'
+      unless a source names that structural pattern.
+    reason: >
+      ADR-020 extraction rule: source wording carries the claim. Metric
+      vocabulary must not invent reference items.
+
+  - id: J-06
+    topic: blinding
+    decision: >
+      Mapping completed from carillion.yaml entity IDs and metric module
+      names only; maps/ unread; metrics not executed for Carillion.
+    reason: >
+      User / ADR-020 integrity requirement for the pre-scoring reference
+      list PR.
