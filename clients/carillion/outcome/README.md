@@ -4,8 +4,9 @@ Procedure-defined **outcome reference list** for structural-weakness scoring of
 the locked Carillion map, per
 [ADR-020](../../../docs/decisions/ADR-020-backtest-scoring.md).
 
-**This folder is the reference list only.** It contains no scoring results, no
-comparison with `maps/`, and no metric colours. Scoring is a later, separate PR.
+**This folder is the reference list only.** Scoring results live in
+[docs/backtests/carillion-scoring-result.md](../../../docs/backtests/carillion-scoring-result.md)
+(draft; pending Miles’s review per ADR-020).
 
 ## Blinding rule (this PR)
 
@@ -33,8 +34,8 @@ compute) on the Carillion model. Mapping uses model **entity IDs** from
 - No prediction language; no blended score; no edits to model, map, metrics,
   thresholds, schemas, or eval baselines.
 
-## Next step
+## Scoring
 
-A separate scoring PR compares the locked map (`method_tag: carillion-method-v1`)
-to this list at **driver** level (hit-from-evidence / hit-from-unknown / miss /
-method gap / false flag).
+Driver-level comparison of the locked map (`method_tag: carillion-method-v1`)
+to this list is recorded in
+[docs/backtests/carillion-scoring-result.md](../../../docs/backtests/carillion-scoring-result.md).
