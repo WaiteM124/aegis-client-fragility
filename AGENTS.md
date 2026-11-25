@@ -128,11 +128,14 @@ Do not frame eval results as forecasts. Metric formula bugs found by the suite a
 ## Workflow for agents
 
 1. **Read before writing.** Inspect the real layout, ADRs, and neighbouring tests. Prefer matching existing patterns over inventing new ones.
-2. **Plan large changes.** For multi-file or cross-cutting work, outline the approach, files touched, and risks before coding. Keep scope to the assigned task.
+2. **Plan large changes.** For multi-file or cross-cutting work, outline the approach, files touched, and risks before coding. Keep scope to the assigned task. Cursor rule `.cursor/rules/plan-first.mdc` requires a written plan and explicit approval before coding when the change touches more than about three files, schemas, run-record / DuckDB migrations, or any metric’s logic.
 3. **Do not weaken tests.** Never delete, skip, or loosen assertions solely to make CI pass. Fix the code or add a justified, documented test change.
 4. **State assumptions in the PR.** Call out concurrent work (e.g. metrics package), env expectations, and anything left as follow-up.
 5. **Docs/config-only vs product code.** If the task says docs/config only, do not change application behaviour.
 6. **Cursor rules.** Follow `.cursor/rules/*.mdc`; they summarise this file for scoped globs. When in conflict, **this file wins**.
+7. **Cursor skills.** Use repo skills under `.cursor/skills/` when they match the task:
+   - [`add-metric`](.cursor/skills/add-metric/SKILL.md) — tests-first workflow to add a fragility metric (unit + eval case, `run_all` / run-record registration, own status never a blended score, docs + ADR). Covers supply-side and optional financial-side metrics (`runway`, `customer_*`, `energy_margin`, covenants in ruin) per [ADR-019](docs/decisions/ADR-019-financial-side-model.md).
+   - [`review-against-method`](.cursor/skills/review-against-method/SKILL.md) — review a diff against Aegis principles (including ADR-019 financial-side checks); pass/fail per principle with file and line references.
 
 ---
 
@@ -142,3 +145,5 @@ Do not frame eval results as forecasts. Metric formula bugs found by the suite a
 - [README.md](README.md) — product overview and quick start
 - [docs/architecture/overview.md](docs/architecture/overview.md)
 - [docs/decisions/](docs/decisions/) — ADR index (product ADRs 005–013, 015–019; engineering ADRs 001–004; eval gate ADR-014)
+- [`.cursor/skills/`](.cursor/skills/) — Cursor agent skills for Aegis method work
+- [`.cursor/rules/`](.cursor/rules/) — Cursor rules (core principles, plan-first, metrics / Python / frontend)
