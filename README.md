@@ -41,6 +41,8 @@ PYTHONPATH=. python -m pytest metrics/tests -q
 
 # Confidential client-pack guard (also runs in CI)
 PYTHONPATH=. python -m metrics.client_pack --check-confidential
+PYTHONPATH=. python -m metrics.client_pack --validate carillion
+PYTHONPATH=. python -m metrics.client_pack --check-method-freeze
 
 # Labelled weakness-detection eval suite (not prediction) — see ADR-014
 PYTHONPATH=. python evals/run_evals.py
@@ -58,7 +60,7 @@ python -m pytest metrics/tests -q
 python evals/run_evals.py
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`, plus optional financial-side `metrics.runway`, `metrics.customer_hhi`, `metrics.customer_monoculture`, `metrics.customer_spof`, `metrics.energy_margin` ([ADR-019](docs/decisions/ADR-019-financial-side-model.md)). Small test graphs live in `metrics/examples/`. Client packs (evidence, models, locked maps, run history) live under `clients/` — see [clients/README.md](clients/README.md). Made-up ChillCo (supply + EXAMPLE financial sections): `clients/chillco/`. Carillion public backtest skeleton (no model numbers yet): `clients/carillion/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`, plus optional financial-side `metrics.runway`, `metrics.customer_hhi`, `metrics.customer_monoculture`, `metrics.customer_spof`, `metrics.energy_margin` ([ADR-019](docs/decisions/ADR-019-financial-side-model.md)). Small test graphs live in `metrics/examples/`. Client packs (evidence, models, locked maps, run history) live under `clients/` — see [clients/README.md](clients/README.md). Made-up ChillCo (supply + EXAMPLE financial sections): `clients/chillco/`. Carillion public backtest (source pack + method freeze `carillion-method-v1`; no model numbers yet): `clients/carillion/` — see [docs/backtests/carillion-method-freeze.md](docs/backtests/carillion-method-freeze.md). Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
 **Status values.** Each metric reports its own status separately: `green` / `amber` / `red` / `not_tested`. `not_tested` means the probe or required data was missing — it is never treated as a pass. Group roll-up is worst-member (`red > amber > not_tested > green`). There is no blended single score.
 
@@ -80,7 +82,7 @@ PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yam
 
 **Client packs.** Each client has `clients/<id>/` with `client.yaml`, `model/`, `sources/manifest.yaml`, `maps/` (locked, date-stamped), and `runs/` (gitignored). Schemas: `clients/schemas/`. Backtest packs enforce `cut_off_date` on source publication dates. Packs with `data_classification: confidential` must not commit `sources/` or `model/` — real client data belongs in private cloud storage ([ADR-018](docs/decisions/ADR-018-client-packs-and-confidential-data.md)).
 
-**Run records.** `metrics.run_all --out PATH` writes one JSON object per run (`run_id`, UTC timestamp, graph name, graph SHA-256, git commit if available, package version, probe settings, and every metric’s version / value / status / drivers). `--client <id>` emits `run_record.v2` with `client_id` and writes under `clients/<id>/runs/`. v1 records remain loadable. Schemas: `metrics/schemas/run_record.v1.json`, `run_record.v2.json`. `--store [DB]` validates and appends into local DuckDB (default `data/aegis_runs.duckdb`, gitignored) via `metrics.store.load` — idempotent on `run_id`; migration 002 adds `client_id`. `--lock` copies the record and rendered output into `clients/<id>/maps/` with a date stamp and refuses overwrite. Same record shape is intended for BigQuery later ([ADR-017](docs/decisions/ADR-017-local-duckdb-run-records.md)). Example analytical SQL: [docs/metrics-run-queries.md](docs/metrics-run-queries.md).
+**Run records.** `metrics.run_all --out PATH` writes one JSON object per run (`run_id`, UTC timestamp, graph name, graph SHA-256, git commit if available, package version, probe settings, and every metric’s version / value / status / drivers). `--client <id>` emits `run_record.v2` with `client_id` and writes under `clients/<id>/runs/`. v1 records remain loadable. Schemas: `metrics/schemas/run_record.v1.json`, `run_record.v2.json`. `--store [DB]` validates and appends into local DuckDB (default `data/aegis_runs.duckdb`, gitignored) via `metrics.store.load` — idempotent on `run_id`; migration 002 adds `client_id`. `--lock` copies the record and rendered output into `clients/<id>/maps/` with a date stamp, records optional `method_tag` (frozen-method git tag), and refuses overwrite. `python -m metrics.client_pack --check-method-freeze` fails if a locked map’s `method_tag` no longer matches current `metrics/*.py`. Same record shape is intended for BigQuery later ([ADR-017](docs/decisions/ADR-017-local-duckdb-run-records.md)). Example analytical SQL: [docs/metrics-run-queries.md](docs/metrics-run-queries.md).
 
 ### Backend
 

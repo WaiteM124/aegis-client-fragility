@@ -47,6 +47,14 @@ jobs:
       - name: Confidential client-pack guard
         run: PYTHONPATH=. python -m metrics.client_pack --check-confidential
 
+      - name: Validate client packs (cut-off + schemas)
+        run: |
+          PYTHONPATH=. python -m metrics.client_pack --validate carillion
+          PYTHONPATH=. python -m metrics.client_pack --validate chillco
+
+      - name: Locked-map method freeze guard
+        run: PYTHONPATH=. python -m metrics.client_pack --check-method-freeze
+
       - name: Run tests
         run: PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation" -v
 

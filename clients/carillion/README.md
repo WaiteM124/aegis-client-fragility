@@ -1,40 +1,66 @@
 # Carillion plc — public backtest
 
-Public historical backtest skeleton for Aegis structural-fragility methods.
+Public historical backtest for Aegis structural-fragility methods.
 **No prediction.** The pack finds structural weaknesses that were (or were not)
 visible in public evidence at the cut-off; it does not forecast insolvency or
 any event.
 
-## Cut-off
+## Backtest rules (approved 25 Nov 2026)
 
-- **cut_off_date:** `2017-03-01` (see `client.yaml`)
-- Only **public** sources with `publication_date` on or before that date may
-  enter `sources/manifest.yaml`.
-- Each source must record its publication date. A check fails if any source is
-  dated after the cut-off.
+1. **Cut-off:** `2017-03-01` (see `client.yaml`). Inclusive — sources dated
+   that day are allowed; later dates fail the cut-off check.
+2. **Sources:** only **public** pre-cut-off material. Every source is logged in
+   `sources/manifest.yaml` with publisher, `publication_date`, and url (and/or
+   path). No documents are stored in the repo — URLs and metadata only.
+3. **Method freeze:** metric modules, `metrics/thresholds.py`, eval baseline,
+   and schemas are frozen and **git-tagged** before modelling. Tag:
+   `carillion-method-v1` (created on the merge commit that introduced this
+   pack; see [docs/backtests/carillion-method-freeze.md](../../docs/backtests/carillion-method-freeze.md)).
+4. **Blind model:** the dependency model is built **only** from this logged
+   source pack — no post-cut-off hindsight.
+5. **Unknowns as fragile:** missing structure, missing documents, and
+   unresolved figures are treated as fragile (do not invent reassuring
+   structure). See known gaps below.
+6. **Map lock:** lock the fragility map under `maps/` (date-stamped run record
+   + rendered output, with `method_tag`) **before** any comparison with later
+   outcomes. Locked files are never edited after creation.
+7. **Score the method:** report **hits**, **misses**, and **false flags**
+   against labelled structural weaknesses.
+8. **No prediction claim:** do not claim prediction, probability, or a blended
+   fragility score.
 
-## Method freeze (before modelling)
+## Key finding — 2016 Annual Report excluded
 
-Before any dependency model is built or compared with outcomes:
+The **2016 Annual Report & Accounts** (Carillion plc, published **29 March
+2017**, RNS 9429A) is **after** the cut-off and must not be used. The primary
+pre-cut-off financial sources are therefore:
 
-1. Freeze and **git-tag** the method: metric versions, status thresholds,
-   survival floor, and worst-on-record conventions.
-2. Build the model **only** from the logged source pack.
-3. Treat unknowns as **fragile** (do not invent reassuring structure).
-4. **Lock** the fragility map (`maps/`, date-stamped run record + rendered
-   output) **before** any comparison with later outcomes. Locked files are
-   never edited after creation.
+- **2016 Final Results** RNS (`fy-results-2016`, published **1 March 2017** —
+  on the cut-off day; allowed)
+- **2015 Annual Report & Accounts** (`ar-2015`, published **21 March 2016**)
 
-## Results framing
+Companies House group accounts for the year ended 31 December 2016 (filed
+12 May 2017) and later 2017 trading / financing / charge filings are also
+excluded. See comments in `sources/manifest.yaml`.
 
-Report **hits**, **misses**, and **false flags** against labelled structural
-weaknesses. Do **not** claim prediction, probability, or a blended fragility
-score.
+## Known gaps (treat as fragile unknowns)
 
-## This skeleton
+These were not available as agreed public documents on or before the cut-off
+(or were not found as public filings). Model them as **unknown / fragile**,
+not as reassuring defaults:
+
+- No pre-cut-off **credit-rating reports** in the pack
+- No agreed **31 December 2016 triennial pension valuation** (the 1 March 2017
+  results state it was not yet agreed)
+- No full **facility agreement**, **US private placement**, or **convertible
+  bond** instruments as public documents (only RNS summaries and account notes)
+
+## This pack
 
 - `client.yaml` — kind `backtest`, classification `public`, cut-off set.
-- `sources/manifest.yaml` — empty until public sources are logged.
-- `model/` — intentionally empty; **no Carillion model numbers** in this pack yet.
-- `maps/` — locked maps go here once a freeze exists.
+- `sources/manifest.yaml` — logged public sources (publication_date ≤ cut-off).
+- `model/` — intentionally empty until the method is tagged and a blind model
+  is built (**no Carillion model numbers** in this commit).
+- `maps/` — locked maps go here once a freeze and model exist (`method_tag`
+  recorded on lock).
 - `runs/` — local run records (gitignored).

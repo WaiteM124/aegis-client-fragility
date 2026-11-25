@@ -14,12 +14,15 @@ from metrics.client_pack import (
     BacktestCutOffError,
     ConfidentialPayloadError,
     LockExistsError,
+    MethodFreezeError,
     assert_no_confidential_payloads,
     check_backtest_cut_off,
+    check_locked_maps_method_freeze,
     list_model_paths,
     load_client,
     load_sources_manifest,
     lock_map,
+    resolve_method_tag,
     validate_client,
     validate_sources_manifest,
 )
@@ -100,6 +103,18 @@ def test_backtest_cut_off_allows_on_or_before():
     }
     validate_sources_manifest(manifest)
     check_backtest_cut_off(client, manifest)  # does not raise
+
+
+def test_carillion_manifest_all_sources_on_or_before_cut_off():
+    client = load_client("carillion")
+    manifest = load_sources_manifest("carillion")
+    assert len(manifest["sources"]) >= 1
+    check_backtest_cut_off(client, manifest)
+    # 2016 AR must not appear (published 29 Mar 2017).
+    ids = {s["id"] for s in manifest["sources"]}
+    assert "fy-results-2016" in ids
+    assert "ar-2015" in ids
+    assert "ar-2016" not in ids
 
 
 def test_chillco_model_lives_under_clients():
@@ -203,9 +218,13 @@ def test_lock_map_writes_date_stamped_and_refuses_overwrite(tmp_path):
         output_text="hello\n",
         stamp=stamp,
         root=clients,
+        method_tag="chillco-method-v1",
     )
     assert a.exists() and b.exists()
     assert "2026-11-25T120000Z" in a.name
+    locked = json.loads(a.read_text(encoding="utf-8"))
+    assert locked["method_tag"] == "chillco-method-v1"
+    validate_run_record(locked)
     with pytest.raises(LockExistsError):
         lock_map(
             client_id=cid,
@@ -214,6 +233,108 @@ def test_lock_map_writes_date_stamped_and_refuses_overwrite(tmp_path):
             stamp=stamp,
             root=clients,
         )
+
+
+def test_resolve_method_tag_prefers_explicit():
+    assert resolve_method_tag(explicit="carillion-method-v1", client_id="carillion") == (
+        "carillion-method-v1"
+    )
+
+
+def test_method_freeze_ok_when_no_locked_maps_or_no_tag():
+    # Repo carillion maps/ has only .gitkeep today — guard must pass.
+    check_locked_maps_method_freeze()
+
+
+def test_method_freeze_fails_when_tag_missing_for_locked_map(tmp_path, monkeypatch):
+    clients = tmp_path / "clients"
+    pack = clients / "carillion" / "maps"
+    pack.mkdir(parents=True)
+    record = {
+        "schema_version": "run_record.v2",
+        "run_id": "r1",
+        "ts_utc": "2026-11-25T10:00:00.000Z",
+        "client_id": "carillion",
+        "graph_name": "carillion",
+        "graph_sha256": "b" * 64,
+        "git_commit": None,
+        "package_version": "0.1.0",
+        "method_tag": "carillion-method-v1",
+        "probe": {"stress_ladder": True, "survival_floor": 0.5},
+        "metrics": [
+            {
+                "metric": "hhi",
+                "version": "1",
+                "value": 0.1,
+                "status": "green",
+                "drivers": [],
+            }
+        ],
+    }
+    validate_run_record(record)
+    (pack / "2026-11-25T120000Z_carillion_run.json").write_text(
+        json.dumps(record),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "metrics.client_pack._git_tag_exists",
+        lambda tag, *, repo_root: False,
+    )
+    with pytest.raises(MethodFreezeError, match="method_tag"):
+        check_locked_maps_method_freeze(root=clients)
+
+
+def test_method_freeze_fails_when_metrics_differ_from_tag(tmp_path, monkeypatch):
+    clients = tmp_path / "clients"
+    pack = clients / "carillion" / "maps"
+    pack.mkdir(parents=True)
+    record = {
+        "schema_version": "run_record.v2",
+        "run_id": "r2",
+        "ts_utc": "2026-11-25T10:00:00.000Z",
+        "client_id": "carillion",
+        "graph_name": "carillion",
+        "graph_sha256": "c" * 64,
+        "git_commit": None,
+        "package_version": "0.1.0",
+        "method_tag": "carillion-method-v1",
+        "probe": {"stress_ladder": True, "survival_floor": 0.5},
+        "metrics": [
+            {
+                "metric": "hhi",
+                "version": "1",
+                "value": 0.1,
+                "status": "green",
+                "drivers": [],
+            }
+        ],
+    }
+    (pack / "2026-11-25T120000Z_carillion_run.json").write_text(
+        json.dumps(record),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "metrics.client_pack._git_tag_exists",
+        lambda tag, *, repo_root: True,
+    )
+    monkeypatch.setattr(
+        "metrics.client_pack._metrics_diff_vs_tag",
+        lambda tag, *, repo_root: ["metrics/thresholds.py"],
+    )
+    with pytest.raises(MethodFreezeError, match="thresholds.py"):
+        check_locked_maps_method_freeze(root=clients)
+
+
+def test_build_run_record_v2_with_method_tag():
+    graph = CLIENTS_ROOT / "chillco" / "model" / "chillco.yaml"
+    record = build_run_record(
+        graph_path=graph,
+        client_id="chillco",
+        method_tag="chillco-method-v1",
+        stress_ladder=True,
+    )
+    validate_run_record(record)
+    assert record["method_tag"] == "chillco-method-v1"
 
 
 def test_run_all_client_writes_v2_record_to_runs(tmp_path, monkeypatch):

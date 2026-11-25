@@ -1,3 +1,541 @@
-# Empty until public sources (publication_date ≤ cut_off_date) are logged.
+# Source pack for the Carillion plc public backtest.
+# Path: clients/carillion/sources/manifest.yaml
+# Schema: clients/schemas/sources_manifest.v1.json (schema_version, sources[];
+# each source: id, title, publisher, publication_date, and url and/or path).
+# Verification and confidence notes are YAML comments only (not schema fields).
+# URLs and metadata only — documents are not downloaded into the repo.
+#
+# Client: carillion
+# kind: backtest
+# data_classification: public
+# cut_off_date: 2017-03-01
+# Rule: only public sources with publication_date on or before 2017-03-01.
+# Sources were chosen as what a careful analyst would have gathered then,
+# not because later events made particular contracts or disclosures look important.
+#
+# EXCLUDED (published after the cut-off) — do not add to sources:
+# - 2016 Annual Report & Accounts, Carillion plc, 29 March 2017 (RNS 9429A,
+#   17:32). Confirmed from the RNS text: "Carillion PLC / 29 March 2017 /
+#   2016 Annual Report & Accounts and Notice of 2017 Annual General Meeting".
+#   Mirror: https://shareprices.com/rns/2016-annual-report-accounts-and-2017-agm-notice-l7uebqibn8lnyrk/
+#   Latest permitted financial report is therefore the 1 March 2017 Final Results.
+# - Companies House group accounts for the year ended 31 December 2016,
+#   filed 12 May 2017 (transaction MzE3NTQ4NjY1OGFkaXF6a2N4).
+# - 2017 AGM Statement (Investegate id 5010547) and later 2017 trading,
+#   financing and charge filings (including the July 2017 trading statement
+#   and October 2017 Glas Trust charges).
+# - Any 2018 parliamentary, FCA or post-liquidation material.
+#
+# Company number (Companies House): 03782379.
+
 schema_version: sources_manifest.v1
-sources: []
+sources:
+
+  # --- Latest financial report at the cut-off (on the cut-off date; allowed) ---
+  - id: fy-results-2016
+    title: "Final Results for the year ended 31 December 2016"
+    publisher: Carillion plc (London Stock Exchange RNS 1423Y)
+    publication_date: "2017-03-01"
+    url: "https://www.rns-pdf.londonstockexchange.com/rns/1423Y_-2017-3-1.pdf"
+    supports_fields:
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - order_book
+  # Date verified from the first line of the PDF itself ("1 March 2017") and
+  # from the Investegate CLLN index (1 Mar 2017, 07:00). HTTP 200, application/pdf,
+  # 1,038,097 bytes. Confidence: high.
+  # Also listed at https://www.investegate.co.uk/announcement/rns/carillion--clln/final-results/5016153
+  # Informs year-end and average net borrowing, committed facilities (£870m),
+  # private placement (£361m / £135m + US$280m, 2017–2024), convertible bonds
+  # (£170m by 2019), January 2017 Schuldschein (£112m), cash conversion, working
+  # capital, IAS 19 pension liability and deficit contributions, and the statement
+  # that the 31 December 2016 triennial valuation was not yet agreed. Segment
+  # and order-book figures inform contracts and customers. The results RNS does
+  # not set out numerical financial-covenant tests; use the 2015 Annual Report
+  # for covenant wording.
+
+  # --- 2016 interim and trading updates ---
+  - id: hy-report-2016
+    title: "Half-year financial report for the six months ended 30 June 2016"
+    publisher: Carillion plc (London Stock Exchange RNS 9592H)
+    publication_date: "2016-08-24"
+    url: "https://www.rns-pdf.londonstockexchange.com/rns/9592H_1-2016-8-23.pdf"
+    supports_fields:
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - order_book
+  # Date verified from the first line of the PDF ("24 August 2016") and the
+  # Investegate index (24 Aug 2016, 07:05). HTTP 200, 289,054 bytes. The PDF
+  # filename is dated 23 August 2016 (standard pre-release upload). Confidence: high.
+  # Also: https://www.investegate.co.uk/announcement/rns/carillion--clln/half-year-report/4590106
+  # Notes "over £1.4 billion of committed funding available to the Group".
+
+  - id: trading-update-2016-12
+    title: "Full year trading update"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-12-07"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/full-year-trading-update/4940396"
+    supports_fields:
+      - contracts
+      - customers
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (7 Dec 2016, 07:00) and
+  # same-day contemporaneous press (Construction Enquirer, New Civil Engineer,
+  # Express & Star). Confidence: high for date and identity; the Investegate
+  # page is currently an announcement landing page (full wire text may be
+  # truncated on the site).
+
+  - id: trading-update-2016-07
+    title: "Half-year trading update"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-07-06"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/half-year-trading-update/4729908"
+    supports_fields:
+      - contracts
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (6 Jul 2016, 07:00).
+  # Confidence: high for date; body should be read from the announcement.
+
+  - id: agm-statement-2016
+    title: "AGM Statement"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-05-04"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/agm-statement/4490108"
+    supports_fields:
+      - contracts
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (4 May 2016, 09:37).
+  # Do not use Investegate id 5010547, which is the 2017 AGM statement (after
+  # the cut-off). Confidence: high for date.
+
+  # --- Latest complete annual report before the cut-off ---
+  - id: ar-2015
+    title: "Annual Report and Accounts 2015"
+    publisher: Carillion plc
+    publication_date: "2016-03-21"
+    url: "https://web.archive.org/web/20160417100714id_/http://www.carillionplc.com/media/521024/carillion_ar15.pdf"
+    supports_fields:
+      - covenants
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - supply_chain
+      - order_book
+  # Publication date verified from the RNS "2015 Annual Report & Accounts and
+  # 2016 AGM Notice", 21 March 2016, 09:48
+  # (https://www.investegate.co.uk/announcement/rns/carillion--clln/2015-annual-report-accounts-and-2016-agm-notice/4336226),
+  # which states that copies were submitted to the National Storage Mechanism.
+  # Wayback snapshot 17 April 2016 (HTTP 200, application/pdf, 7,832,669 bytes;
+  # Memento-Datetime 17 Apr 2016; origin last-modified 29 Mar 2016). The
+  # last-modified date is eight days after the RNS; both dates are well before
+  # the cut-off. Confidence: high that this is the 2015 report and that it was
+  # public before the cut-off; mild note on file last-modified vs RNS date.
+  # This is the latest full annual report a modeller may use. It is the best
+  # pre-cut-off source for covenant wording, facility terms, pension scheme
+  # notes, customer/segment analysis and the Early Payment Facility / supplier
+  # disclosures. Amounts should be updated from the 1 March 2017 results.
+
+  - id: ch-group-accounts-2015
+    title: "Group accounts made up to 31 December 2015"
+    publisher: Companies House (Carillion plc, 03782379)
+    publication_date: "2016-05-11"
+    url: "https://find-and-update.company-information.service.gov.uk/company/03782379/filing-history/MzE0ODIxNDkyMmFkaXF6a2N4/document?format=pdf&download=0"
+    supports_fields:
+      - covenants
+      - cash
+      - debt
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - supply_chain
+  # Filing date verified from the Companies House filing-history table
+  # (type AA, "Group of companies' accounts made up to 31 December 2015",
+  # 11 May 2016). Official statutory copy of the 2015 group accounts; later
+  # than the 21 March 2016 investor publication of the same year's accounts.
+  # Confidence: high for filing date. Direct PDF download from some networks
+  # is issued as a short-lived S3 redirect; the Companies House URL above is
+  # the stable public record. Filing-history index:
+  # https://find-and-update.company-information.service.gov.uk/company/03782379/filing-history
+
+  - id: fy-results-2015
+    title: "Final Results for the year ended 31 December 2015"
+    publisher: Carillion plc (London Stock Exchange RNS 8713Q)
+    publication_date: "2016-03-03"
+    url: "https://www.rns-pdf.londonstockexchange.com/rns/8713Q_1-2016-3-2.pdf"
+    supports_fields:
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - order_book
+  # Date verified from the first line of the PDF ("3 March 2016") and the
+  # Investegate index (3 Mar 2016, 07:00). HTTP 200, 652,612 bytes. Confidence: high.
+  # Also: https://www.investegate.co.uk/announcement/rns/carillion--clln/final-results/4435557
+  # Superseded for notes and covenants by ar-2015, but useful as the
+  # contemporaneous results announcement.
+
+  # --- 2015 interim and trading updates ---
+  - id: hy-report-2015
+    title: "Half-yearly financial report for the six months ended 30 June 2015"
+    publisher: Carillion plc (London Stock Exchange RNS 0809X)
+    publication_date: "2015-08-26"
+    url: "https://www.rns-pdf.londonstockexchange.com/rns/0809X_1-2015-8-25.pdf"
+    supports_fields:
+      - cash
+      - debt
+      - liquidity
+      - pensions
+      - contracts
+      - customers
+      - order_book
+  # Date verified from the first line of the PDF ("26 August 2015") and the
+  # Investegate index (26 Aug 2015, 07:00). HTTP 200, 284,759 bytes. Filename
+  # dated 25 August 2015. Confidence: high.
+  # Also: https://www.investegate.co.uk/announcement/rns/carillion--clln/half-yearly-report/4041371
+
+  - id: trading-update-2015-12
+    title: "2015 pre-close trading update"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-12-09"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/2015-pre-close-trading-update/4406756"
+    supports_fields:
+      - contracts
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (9 Dec 2015, 07:00).
+  # Confidence: high for date.
+
+  - id: trading-update-2015-07
+    title: "Trading Statement"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-07-14"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/trading-statement/4221939"
+    supports_fields:
+      - contracts
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (14 Jul 2015, 07:00).
+  # Confidence: high for date.
+
+  - id: agm-statement-2015
+    title: "AGM Statement"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-05-06"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/agm-statement/4080278"
+    supports_fields:
+      - contracts
+      - order_book
+      - cash
+  # Date verified from the Investegate CLLN RNS index (6 May 2015, 11:51).
+  # A second "AGM Statement" appears on 7 May 2015 (id 4082102); treat as a
+  # follow-up and read both if used. Confidence: high for the 6 May date.
+
+  # --- Prior-year annual report (trend, earlier covenant and pension notes) ---
+  - id: ar-2014
+    title: "Annual Report and Accounts 2014"
+    publisher: Carillion plc
+    publication_date: "2015-03-23"
+    url: "https://web.archive.org/web/20150325213736id_/http://www.carillionplc.com/media/366339/full_annual_report_march_2015.pdf"
+    supports_fields:
+      - covenants
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - supply_chain
+  # Publication date verified from the RNS "2014 Annual Report & Accounts and
+  # 2015 AGM Notice", 23 March 2015, 15:24
+  # (https://www.investegate.co.uk/announcement/rns/carillion--clln/2014-annual-report-accounts-and-2015-agm-notice/4022400).
+  # Wayback snapshot 25 March 2015; PDF downloaded and confirmed as PDF-1.6
+  # (5,774,383 bytes). Confidence: high.
+  # The report discusses covenants on the bank facilities, private placement
+  # and convertible bonds (without publishing the numerical tests); a £770m
+  # five-year syndicate plus £80m of bilateral facilities; US private placement
+  # terms; the Early Payment Facility; and agreed triennial valuations (next
+  # main-scheme valuation due 31 December 2016). Companies House also holds
+  # the 2014 group accounts, filed 22 May 2015
+  # (https://find-and-update.company-information.service.gov.uk/company/03782379/filing-history/MzEyMzcxNDc3OWFkaXF6a2N4/document?format=pdf&download=0).
+
+  - id: fy-results-2014
+    title: "Final Results for the year ended 31 December 2014"
+    publisher: Carillion plc (London Stock Exchange RNS 4606G)
+    publication_date: "2015-03-04"
+    url: "https://www.rns-pdf.londonstockexchange.com/rns/4606G_-2015-3-3.pdf"
+    supports_fields:
+      - cash
+      - debt
+      - liquidity
+      - facilities
+      - pensions
+      - contracts
+      - customers
+      - order_book
+  # RNS date verified from the Investegate CLLN index (4 Mar 2015, 07:00).
+  # HTTP 200, 212,607 bytes. The PDF filename is dated 3 March 2015 (standard
+  # pre-release upload); the first page does not repeat the calendar date.
+  # Confidence: high for the 4 March 2015 release date; mild note on the
+  # filename date. Also:
+  # https://www.investegate.co.uk/announcement/rns/carillion--clln/final-results/3843818
+
+  # --- Financing (facilities, refinancing, security) ---
+  - id: bank-facility-renewal-2015
+    title: "Carillion renews main bank facility"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-11-30"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-renews-main-bank-facility/4308748"
+    supports_fields:
+      - covenants
+      - debt
+      - facilities
+      - liquidity
+      - cash
+  # Date verified from the Investegate CLLN RNS index (30 Nov 2015, 07:00).
+  # Confidence: high for date and identity. The announcement body should be
+  # read in full for tenor and amount; subsequent accounts report committed
+  # bank facilities of £870m at 31 December 2016. The facility agreement
+  # itself was not found as a public document.
+
+  - id: schuldschein-refinancing-2017
+    title: "Carillion successfully refinances maturing debt facilities"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2017-01-30"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-refinances-maturing-debt-facilities/4805312"
+    supports_fields:
+      - debt
+      - facilities
+      - liquidity
+      - cash
+      - covenants
+  # Date verified from the Investegate CLLN RNS index (30 Jan 2017, 15:42) and
+  # from a full-text RNS mirror dated 30 January 2017, 15:42
+  # (https://shareprices.com/rns/carillion-refinances-maturing-debt-facilities-v98cavhe90y1n4n/).
+  # The announcement states £112 million of German Schuldschein loans, average
+  # maturity of about five years, a blended rate of sub-three per cent including
+  # fees, and continued access to over £1.4 billion of funding. Confidence: high.
+  # Referenced again in the 1 March 2017 results.
+
+  - id: ch-charge-0001
+    title: "Charge 0378 2379 0001 (MR01) — Santander UK PLC as security agent"
+    publisher: Companies House (Carillion plc, 03782379)
+    publication_date: "2016-12-16"
+    url: "https://find-and-update.company-information.service.gov.uk/company/03782379/charges/Ke1e04JN2KQZcATkbxLuu9g7GBM"
+    supports_fields:
+      - covenants
+      - debt
+      - facilities
+      - liquidity
+  # Created 9 December 2016; delivered/filed 16 December 2016 (the public
+  # record date used here). Verified from the Companies House charge page:
+  # persons entitled "Santander UK PLC as Security Agent for the Secured
+  # Parties"; brief description "Contains fixed charge. Contains floating
+  # charge. Contains negative pledge."; 30-page MR01. Confidence: high for
+  # dates and the public particulars; the 30-page instrument should be read
+  # for scope of the security. Official PDF:
+  # https://find-and-update.company-information.service.gov.uk/company/03782379/filing-history/MzE2NDY0Mzc3OGFkaXF6a2N4/document?format=pdf&download=0
+  # Later charges in favour of Glas Trust (created 24–26 October 2017) are
+  # after the cut-off and must not be used.
+
+  # --- Material contract, award and acquisition announcements (RNS, 2015–cut-off) ---
+  # Included because the company itself announced them as regulatory news in
+  # the period, not because of later outcomes.
+
+  - id: contract-scape-fm-2015
+    title: "Scape £1.5 billion facilities management framework"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-03-04"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/scape-1-5billion-facilities-management-framework/3843868"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 4 Mar 2015, 07:01. Confidence: high for date.
+
+  - id: contract-helical-bar-2015
+    title: "£91 million contract by Helical Bar"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-03-26"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/-91-million-contract-by-helical-bar/4062686"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 26 Mar 2015, 11:08. Confidence: high for date.
+
+  - id: acquisition-outland-2015
+    title: "Carillion acquires Outland Group"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-05-29"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-acquires-outland-group/4053011"
+    supports_fields:
+      - customers
+      - contracts
+      - cash
+      - debt
+  # Investegate CLLN index: 29 May 2015, 07:04. Informs the Canadian remote-site
+  # services footprint. Confidence: high for date.
+
+  - id: contract-smart-motorways-2015
+    title: "Carillion JV awarded smart motorway contracts"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-07-22"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-jv-awarded-smart-motorway-contracts/4005293"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 22 Jul 2015, 07:00. Confidence: high for date.
+
+  - id: contract-a14-2015
+    title: "Carillion JV selected to deliver £292m A14 upgrade"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-09-21"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-jv-selected-to-deliver-292m-a14-upgrade/3973547"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 21 Sep 2015, 08:46. Confidence: high for date.
+
+  - id: contracts-new-business-1bn-2015
+    title: "Carillion announces new business worth around £1bn"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-12-09"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-announces-new-business-worth-around-1bn/4406755"
+    supports_fields:
+      - contracts
+      - customers
+      - order_book
+  # Investegate CLLN index: 9 Dec 2015, 07:00 (same morning as the pre-close
+  # trading update). Confidence: high for date.
+
+  - id: contract-arriva-2015
+    title: "Carillion selected by Arriva as preferred partner"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-12-11"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-selected-by-arriva-as-preferred-partner/4440731"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 11 Dec 2015, 07:18. Confidence: high for date.
+
+  - id: jv-final-close-2015-12
+    title: "Carillion joint venture achieves final close"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2015-12-14"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-joint-venture-achieves-final-close/4161565"
+    supports_fields:
+      - contracts
+      - cash
+      - debt
+  # Investegate CLLN index: 14 Dec 2015, 08:32. Informs PPP investment / cash
+  # from financial close. Confidence: high for date; read the body for the
+  # project name and value.
+
+  - id: contracts-up-to-600m-2016
+    title: "Carillion awarded contracts worth up to £600m"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-07-06"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-awarded-contracts-worth-up-to-600m/4729931"
+    supports_fields:
+      - contracts
+      - customers
+      - order_book
+  # Investegate CLLN index: 6 Jul 2016, 07:00 (same morning as the half-year
+  # trading update). Confidence: high for date.
+
+  - id: jv-financial-close-2016-07
+    title: "Carillion joint venture achieves financial close"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-07-26"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-joint-venture-achieves-financial-close/4419178"
+    supports_fields:
+      - contracts
+      - cash
+      - debt
+  # Investegate CLLN index: 26 Jul 2016, 07:00. A second RNS that morning,
+  # "Carillion subsidiary in joint venture"
+  # (https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-subsidiary-in-joint-venture/4419183),
+  # should be read alongside. Confidence: high for date.
+
+  - id: contract-centrica-2016
+    title: "Carillion selected by Centrica for contract"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-09-05"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-selected-by-centrica-for-contract/4686172"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 5 Sep 2016, 07:00. Confidence: high for date.
+
+  - id: contract-nationwide-2016
+    title: "Carillion wins £350m contract for Nationwide"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-10-04"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-wins-350m-contract-for-nationwide/4690483"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 4 Oct 2016, 07:00. Confidence: high for date.
+
+  - id: contract-mod-jv-2016
+    title: "Carillion Joint Ventures awarded contract by MoD"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-11-01"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-joint-ventures-awarded-contract-by-mod/4665947"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 1 Nov 2016, 13:30. Confidence: high for date.
+
+  - id: contract-manitoba-hydro-2016
+    title: "Carillion selected as the preferred bidder (Manitoba Hydro / Rokstad)"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2016-12-07"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-selected-as-the-preferred-bidder/4940427"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 7 Dec 2016, 07:00 (same morning as the full-year
+  # trading update). Contemporaneous reports describe a c.£120m Bipole III
+  # transmission award to Rokstad for Manitoba Hydro. Confidence: high for
+  # date; confirm value and scope from the RNS body.
+
+  - id: contract-jv-160m-2017
+    title: "Carillion JV awarded £160 million contract"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2017-01-04"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-jv-awarded-160-million-contract/4544457"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 4 Jan 2017, 07:00. Confidence: high for date.
+
+  - id: contract-openreach-2017
+    title: "Carillion extends Openreach framework agreement"
+    publisher: Carillion plc (London Stock Exchange RNS)
+    publication_date: "2017-02-02"
+    url: "https://www.investegate.co.uk/announcement/rns/carillion--clln/carillion-extends-openreach-framework-agreement/4809038"
+    supports_fields:
+      - contracts
+      - customers
+  # Investegate CLLN index: 2 Feb 2017, 07:00. Confidence: high for date.
