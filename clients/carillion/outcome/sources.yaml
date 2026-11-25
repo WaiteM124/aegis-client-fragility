@@ -1,0 +1,134 @@
+# Authoritative post-event sources for the Carillion outcome reference list.
+# Path: clients/carillion/outcome/sources.yaml
+# Procedure: docs/decisions/ADR-020-backtest-scoring.md
+#
+# Allowed classes (ADR-020): parliamentary / select-committee reports;
+# Official Receiver or Insolvency Service material; regulator or enforcement
+# findings; similarly primary official inquiries.
+# Secondary journalism and commentary are out of scope.
+#
+# URLs and metadata only — documents are not stored in the repo.
+
+schema_version: outcome_sources.v1
+client_id: carillion
+method_tag_for_later_scoring: carillion-method-v1
+blinding_note: >
+  Sources logged here are post-event only. This PR does not open maps/ or run
+  metrics on Carillion.
+
+sources:
+
+  # --- Primary parliamentary inquiry (principal causal narrative) ---
+  - id: joint-committee-hc769
+    title: "Carillion (HC 769) — Second Joint Report from the Business, Energy and Industrial Strategy and Work and Pensions Committees"
+    publisher: House of Commons (BEIS and Work and Pensions Committees)
+    publication_date: "2018-05-16"
+    ordered_printed: "2018-05-09"
+    url: "https://publications.parliament.uk/pa/cm201719/cmselect/cmworpen/769/769.pdf"
+    html_url: "https://publications.parliament.uk/pa/cm201719/cmselect/cmworpen/769/76902.htm"
+    class: parliamentary_select_committee
+    notes: >
+      Ordered by the House of Commons to be printed 9 May 2018; published
+      16 May 2018. Principal source naming structural weaknesses as causal or
+      contributing to Carillion's failure (debt-funded acquisitive growth,
+      pensions underfunding, supplier / EPF practices, aggressive contract
+      revenue accounting, overseas expansion).
+
+  - id: joint-committee-hc769-summary
+    title: "Carillion — Committee summary (HC 769)"
+    publisher: House of Commons (BEIS and Work and Pensions Committees)
+    publication_date: "2018-05-16"
+    url: "https://publications.parliament.uk/pa/cm201719/cmselect/cmworpen/769/76903.htm"
+    class: parliamentary_select_committee
+    notes: >
+      HTML summary of the same joint report; used where the summary states the
+      causal framing more compactly than chapter prose.
+
+  # --- NAO (government handling; limited company-cause claims) ---
+  - id: nao-carillion-2018
+    title: "Investigation into the government's handling of the collapse of Carillion (HC 1002)"
+    publisher: National Audit Office
+    publication_date: "2018-06-07"
+    ordered_printed: "2018-06-05"
+    url: "https://www.nao.org.uk/wp-content/uploads/2018/06/Investigation-into-the-governments-handling-of-the-collapse-of-Carillion.pdf"
+    report_page: "https://www.nao.org.uk/reports/investigation-into-the-governments-handling-of-the-collapse-of-carillion/"
+    class: parliamentary_nao
+    notes: >
+      Official inquiry into government exposure and liquidation handling.
+      Explicitly states it has not assessed the actions of Carillion, its
+      directors, or advisers. Used only for factual portfolio structure the
+      NAO records (e.g. public-sector contract footprint; named loss-making
+      construction projects), not as sole authority that those facts caused
+      the insolvency.
+
+  # --- Pensions Regulator ---
+  - id: tpr-carillion-s89
+    title: "The Carillion Group — Regulatory intervention report"
+    publisher: The Pensions Regulator
+    publication_date: "2023-01-01"
+    url: "https://www.thepensionsregulator.gov.uk/en/document-library/enforcement-activity/regulatory-intervention-reports/carillion-group-regulatory-intervention-report"
+    class: regulator_enforcement
+    notes: >
+      Section 89-style regulatory intervention report. Opens by stating the
+      Group was brought down by unsustainable debt and an £845 million
+      write-down on major long-term construction contracts. Also records
+      misleading financial information and stretching of trade creditors.
+      Exact calendar day within January 2023 is not stated on the page;
+      publication_date uses month-start ISO form for logging.
+
+  # --- FRC / audit and accounts enforcement ---
+  - id: frc-kpmg-sanctions-2023
+    title: "Sanctions against KPMG LLP, KPMG Audit plc and two former partners (Carillion audits)"
+    publisher: Financial Reporting Council
+    publication_date: "2023-10-12"
+    url: "https://www.frc.org.uk/news-and-events/news/2023/10/sanctions-against-kpmg-llp-kpmg-audit-plc-and-two-former-partners/"
+    summary_pdf_url: "https://www.frc.org.uk/documents/6490/KPMG_sanctions_for_audit_of_Carillion_Summary_of_findings_1.pdf"
+    class: regulator_enforcement
+    notes: >
+      Enforcement findings on the statutory audits of Carillion FY2014–2016.
+      Summarises auditor failures over contracts, going concern / debt,
+      supply-chain finance, pensions, and goodwill. Used where the notice
+      records company structural features the audits failed to challenge
+      (core operations loss-making; reliance on short-term cash measures;
+      SCF facility; construction contracts), not as a finding against the
+      auditors themselves as a Carillion weakness.
+
+  - id: frc-kpmg-decision1-2024
+    title: "Final Settlement Decision Notice — KPMG LLP and Peter Noel Meehan (Carillion FY2014–2016 audits)"
+    publisher: Financial Reporting Council
+    publication_date: "2024-05-09"
+    url: "https://www.frc.org.uk/documents/7202/Final_Settlement_Decision_Notice_-_KPMG_and_Peter_Noel_Meehan.pdf"
+    announcement_url: "https://www.frc.org.uk/news-and-events/news/2024/05/publication-of-final-settlement-decision-notices-in-respect-of-kpmg-and-two-former-partners/"
+    class: regulator_enforcement
+    notes: >
+      Full Decision 1 text published 9 May 2024. Same investigative scope as
+      frc-kpmg-sanctions-2023; preferred citation where paragraph-level
+      pinpointing is needed.
+
+  - id: frc-adam-khan-2026
+    title: "Findings in relation to Mr Adam and Mr Khan (Carillion financial statements)"
+    publisher: Financial Reporting Council
+    publication_date: "2026-05-12"
+    url: "https://www.frc.org.uk/news-and-events/news/2026/05/findings-12-05-2026/"
+    particulars_pdf_url: "https://www.frc.org.uk/documents/9336/POFAM_12_05_2026.pdf"
+    class: regulator_enforcement
+    notes: >
+      Misconduct findings against former Group Finance Directors Richard Adam
+      and Zafar Khan concerning preparation of accounting information for
+      major UK construction contracts and a supply-chain finance facility,
+      material to reported performance 2013–2016 / H1 2017.
+
+  # --- Official Receiver / Insolvency Service (limited public causal text) ---
+  - id: beis-or-letter-2018
+    title: "Carillion liquidation: letter from the Business Secretary to the Insolvency Service"
+    publisher: Department for Business, Energy and Industrial Strategy
+    publication_date: "2018-01-16"
+    url: "https://assets.publishing.service.gov.uk/media/5a75606eed915d73149597c4/carillion-letter-sos-insolvency-service.pdf"
+    related_news_url: "https://www.gov.uk/government/news/business-secretary-outlines-departmental-action-following-carillion-liquidation"
+    class: official_receiver_insolvency_service
+    notes: >
+      Confirms the Official Receiver's statutory duty to investigate causes of
+      failure and director conduct; does not itself publish a list of structural
+      weaknesses. Logged because ADR-020 names OR / Insolvency Service material
+      as an allowed class. No reference-list items are sourced solely from this
+      letter (see exclusions in reference_list.yaml).

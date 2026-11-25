@@ -28,7 +28,9 @@ any event.
    procedure-defined outcome reference list per
    [ADR-020](../../docs/decisions/ADR-020-backtest-scoring.md) (driver-level
    hit-from-evidence / hit-from-unknown / miss / method gap / false flag; no
-   blended score). Reference list and scoring are separate later PRs.
+   blended score). The reference list lives under
+   [`outcome/`](outcome/) (sources + items + mappings); scoring is a
+   separate later PR.
 8. **No prediction claim:** do not claim prediction, probability, or a blended
    fragility score.
 
@@ -65,4 +67,5 @@ not as reassuring defaults:
 - `model/carillion.yaml` — blind dependency model from the source pack only;
   `model/CITATIONS.md` and `model/GAPS.md` record citations and unknowns.
 - `maps/` — locked maps (`method_tag: carillion-method-v1`); never edited after creation.
+- `outcome/` — post-event outcome reference list (ADR-020); no scoring results.
 - `runs/` — local run records (gitignored).
