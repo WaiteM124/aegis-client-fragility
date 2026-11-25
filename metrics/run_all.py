@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Callable
+from pathlib import Path
 
 import networkx as nx
 
@@ -135,12 +136,64 @@ def main(argv: list[str] | None = None) -> None:
             "Overrides graph YAML and the default (0.5)."
         ),
     )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="Write one JSON run record (run_record.v1) to PATH.",
+    )
+    parser.add_argument(
+        "--store",
+        nargs="?",
+        const="data/aegis_runs.duckdb",
+        default=None,
+        metavar="DB",
+        help=(
+            "Write a run record and load it into local DuckDB (default "
+            "data/aegis_runs.duckdb). Implies a temp JSON if --out is omitted."
+        ),
+    )
     args = parser.parse_args(argv)
     graph, scenario = load_graph_and_scenario(args)
     # --stress-ladder is on common args and already folded into scenario
     if args.survival_floor is not None:
         scenario = scenario.model_copy(update={"survival_floor": args.survival_floor})
-    print(format_grouped(run_all(graph, scenario)))
+
+    results = run_all(graph, scenario)
+    print(format_grouped(results))
+
+    if args.out is None and args.store is None:
+        return
+
+    from metrics.run_record import build_run_record, write_run_record
+    from metrics.store import load as store_load
+
+    stress: bool | list[float]
+    if scenario.stress_ladder is not None:
+        stress = list(scenario.stress_ladder)
+    else:
+        stress = bool(scenario.run_stress_ladder)
+
+    record = build_run_record(
+        graph_path=args.graph,
+        scenario=scenario,
+        stress_ladder=stress if stress else False,
+        survival_floor=scenario.survival_floor,
+    )
+
+    out_path = args.out
+    if out_path is None and args.store is not None:
+        # Persist alongside the DB so --store alone still leaves a JSON artifact.
+        out_path = Path(args.store).with_suffix(".last_run.json")
+    assert out_path is not None
+    write_run_record(record, out_path)
+
+    if args.store is not None:
+        inserted = store_load([out_path], db_path=Path(args.store))
+        print(f"run record → {out_path} (stored={inserted} new row(s) in {args.store})")
+    else:
+        print(f"run record → {out_path}")
 
 
 if __name__ == "__main__":

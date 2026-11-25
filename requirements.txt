@@ -7,6 +7,8 @@ pydantic-settings>=2.4.0
 # ── Structural-fragility metrics (local, no cloud) ────────────────────────────
 networkx>=3.3
 PyYAML>=6.0.1
+duckdb>=1.1.0
+jsonschema>=4.23.0
 
 # ── Async persistence ─────────────────────────────────────────────────────────
 aiosqlite>=0.20.0

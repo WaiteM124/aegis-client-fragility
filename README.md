@@ -30,6 +30,13 @@ PYTHONPATH=. python -m metrics.hhi --graph metrics/examples/four_equal_suppliers
 # Ruin needs an explicit probe (--stress-ladder or shocks); silence is NOT_TESTED.
 PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml --stress-ladder
 
+# Made-up EXAMPLE: ChillCo chilled ready-meals (supply-side only)
+PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder
+
+# Persist a versioned run record (JSON) and/or load into local DuckDB
+PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chillco.yaml \
+  --stress-ladder --out /tmp/chillco_run.json --store
+
 # Tests for the metrics package
 PYTHONPATH=. python -m pytest metrics/tests -q
 
@@ -38,9 +45,22 @@ PYTHONPATH=. python evals/run_evals.py
 # or: make eval-gate
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
+Windows PowerShell (same commands with `$env:PYTHONPATH`):
+
+```powershell
+$env:PYTHONPATH = "."
+python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder
+python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder `
+  --out $env:TEMP\chillco_run.json --store
+python -m pytest metrics/tests -q
+python evals/run_evals.py
+```
+
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/` (including made-up `chillco.yaml`). Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
 **Status values.** Each metric reports its own status separately: `green` / `amber` / `red` / `not_tested`. `not_tested` means the probe or required data was missing — it is never treated as a pass. Group roll-up is worst-member (`red > amber > not_tested > green`). There is no blended single score.
+
+**Optionality.** Counts **node-disjoint** supply corridors (Menger / max-flow with node splitting). Shared sources collapse apparent routes — see [ADR-016](docs/decisions/ADR-016-optionality-node-disjoint-maxflow.md). Drivers name `shared_collapse:<node>` when a shared vertex collapses the topology.
 
 **Ruin.** Ruin fires only under an **explicit** probe (`--stress-ladder`, scenario shocks, or `ladder=`). Without one it returns `NOT_TESTED`, never green. When tested, ruin is red if remaining deliverable flow at any ladder rung is strictly below `floor × F₀`. Default floor is **0.5**. Override per graph with `survival_floor:` / `ruin_line:`, or `--survival-floor` on the CLI:
 
@@ -53,6 +73,8 @@ PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yam
 **Distance to ruin.** Per input, smallest multiple of worst-on-record at which a configured ruin line is crossed. Never averaged across inputs. Cut-offs are versioned in `DistanceToRuinThresholds` (≤1× red, ≤2× amber by default).
 
 **SPOF.** A cut node marked `critical: true` (sole supplier / sole critical route) is red on its own. Non-critical cut nodes stay amber.
+
+**Run records.** `metrics.run_all --out PATH` writes one JSON object per run (`run_id`, UTC timestamp, graph name, graph SHA-256, git commit if available, package version, probe settings, and every metric’s version / value / status / drivers). Schema: `metrics/schemas/run_record.v1.json`. `--store [DB]` validates the record and appends it into local DuckDB (default `data/aegis_runs.duckdb`, gitignored) via `metrics.store.load` — idempotent on `run_id`. Same record shape is intended for BigQuery later ([ADR-017](docs/decisions/ADR-017-local-duckdb-run-records.md)). Example analytical SQL: [docs/metrics-run-queries.md](docs/metrics-run-queries.md).
 
 ### Backend
 
@@ -185,7 +207,7 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |
 | `infrastructure` | Dockerfiles and Cloud Run service YAML for the API and the worker |
 | `evals/` | Deterministic metrics eval suite (labelled graphs, baseline, CI `eval-gate`) — weakness detection, not prediction ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)) |
-| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013, 015; engineering ADRs 001–004; eval gate ADR-014) |
+| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013, 015–017; engineering ADRs 001–004; eval gate ADR-014) |
 | `tests` | Unit, integration, contract, and evaluation tests |
 
 ### Port and adapter matrix

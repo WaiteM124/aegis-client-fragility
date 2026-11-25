@@ -1,0 +1,128 @@
+# EXAMPLE DATA (made-up). ChillCo — chilled ready-meals maker.
+# Supply-side only: the current graph schema supports suppliers / assets /
+# routes / buyer with share, flow, capacity, buffer. It does NOT yet model:
+#   - customer concentration (demand-side / outbound)
+#   - energy cost to margin
+#   - cash and covenant as the ruin line
+# Those are known gaps; ruin here uses survival_floor on deliverable flow only.
+#
+# Proteins (and other inbound lines in this EXAMPLE) consolidate through one
+# chilled haulier before the factories — a structural single corridor.
+name: chillco
+nodes:
+- id: protein_a
+  kind: supplier
+  type: protein
+  region: uk
+  technology: poultry
+  critical: false
+- id: protein_b
+  kind: supplier
+  type: protein
+  region: ireland
+  technology: beef
+  critical: false
+- id: protein_c
+  kind: supplier
+  type: protein
+  region: netherlands
+  technology: pork
+  critical: false
+- id: vegetables
+  kind: supplier
+  type: produce
+  region: uk
+  technology: fresh
+  critical: false
+- id: packaging
+  kind: supplier
+  type: packaging
+  region: uk
+  technology: tray
+  critical: false
+- id: haulier_x
+  kind: route
+  type: chilled_haulage
+  region: uk
+  technology: reefer
+  critical: true
+- id: factory_main
+  kind: asset
+  type: cook_line
+  region: uk
+  technology: cook_chill
+  critical: true
+- id: factory_2
+  kind: asset
+  type: cook_line
+  region: uk
+  technology: cook_chill_spare
+  critical: false
+- id: chillco
+  kind: buyer
+  critical: false
+edges:
+# Inbound → shared chilled haulier (buffer ~0: no stock on chilled lines)
+- source: protein_a
+  target: haulier_x
+  share: 0.2
+  flow: 20
+  capacity: 22
+  buffer: 0
+- source: protein_b
+  target: haulier_x
+  share: 0.2
+  flow: 20
+  capacity: 22
+  buffer: 0
+- source: protein_c
+  target: haulier_x
+  share: 0.2
+  flow: 20
+  capacity: 22
+  buffer: 0
+- source: vegetables
+  target: haulier_x
+  share: 0.25
+  flow: 25
+  capacity: 28
+  buffer: 0
+- source: packaging
+  target: haulier_x
+  share: 0.15
+  flow: 15
+  capacity: 18
+  buffer: 0
+# Haulier → factories (main line critical; factory_2 limited spare capacity)
+- source: haulier_x
+  target: factory_main
+  share: 0.75
+  flow: 75
+  capacity: 80
+  buffer: 0
+- source: haulier_x
+  target: factory_2
+  share: 0.25
+  flow: 25
+  capacity: 30
+  buffer: 0
+# Factories → buyer
+- source: factory_main
+  target: chillco
+  share: 0.75
+  flow: 75
+  capacity: 80
+  buffer: 0
+- source: factory_2
+  target: chillco
+  share: 0.25
+  flow: 25
+  capacity: 30
+  buffer: 0
+inputs:
+- id: supply_shock
+  worst_on_record: 0.2
+  lower_bound: 0.0
+  upper_bound: 1.0
+ruin_line:
+  survival_floor: 0.5

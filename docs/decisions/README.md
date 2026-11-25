@@ -32,6 +32,8 @@ Keep ADRs short and plain. Link related ADRs. Cross-check `metrics/` and `backen
 | [ADR-012](ADR-012-target-gcp-platform.md) | Target platform is GCP | Proposed | 2026-11-22 |
 | [ADR-013](ADR-013-hormuz-case-study-dropped.md) | Strait of Hormuz case study dropped | Accepted | 2026-11-22 – 2026-11-23 |
 | [ADR-015](ADR-015-convexity-distance-to-ruin-not-tested.md) | Convexity from model output; distance to ruin; NOT_TESTED | Accepted | 2026-11-25 |
+| [ADR-016](ADR-016-optionality-node-disjoint-maxflow.md) | Optionality counts node-disjoint corridors (Menger / max-flow) | Accepted | 2026-11-25 |
+| [ADR-017](ADR-017-local-duckdb-run-records.md) | Local DuckDB for metrics run records; BigQuery later | Accepted | 2026-11-25 |
 
 ### Eval / CI
 
