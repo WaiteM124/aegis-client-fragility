@@ -1,13 +1,20 @@
 """ChillCo example: chilled ready-meals supply-side fragility (made-up EXAMPLE DATA)."""
 
+from pathlib import Path
+
 from metrics.contracts import Scenario, Status
+from metrics.graph_loader import load_graph
 from metrics.run_all import run_all
 
+CHILLCO_GRAPH = (
+    Path(__file__).resolve().parents[2] / "clients" / "chillco" / "model" / "chillco.yaml"
+)
 
-def test_chillco_stress_ladder_findings(load_example):
+
+def test_chillco_stress_ladder_findings():
     """run_all with stress ladder: haulier SPOF red, optionality not green, ruin tested."""
     results = run_all(
-        load_example("chillco"),
+        load_graph(CHILLCO_GRAPH),
         Scenario(run_stress_ladder=True),
     )
 

@@ -1,0 +1,3 @@
+# Empty until public sources (publication_date ≤ cut_off_date) are logged.
+schema_version: sources_manifest.v1
+sources: []

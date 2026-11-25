@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/sources_manifest.v1.json",
+  "title": "Aegis client sources manifest v1",
+  "description": "Evidence pack for a client model. Each source is logged with a publication date. No forecasts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "sources_manifest.v1"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "publisher", "publication_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publisher": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publication_date": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO date the source was published (public record)."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path under clients/<id>/sources/ when the artefact is a file."
+          },
+          "sha256": {
+            "type": ["string", "null"],
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA-256 of the file when path is set."
+          },
+          "supports_fields": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "description": "Model / graph fields this source supports."
+          }
+        },
+        "anyOf": [
+          { "required": ["url"] },
+          { "required": ["path"] }
+        ]
+      }
+    }
+  }
+}

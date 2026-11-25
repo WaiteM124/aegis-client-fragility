@@ -1,0 +1,10 @@
+# EXAMPLE DATA (made-up). ChillCo is a fictional chilled ready-meals maker.
+# Not a real company. Used only to exercise structural-fragility metrics.
+id: chillco
+display_name: ChillCo (EXAMPLE — made-up)
+kind: example
+data_classification: example
+notes: >
+  Made-up EXAMPLE DATA. Supply-side dependency graph only. The current graph
+  schema does not yet model customer concentration, energy-to-margin, or cash
+  covenants as the ruin line. No prediction claim.

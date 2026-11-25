@@ -37,6 +37,18 @@ data/aegis_runs.duckdb.wal
 data/*.duckdb
 data/*.last_run.json
 
+# ── Client packs ──────────────────────────────────────────────────────────────
+# Local run records (never commit). Locked maps under maps/ are intentional.
+clients/*/runs/**
+!clients/*/runs/.gitkeep
+
+# Confidential client evidence and models must not enter git. Real client data
+# belongs in private cloud storage (ADR-018). CI fails if a pack with
+# data_classification: confidential has tracked files under sources/ or model/.
+# For a confidential pack, add clients/<id>/.gitignore ignoring sources/** and
+# model/** (keep .gitkeep only), or keep those trees untracked.
+clients/**/confidential_local/
+
 # ── Node / frontend ───────────────────────────────────────────────────────────
 node_modules/
 .next/

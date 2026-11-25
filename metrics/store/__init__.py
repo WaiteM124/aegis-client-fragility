@@ -1,8 +1,9 @@
 """Local DuckDB store for metrics run records.
 
-Append-only load of validated ``run_record.v1`` JSON files. Idempotent on
-``run_id``. Analytics later may move to BigQuery with the same record
-schema (see ADR-017); this package is the local path.
+Append-only load of validated ``run_record.v1`` / ``run_record.v2`` JSON
+files. Idempotent on ``run_id``. v1 records load with ``client_id`` NULL;
+v2 sets ``client_id``. Analytics later may move to BigQuery with the same
+record schema (see ADR-017); this package is the local path.
 
 Public API: ``load``, ``DEFAULT_DB_PATH``, ``migrate``.
 """
@@ -83,8 +84,8 @@ def _insert_record(con, record: dict[str, Any]) -> None:
         """
         INSERT INTO runs (
             run_id, ts_utc, graph_name, graph_sha256, git_commit,
-            package_version, stress_ladder, survival_floor
-        ) VALUES (?, ?, ?, ?, ?, ?, ?::JSON, ?)
+            package_version, stress_ladder, survival_floor, client_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?::JSON, ?, ?)
         """,
         [
             record["run_id"],
@@ -95,6 +96,7 @@ def _insert_record(con, record: dict[str, Any]) -> None:
             record["package_version"],
             json.dumps(probe["stress_ladder"]),
             probe.get("survival_floor"),
+            record.get("client_id"),
         ],
     )
     for m in record["metrics"]:
@@ -122,7 +124,7 @@ def load(
     """Validate and append run-record JSON files into DuckDB.
 
     Returns the number of newly inserted runs. Existing ``run_id`` rows are
-    skipped (idempotent). Each file must validate against run_record.v1.
+    skipped (idempotent). Each file must validate as run_record.v1 or v2.
     """
     con = _connect(Path(db_path))
     try:

@@ -30,15 +30,17 @@ PYTHONPATH=. python -m metrics.hhi --graph metrics/examples/four_equal_suppliers
 # Ruin needs an explicit probe (--stress-ladder or shocks); silence is NOT_TESTED.
 PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml --stress-ladder
 
-# Made-up EXAMPLE: ChillCo chilled ready-meals (supply-side only)
-PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder
+# Made-up EXAMPLE client pack: ChillCo (supply-side only) — write runs/ + DuckDB
+PYTHONPATH=. python -m metrics.run_all --client chillco --stress-ladder --store
 
-# Persist a versioned run record (JSON) and/or load into local DuckDB
-PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chillco.yaml \
-  --stress-ladder --out /tmp/chillco_run.json --store
+# Lock a date-stamped map under clients/chillco/maps/ (refuses overwrite)
+PYTHONPATH=. python -m metrics.run_all --client chillco --stress-ladder --store --lock
 
 # Tests for the metrics package
 PYTHONPATH=. python -m pytest metrics/tests -q
+
+# Confidential client-pack guard (also runs in CI)
+PYTHONPATH=. python -m metrics.client_pack --check-confidential
 
 # Labelled weakness-detection eval suite (not prediction) — see ADR-014
 PYTHONPATH=. python evals/run_evals.py
@@ -49,14 +51,14 @@ Windows PowerShell (same commands with `$env:PYTHONPATH`):
 
 ```powershell
 $env:PYTHONPATH = "."
-python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder
-python -m metrics.run_all --graph metrics/examples/chillco.yaml --stress-ladder `
-  --out $env:TEMP\chillco_run.json --store
+python -m metrics.run_all --client chillco --stress-ladder --store
+python -m metrics.run_all --client chillco --stress-ladder --store --lock
+python -m metrics.client_pack --check-confidential
 python -m pytest metrics/tests -q
 python evals/run_evals.py
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Example graphs live in `metrics/examples/` (including made-up `chillco.yaml`). Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Small test graphs live in `metrics/examples/`. Client packs (evidence, models, locked maps, run history) live under `clients/` — see [clients/README.md](clients/README.md). Made-up ChillCo: `clients/chillco/`. Carillion public backtest skeleton (no model numbers yet): `clients/carillion/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
 **Status values.** Each metric reports its own status separately: `green` / `amber` / `red` / `not_tested`. `not_tested` means the probe or required data was missing — it is never treated as a pass. Group roll-up is worst-member (`red > amber > not_tested > green`). There is no blended single score.
 
@@ -74,7 +76,9 @@ PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yam
 
 **SPOF.** A cut node marked `critical: true` (sole supplier / sole critical route) is red on its own. Non-critical cut nodes stay amber.
 
-**Run records.** `metrics.run_all --out PATH` writes one JSON object per run (`run_id`, UTC timestamp, graph name, graph SHA-256, git commit if available, package version, probe settings, and every metric’s version / value / status / drivers). Schema: `metrics/schemas/run_record.v1.json`. `--store [DB]` validates the record and appends it into local DuckDB (default `data/aegis_runs.duckdb`, gitignored) via `metrics.store.load` — idempotent on `run_id`. Same record shape is intended for BigQuery later ([ADR-017](docs/decisions/ADR-017-local-duckdb-run-records.md)). Example analytical SQL: [docs/metrics-run-queries.md](docs/metrics-run-queries.md).
+**Client packs.** Each client has `clients/<id>/` with `client.yaml`, `model/`, `sources/manifest.yaml`, `maps/` (locked, date-stamped), and `runs/` (gitignored). Schemas: `clients/schemas/`. Backtest packs enforce `cut_off_date` on source publication dates. Packs with `data_classification: confidential` must not commit `sources/` or `model/` — real client data belongs in private cloud storage ([ADR-018](docs/decisions/ADR-018-client-packs-and-confidential-data.md)).
+
+**Run records.** `metrics.run_all --out PATH` writes one JSON object per run (`run_id`, UTC timestamp, graph name, graph SHA-256, git commit if available, package version, probe settings, and every metric’s version / value / status / drivers). `--client <id>` emits `run_record.v2` with `client_id` and writes under `clients/<id>/runs/`. v1 records remain loadable. Schemas: `metrics/schemas/run_record.v1.json`, `run_record.v2.json`. `--store [DB]` validates and appends into local DuckDB (default `data/aegis_runs.duckdb`, gitignored) via `metrics.store.load` — idempotent on `run_id`; migration 002 adds `client_id`. `--lock` copies the record and rendered output into `clients/<id>/maps/` with a date stamp and refuses overwrite. Same record shape is intended for BigQuery later ([ADR-017](docs/decisions/ADR-017-local-duckdb-run-records.md)). Example analytical SQL: [docs/metrics-run-queries.md](docs/metrics-run-queries.md).
 
 ### Backend
 
@@ -202,12 +206,13 @@ Processing is genuinely asynchronous: the API and the worker share only the mess
 | `backend/persistence` | SQLite and Firestore stores; in-memory and Pub/Sub emulator buses; lexical knowledge repository |
 | `backend/shared` | Pydantic models, port interfaces, configuration, logging |
 | `metrics/` | Structural-fragility metrics on YAML dependency graphs (HHI, monoculture, SPOF, cascade depth, convexity, ruin, distance to ruin, optionality, slack). No forecasting, no blended score. |
+| `clients/` | Per-client packs: evidence, models, locked maps, local runs ([ADR-018](docs/decisions/ADR-018-client-packs-and-confidential-data.md)) |
 | `frontend` | React, TypeScript, Vite, Tailwind, TanStack Query dashboard: dashboard, events, event detail, assessments, submit event |
 | `data/synthetic` | Synthetic clients, projects, regional profiles, industry context, intelligence reports |
 | `data/evaluation` | Labelled evaluation, adversarial, and held-out event sets |
 | `infrastructure` | Dockerfiles and Cloud Run service YAML for the API and the worker |
 | `evals/` | Deterministic metrics eval suite (labelled graphs, baseline, CI `eval-gate`) — weakness detection, not prediction ([ADR-014](docs/decisions/ADR-014-eval-gate-weakness-detection.md)) |
-| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013, 015–017; engineering ADRs 001–004; eval gate ADR-014) |
+| `docs/decisions` | [ADR index](docs/decisions/README.md) (product ADRs 005–013, 015–018; engineering ADRs 001–004; eval gate ADR-014) |
 | `tests` | Unit, integration, contract, and evaluation tests |
 
 ### Port and adapter matrix
@@ -301,11 +306,12 @@ The root README previously marked checkpoints 2–4 as pending. The code is ahea
 backend/           API, ingestion, worker, assessment, retrieval, scoring, adapters
 frontend/          React + TypeScript dashboard
 metrics/           Structural-fragility metrics (no forecasting)
+clients/           Per-client packs (evidence, models, locked maps, runs)
 evals/             Labelled metrics eval suite + CI eval-gate (ADR-014)
 data/synthetic/    Local knowledge base and client/project fixtures
 data/evaluation/   Labelled evaluation sets
 docs/architecture/ Component map
-docs/decisions/    ADR index (005–013 product; 001–004 engineering; 014 eval gate)
+docs/decisions/    ADR index (005–013, 015–018 product; 001–004 engineering; 014 eval)
 infrastructure/    Dockerfiles and Cloud Run YAML
 tests/             unit, integration, contract, evaluation
 ```
@@ -329,3 +335,6 @@ tests/             unit, integration, contract, evaluation
 - [ADR-013 Hormuz case study dropped](docs/decisions/ADR-013-hormuz-case-study-dropped.md)
 - [ADR-014 Eval gate (weakness detection, not prediction)](docs/decisions/ADR-014-eval-gate-weakness-detection.md)
 - [ADR-015 Convexity from model output; distance to ruin; NOT_TESTED](docs/decisions/ADR-015-convexity-distance-to-ruin-not-tested.md)
+- [ADR-016 Optionality node-disjoint max-flow](docs/decisions/ADR-016-optionality-node-disjoint-maxflow.md)
+- [ADR-017 Local DuckDB run records](docs/decisions/ADR-017-local-duckdb-run-records.md)
+- [ADR-018 Client packs; confidential data out of git](docs/decisions/ADR-018-client-packs-and-confidential-data.md)

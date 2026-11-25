@@ -44,6 +44,9 @@ jobs:
       - name: Lint with ruff
         run: ruff check backend/ tests/ metrics/ evals/
 
+      - name: Confidential client-pack guard
+        run: PYTHONPATH=. python -m metrics.client_pack --check-confidential
+
       - name: Run tests
         run: PYTHONPATH=. pytest tests/ metrics/tests/ -m "not evaluation" -v
 

@@ -42,10 +42,15 @@ def build_scenario_from_args(args: argparse.Namespace) -> Scenario:
     )
 
 
-def add_common_args(parser: argparse.ArgumentParser) -> None:
+def add_common_args(
+    parser: argparse.ArgumentParser,
+    *,
+    graph_required: bool = True,
+) -> None:
     parser.add_argument(
         "--graph",
-        required=True,
+        required=graph_required,
+        default=None,
         type=Path,
         help="Path to a YAML dependency graph",
     )

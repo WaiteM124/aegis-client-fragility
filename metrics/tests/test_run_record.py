@@ -21,6 +21,11 @@ def test_schema_file_exists():
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     assert schema["$id"].endswith("run_record.v1.json")
     assert "run_id" in schema["required"]
+    from metrics.run_record import SCHEMA_PATH_V2
+
+    assert SCHEMA_PATH_V2.is_file()
+    v2 = json.loads(SCHEMA_PATH_V2.read_text(encoding="utf-8"))
+    assert "client_id" in v2["required"]
 
 
 def test_build_and_validate_run_record(tmp_path, examples_dir):
@@ -69,6 +74,8 @@ def test_duckdb_round_trip_idempotent(tmp_path, examples_dir):
     graph_path = examples_dir / "one_route.yaml"
     record = build_run_record(graph_path=graph_path, stress_ladder=True)
     validate_run_record(record)
+    assert record["schema_version"] == "run_record.v1"
+    assert "client_id" not in record
     json_path = tmp_path / "rec.json"
     json_path.write_text(json.dumps(record), encoding="utf-8")
 
@@ -81,13 +88,41 @@ def test_duckdb_round_trip_idempotent(tmp_path, examples_dir):
     import duckdb
 
     con = duckdb.connect(str(db))
-    runs = con.execute("SELECT run_id, graph_name FROM runs").fetchall()
+    runs = con.execute("SELECT run_id, graph_name, client_id FROM runs").fetchall()
     assert len(runs) == 1
     assert runs[0][0] == record["run_id"]
+    assert runs[0][2] is None  # v1 loads with NULL client_id
     metrics = con.execute(
         "SELECT COUNT(*) FROM metric_results WHERE run_id = ?", [record["run_id"]]
     ).fetchone()[0]
     assert metrics == len(record["metrics"])
+    con.close()
+
+
+def test_duckdb_loads_v1_and_v2(tmp_path, examples_dir):
+    graph_path = examples_dir / "one_route.yaml"
+    v1 = build_run_record(graph_path=graph_path, stress_ladder=True)
+    v2 = build_run_record(
+        graph_path=graph_path, stress_ladder=True, client_id="chillco"
+    )
+    validate_run_record(v1)
+    validate_run_record(v2)
+    p1 = tmp_path / "v1.json"
+    p2 = tmp_path / "v2.json"
+    p1.write_text(json.dumps(v1), encoding="utf-8")
+    p2.write_text(json.dumps(v2), encoding="utf-8")
+    db = tmp_path / "both.duckdb"
+    assert store_load([p1, p2], db_path=db) == 2
+
+    import duckdb
+
+    con = duckdb.connect(str(db))
+    rows = {
+        r[0]: r[1]
+        for r in con.execute("SELECT run_id, client_id FROM runs").fetchall()
+    }
+    assert rows[v1["run_id"]] is None
+    assert rows[v2["run_id"]] == "chillco"
     con.close()
 
 
