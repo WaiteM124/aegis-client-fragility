@@ -24,8 +24,11 @@ any event.
 6. **Map lock:** lock the fragility map under `maps/` (date-stamped run record
    + rendered output, with `method_tag`) **before** any comparison with later
    outcomes. Locked files are never edited after creation.
-7. **Score the method:** report **hits**, **misses**, and **false flags**
-   against labelled structural weaknesses.
+7. **Score the method:** after the map is locked, score against a
+   procedure-defined outcome reference list per
+   [ADR-020](../../docs/decisions/ADR-020-backtest-scoring.md) (driver-level
+   hit-from-evidence / hit-from-unknown / miss / method gap / false flag; no
+   blended score). Reference list and scoring are separate later PRs.
 8. **No prediction claim:** do not claim prediction, probability, or a blended
    fragility score.
 

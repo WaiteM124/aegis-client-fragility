@@ -21,6 +21,7 @@ Accepted
 - Marketing and eval design should stress structural weakness discovery (toy / YAML graphs, group statuses, ruin flags), not event-prediction retrospectives.
 - Live events remain valid as **stressors** mapped onto a client graph ([ADR-005](ADR-005-product-positioning.md)); they are not the yardstick for whether Aegis "works".
 - No Hormuz-specific fixtures or backtest harness should be added under that framing.
+- A **public historical pack** (e.g. Carillion) may still be scored for structural-weakness detection against a procedure-defined outcome reference list — driver-level hits/misses/method gaps/false flags, no prediction claim. That use is defined in [ADR-020](ADR-020-backtest-scoring.md); it is not an event-prediction proof and does not weaken this ADR.
 
 ## Alternatives rejected
 

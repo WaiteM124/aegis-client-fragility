@@ -36,6 +36,7 @@ Keep ADRs short and plain. Link related ADRs. Cross-check `metrics/` and `backen
 | [ADR-017](ADR-017-local-duckdb-run-records.md) | Local DuckDB for metrics run records; BigQuery later | Accepted | 2026-11-25 |
 | [ADR-018](ADR-018-client-packs-and-confidential-data.md) | Per-client packs; confidential data stays out of git | Accepted | 2026-11-25 |
 | [ADR-019](ADR-019-financial-side-model.md) | Optional financial-side model (cash, covenants, contracts, customers, energy) | Accepted | 2026-11-25 |
+| [ADR-020](ADR-020-backtest-scoring.md) | Public backtest scoring (structural weakness detection) | Proposed | 2026-11-25 |
 
 ### Eval / CI
 
