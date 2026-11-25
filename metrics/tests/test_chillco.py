@@ -1,4 +1,4 @@
-"""ChillCo example: chilled ready-meals supply-side fragility (made-up EXAMPLE DATA)."""
+"""ChillCo example: chilled ready-meals fragility (made-up EXAMPLE DATA)."""
 
 from pathlib import Path
 
@@ -28,3 +28,11 @@ def test_chillco_stress_ladder_findings():
 
     ruin_result = next(r for r in results["Convexity"] if r.metric == "ruin")
     assert ruin_result.status != Status.NOT_TESTED
+
+    # Financial sections present (ADR-019 EXAMPLE DATA)
+    runway = next(r for r in results["Convexity"] if r.metric == "runway")
+    assert runway.status != Status.NOT_TESTED
+    cust = next(r for r in results["Contagion"] if r.metric == "customer_spof")
+    assert cust.status == Status.RED
+    energy = next(r for r in results["Convexity"] if r.metric == "energy_margin")
+    assert energy.status != Status.NOT_TESTED

@@ -40,11 +40,16 @@ BASELINE_PATH = EVALS_DIR / "baseline.json"
 ALL_METRICS = [
     "hhi",
     "monoculture",
+    "customer_hhi",
+    "customer_monoculture",
     "single_points_of_failure",
     "cascade_depth",
+    "customer_spof",
     "convexity",
     "ruin",
     "distance_to_ruin",
+    "runway",
+    "energy_margin",
     "optionality",
     "slack",
 ]

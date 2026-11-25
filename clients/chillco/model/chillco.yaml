@@ -1,10 +1,8 @@
 # EXAMPLE DATA (made-up). ChillCo — chilled ready-meals maker.
-# Supply-side only: the current graph schema supports suppliers / assets /
-# routes / buyer with share, flow, capacity, buffer. It does NOT yet model:
-#   - customer concentration (demand-side / outbound)
-#   - energy cost to margin
-#   - cash and covenant as the ruin line
-# Those are known gaps; ruin here uses survival_floor on deliverable flow only.
+# Supply-side graph plus optional financial sections (ADR-019):
+#   cash/liquidity, one covenant, contracts, a big customer, energy.
+# Every swing / figure carries a cited-style placeholder source marked EXAMPLE.
+# Do not treat these numbers as real. No prediction claim.
 #
 # Proteins (and other inbound lines in this EXAMPLE) consolidate through one
 # chilled haulier before the factories — a structural single corridor.
@@ -124,5 +122,137 @@ inputs:
   worst_on_record: 0.2
   lower_bound: 0.0
   upper_bound: 1.0
+  source:
+    label: EXAMPLE DATA — placeholder supply WOR
+    as_of: "2020-01-01"
+    note: Made-up. Not a real observation.
+- id: leverage_shock
+  worst_on_record: 0.4
+  lower_bound: 0.0
+  upper_bound: 2.0
+  source:
+    label: EXAMPLE DATA — placeholder leverage WOR
+    as_of: "2019-06-30"
+    note: Made-up swing size for covenant distance probes.
+- id: liquidity_shock
+  worst_on_record: 0.25
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: EXAMPLE DATA — placeholder liquidity WOR
+    as_of: "2020-03-01"
+    note: Made-up. Anchors runway stress only.
+- id: energy_price
+  worst_on_record: 0.35
+  lower_bound: 0.0
+  upper_bound: 1.0
+  source:
+    label: EXAMPLE DATA — placeholder energy WOR
+    as_of: "2022-08-01"
+    note: Made-up energy-price move fraction.
 ruin_line:
   survival_floor: 0.5
+# --- Optional financial sections (ADR-019) — all EXAMPLE DATA ---
+liquidity:
+  cash_on_hand: 8.0
+  currency: GBPm
+  fixed_monthly_outflows: 2.5
+  stress_input_id: liquidity_shock
+  committed_facilities:
+  - id: rcf_example
+    limit: 10.0
+    drawn: 4.0
+    source:
+      label: EXAMPLE DATA — placeholder RCF
+      as_of: "2020-12-31"
+      note: Made-up committed facility. Undrawn = 6.0.
+  source:
+    label: EXAMPLE DATA — placeholder cash & liquidity
+    as_of: "2020-12-31"
+    note: Made-up. cash 8 + undrawn 6 = 14; runway 14/2.5 = 5.6 months baseline.
+covenants:
+- id: net_debt_ebitda
+  kind: max
+  metric: net_debt_ebitda
+  limit: 3.5
+  current: 2.8
+  stress_input_id: leverage_shock
+  source:
+    label: EXAMPLE DATA — placeholder covenant
+    as_of: "2020-12-31"
+    note: Made-up net debt / EBITDA max 3.5; current 2.8 (headroom 0.7).
+contracts:
+- id: retail_fixed
+  counterparty: MegaRetail EXAMPLE
+  revenue_share: 0.45
+  margin: 0.10
+  pricing: fixed
+  termination_notice_days: 180
+  loss_exposure: 5.0
+  input_cost_exposed: true
+  source:
+    label: EXAMPLE DATA — placeholder fixed-price retail contract
+    as_of: "2020-01-01"
+    note: Made-up. Fixed price with input-cost exposure feeds convexity.
+- id: foodservice_cost_plus
+  counterparty: CaterCo EXAMPLE
+  revenue_share: 0.25
+  margin: 0.12
+  pricing: cost_plus
+  termination_notice_days: 90
+  input_cost_exposed: false
+  source:
+    label: EXAMPLE DATA — placeholder cost-plus contract
+    as_of: "2020-01-01"
+    note: Made-up. Cost-plus does not feed input-cost convexity the same way.
+- id: wholesale_fixed
+  counterparty: FreshDist EXAMPLE
+  revenue_share: 0.15
+  margin: 0.08
+  pricing: fixed
+  termination_notice_days: 60
+  loss_exposure: 2.0
+  input_cost_exposed: true
+  source:
+    label: EXAMPLE DATA — placeholder wholesale fixed contract
+    as_of: "2020-01-01"
+    note: Made-up second fixed-price exposed contract.
+customers:
+- id: mega_retail
+  revenue_share: 0.45
+  public_sector: false
+  critical: true
+  type: grocery_retail
+  region: uk
+  source:
+    label: EXAMPLE DATA — placeholder big customer
+    as_of: "2020-12-31"
+    note: Made-up dominant grocery customer (sales-side SPOF when critical).
+- id: caterco
+  revenue_share: 0.25
+  public_sector: false
+  critical: false
+  type: foodservice
+  region: uk
+  source:
+    label: EXAMPLE DATA — placeholder foodservice customer
+    as_of: "2020-12-31"
+- id: nhs_meals_example
+  revenue_share: 0.15
+  public_sector: true
+  critical: false
+  type: public_meals
+  region: uk
+  source:
+    label: EXAMPLE DATA — placeholder public-sector customer tag
+    as_of: "2020-12-31"
+    note: Made-up. Demonstrates public_sector tag (Carillion-style attribute).
+energy:
+  cost_share: 0.12
+  pass_through_pct: 0.20
+  worst_on_record: 0.35
+  stress_input_id: energy_price
+  source:
+    label: EXAMPLE DATA — placeholder energy cost-to-margin
+    as_of: "2022-08-01"
+    note: Made-up. Unrecovered = 0.12 × 0.80 = 0.096; WOR 0.35 cited above.

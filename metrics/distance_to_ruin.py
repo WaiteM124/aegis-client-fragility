@@ -11,25 +11,30 @@ line (survival floor / covenant breach):
     4. Bisect between the last surviving multiple and the first failing one
        to refine the ruin multiple.
 
-Output per input (never averaged across inputs — ruin is absorbing):
+Debt covenants (optional ``covenants`` section, ADR-019) are additional
+ruin lines. For each covenant with cited swing W on its linked stress
+input, ruin_multiple = headroom / W. The **first** line to breach
+(smallest multiple among survival floor and covenants) is reported;
+lines are never averaged. Missing current or cited W → fragile.
+
+Output per input / per covenant (never averaged — ruin is absorbing):
   - ruin_multiple, or null with "no ruin within scan range […]"
   - whether harm accelerates on the way (reuses convexity curvature sign)
   - ruin_cause (which line broke)
 
-Status per input (cut-offs from versioned ``DistanceToRuinThresholds``):
+Status cut-offs from versioned ``DistanceToRuinThresholds``:
   red    if ruin_multiple ≤ red_max_multiple (default 1×)
   amber  if ruin_multiple ≤ amber_max_multiple (default 2×)
   green  if beyond amber, or no ruin within the stated scan range
   not_tested if ruin line or worst_on_record is missing
 
-The metric's overall status is the **worst** per-input status
-(NOT_TESTED is worse than green but does not hide amber/red).
+Overall status is the **worst** member (NOT_TESTED worse than green).
 
 Meaning
 -------
 How many times the worst-on-record move fits before the company crosses a
-configured ruin line. Structural accounting identity — not a probability
-of ruin, and not a forecast of which shock arrives.
+configured ruin line (survival floor or debt covenant). Structural
+accounting identity — not a probability of ruin.
 """
 
 from __future__ import annotations
@@ -41,13 +46,19 @@ import networkx as nx
 
 from metrics.contracts import MetricResult, Scenario, Status
 from metrics.convexity import compute as compute_convexity
+from metrics.finance import (
+    covenant_headroom,
+    graph_covenants,
+    has_covenants,
+    input_worst_on_record,
+)
 from metrics.graph_loader import apply_edge_shock, apply_node_shock, deliverable_flow
 from metrics.ruin import resolve_survival_floor
 from metrics.stress import apply_uniform_stress, ensure_flow
 from metrics.thresholds import THRESHOLDS, Thresholds
 
 METRIC = "distance_to_ruin"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 
 _RANK = {
     Status.GREEN: 0,
@@ -175,8 +186,9 @@ def compute(
         thresholds,
         require_explicit_ruin_line=require_explicit_ruin_line,
     )
+    covenants_present = has_covenants(g0)
 
-    if not inputs:
+    if not inputs and not covenants_present:
         return MetricResult(
             metric=METRIC,
             version=VERSION,
@@ -185,13 +197,13 @@ def compute(
             drivers=[],
             inputs={"reason": "no_graph_inputs"},
             meaning=(
-                "NOT TESTED: graph has no named inputs. "
+                "NOT TESTED: graph has no named inputs and no covenants. "
                 "Distance to ruin needs per-input worst_on_record anchors."
             ),
             unit="multiple",
         )
 
-    if not lines:
+    if not lines and not covenants_present:
         return MetricResult(
             metric=METRIC,
             version=VERSION,
@@ -323,12 +335,102 @@ def compute(
         statuses.append(st)
         drivers.append(f"{inp_id}:{ruin_multiple:.3f}x/{cause}")
 
+    # Covenant ruin lines (ADR-019): distance = headroom / cited WOR.
+    per_covenant: dict[str, Any] = {}
+    first_breach: str | None = None
+    first_breach_multiple: float | None = headline_multiple
+
+    if has_covenants(g0):
+        for cov in graph_covenants(g0):
+            headroom, reason = covenant_headroom(cov)
+            wor, _inp = input_worst_on_record(g0, cov.stress_input_id)
+            if headroom is None:
+                per_covenant[cov.id] = {
+                    "ruin_multiple": None,
+                    "report": f"FRAGILE: {reason or 'missing_current'}",
+                    "ruin_cause": f"covenant:{cov.id}",
+                    "status": Status.RED.value,
+                    "fragile_unknown": True,
+                }
+                statuses.append(Status.RED)
+                drivers.append(f"covenant:{cov.id}:unknown")
+                if first_breach is None:
+                    first_breach = f"covenant:{cov.id}"
+                    first_breach_multiple = 0.0
+                continue
+            if wor is None or wor <= 0:
+                per_covenant[cov.id] = {
+                    "ruin_multiple": None,
+                    "report": "FRAGILE: missing cited worst_on_record on stress_input",
+                    "ruin_cause": f"covenant:{cov.id}",
+                    "status": Status.RED.value,
+                    "fragile_unknown": True,
+                }
+                statuses.append(Status.RED)
+                drivers.append(f"covenant:{cov.id}:missing_wor")
+                if first_breach is None:
+                    first_breach = f"covenant:{cov.id}"
+                    first_breach_multiple = 0.0
+                continue
+
+            if headroom <= 0:
+                ruin_multiple = 0.0
+                report = "already at or past covenant limit"
+            else:
+                ruin_multiple = float(headroom) / float(wor)
+                report = (
+                    f"covenant breach at {ruin_multiple:.4f}× "
+                    f"worst_on_record (headroom={headroom})"
+                )
+
+            st = _status_for_multiple(
+                ruin_multiple, thresholds, no_ruin_in_range=False
+            )
+            per_covenant[cov.id] = {
+                "ruin_multiple": ruin_multiple,
+                "report": report,
+                "ruin_cause": f"covenant:{cov.id}",
+                "headroom": headroom,
+                "worst_on_record": float(wor),
+                "kind": cov.kind.value if hasattr(cov.kind, "value") else cov.kind,
+                "metric": cov.metric,
+                "limit": cov.limit,
+                "current": cov.current,
+                "status": st.value,
+            }
+            statuses.append(st)
+            drivers.append(f"covenant:{cov.id}:{ruin_multiple:.3f}x")
+            if headline_multiple is None or ruin_multiple < headline_multiple:
+                headline_multiple = ruin_multiple
+            if first_breach_multiple is None or ruin_multiple < first_breach_multiple:
+                first_breach = f"covenant:{cov.id}"
+                first_breach_multiple = ruin_multiple
+
+    # If flow-based inputs produced a smaller multiple, that is first_breach.
+    if headline_multiple is not None:
+        for iid, info in per_input.items():
+            rm = info.get("ruin_multiple")
+            if rm is None:
+                continue
+            cause = info.get("ruin_cause") or "survival_floor"
+            if first_breach_multiple is None or float(rm) < first_breach_multiple - 1e-15:
+                first_breach = str(cause)
+                first_breach_multiple = float(rm)
+            elif (
+                first_breach_multiple is not None
+                and abs(float(rm) - first_breach_multiple) <= 1e-15
+                and first_breach and first_breach.startswith("covenant:")
+            ):
+                # Prefer reporting the earlier-evaluated smaller-or-equal flow line
+                # only when strictly smaller; ties keep covenant if it was first set.
+                pass
+
     overall = Status.GREEN
     for st in statuses:
         if _RANK[st] > _RANK[overall]:
             overall = st
 
-    if overall == Status.NOT_TESTED and headline_multiple is None:
+    if overall == Status.NOT_TESTED and headline_multiple is None and not per_covenant:
         reasons = [
             f"{iid}:{info.get('report')}"
             for iid, info in per_input.items()
@@ -341,10 +443,12 @@ def compute(
         )
     else:
         meaning = (
-            "Per-input distance to ruin in multiples of worst-on-record. "
-            "Never averaged across inputs; ruin is absorbing. "
+            "Per-input / per-covenant distance to ruin in multiples of "
+            "worst-on-record. Never averaged; first breach reported. "
             "Structural probe — not a probability of ruin."
         )
+        if first_breach:
+            meaning = f"First breach={first_breach}. " + meaning
 
     return MetricResult(
         metric=METRIC,
@@ -356,6 +460,9 @@ def compute(
             "F0": f0,
             "ruin_lines": lines,
             "per_input": per_input,
+            "per_covenant": per_covenant,
+            "first_breach": first_breach,
+            "first_breach_multiple": first_breach_multiple,
             "threshold_version": t.version,
             "red_max_multiple": t.red_max_multiple,
             "amber_max_multiple": t.amber_max_multiple,

@@ -30,7 +30,7 @@ PYTHONPATH=. python -m metrics.hhi --graph metrics/examples/four_equal_suppliers
 # Ruin needs an explicit probe (--stress-ladder or shocks); silence is NOT_TESTED.
 PYTHONPATH=. python -m metrics.run_all --graph metrics/examples/chain_abc.yaml --stress-ladder
 
-# Made-up EXAMPLE client pack: ChillCo (supply-side only) — write runs/ + DuckDB
+# Made-up EXAMPLE client pack: ChillCo (supply + optional financial sections) — write runs/ + DuckDB
 PYTHONPATH=. python -m metrics.run_all --client chillco --stress-ladder --store
 
 # Lock a date-stamped map under clients/chillco/maps/ (refuses overwrite)
@@ -58,13 +58,15 @@ python -m pytest metrics/tests -q
 python evals/run_evals.py
 ```
 
-Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`. Small test graphs live in `metrics/examples/`. Client packs (evidence, models, locked maps, run history) live under `clients/` — see [clients/README.md](clients/README.md). Made-up ChillCo: `clients/chillco/`. Carillion public backtest skeleton (no model numbers yet): `clients/carillion/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
+Other metric modules: `metrics.monoculture`, `metrics.single_points_of_failure`, `metrics.cascade_depth`, `metrics.convexity`, `metrics.ruin`, `metrics.distance_to_ruin`, `metrics.optionality`, `metrics.slack`, plus optional financial-side `metrics.runway`, `metrics.customer_hhi`, `metrics.customer_monoculture`, `metrics.customer_spof`, `metrics.energy_margin` ([ADR-019](docs/decisions/ADR-019-financial-side-model.md)). Small test graphs live in `metrics/examples/`. Client packs (evidence, models, locked maps, run history) live under `clients/` — see [clients/README.md](clients/README.md). Made-up ChillCo (supply + EXAMPLE financial sections): `clients/chillco/`. Carillion public backtest skeleton (no model numbers yet): `clients/carillion/`. Status thresholds are documented defaults in `metrics/thresholds.py`. Labelled eval graphs live in `evals/cases/`.
 
 **Status values.** Each metric reports its own status separately: `green` / `amber` / `red` / `not_tested`. `not_tested` means the probe or required data was missing — it is never treated as a pass. Group roll-up is worst-member (`red > amber > not_tested > green`). There is no blended single score.
 
 **Optionality.** Counts **node-disjoint** supply corridors (Menger / max-flow with node splitting). Shared sources collapse apparent routes — see [ADR-016](docs/decisions/ADR-016-optionality-node-disjoint-maxflow.md). Drivers name `shared_collapse:<node>` when a shared vertex collapses the topology.
 
-**Ruin.** Ruin fires only under an **explicit** probe (`--stress-ladder`, scenario shocks, or `ladder=`). Without one it returns `NOT_TESTED`, never green. When tested, ruin is red if remaining deliverable flow at any ladder rung is strictly below `floor × F₀`. Default floor is **0.5**. Override per graph with `survival_floor:` / `ruin_line:`, or `--survival-floor` on the CLI:
+**Financial-side (optional).** Graphs may add `liquidity`, `covenants`, `contracts`, `customers`, and `energy` ([ADR-019](docs/decisions/ADR-019-financial-side-model.md)). Debt covenants are additional ruin lines; the first to breach (covenant or survival floor) is reported. Customer concentration metrics stay separate from supplier ones. Every swing uses a cited `worst_on_record`. Schema: `clients/schemas/dependency_graph.v1.json`.
+
+**Ruin.** Ruin fires only under an **explicit** probe (`--stress-ladder`, scenario shocks, or `ladder=`). Without one it returns `NOT_TESTED`, never green. When tested, ruin is red if remaining deliverable flow at any ladder rung is strictly below `floor × F₀`, or if a configured debt covenant is breached. Default floor is **0.5**. Override per graph with `survival_floor:` / `ruin_line:`, or `--survival-floor` on the CLI:
 
 ```bash
 PYTHONPATH=. python -m metrics.ruin --graph metrics/examples/single_supplier.yaml --stress-ladder --survival-floor 0.6

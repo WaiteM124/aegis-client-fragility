@@ -2,14 +2,19 @@
 
 Groups
 ------
-  Concentration — HHI, monoculture
-  Contagion     — single points of failure, cascade depth
-  Convexity     — convexity, ruin, distance_to_ruin
+  Concentration — HHI, monoculture, customer_hhi, customer_monoculture
+  Contagion     — single points of failure, cascade depth, customer_spof
+  Convexity     — convexity, ruin, distance_to_ruin, runway, energy_margin
   Optionality   — optionality, slack
 
 Each group shows the status of its **worst** metric
 (red > amber > not_tested > green). Ruin forces the Convexity group
 (and the ruin line) to red. NOT_TESTED is never counted as a pass.
+
+Optional financial-section metrics that return NOT_TESTED with
+``optional_section_absent`` are excluded from group roll-up so supply-only
+graphs keep identical group status (ADR-019). Customer and supplier
+concentration stay as separate labelled results — never blended.
 
 No weighted or blended single score is produced. Averaging would hide
 danger and the units differ across metrics.
@@ -27,11 +32,16 @@ import networkx as nx
 from metrics import (
     cascade_depth,
     convexity,
+    customer_hhi,
+    customer_monoculture,
+    customer_spof,
     distance_to_ruin,
+    energy_margin,
     hhi,
     monoculture,
     optionality,
     ruin,
+    runway,
     slack,
 )
 from metrics import single_points_of_failure as spof
@@ -45,6 +55,8 @@ GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
         [
             ("HHI", hhi.compute),
             ("Monoculture", monoculture.compute),
+            ("Customer HHI", customer_hhi.compute),
+            ("Customer monoculture", customer_monoculture.compute),
         ],
     ),
     (
@@ -52,6 +64,7 @@ GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
         [
             ("Single points of failure", spof.compute),
             ("Cascade depth", cascade_depth.compute),
+            ("Customer SPOF", customer_spof.compute),
         ],
     ),
     (
@@ -60,6 +73,8 @@ GROUPS: list[tuple[str, list[tuple[str, Callable[..., MetricResult]]]]] = [
             ("Convexity", convexity.compute),
             ("Ruin", ruin.compute),
             ("Distance to ruin", distance_to_ruin.compute),
+            ("Runway", runway.compute),
+            ("Energy margin", energy_margin.compute),
         ],
     ),
     (
@@ -80,9 +95,19 @@ _RANK = {
 }
 
 
+def _optional_section_absent(result: MetricResult) -> bool:
+    """True when an optional financial section was omitted (ADR-019)."""
+    inputs = result.inputs or {}
+    return bool(inputs.get("optional_section_absent"))
+
+
 def worst_status(results: list[MetricResult], *, ruin_forces_red: bool = False) -> Status:
     status = Status.GREEN
     for r in results:
+        # Optional-section metrics absent on supply-only graphs must not
+        # change group status (keeps existing evals / examples identical).
+        if _optional_section_absent(r):
+            continue
         if _RANK[r.status] > _RANK[status]:
             status = r.status
         if ruin_forces_red and r.metric == "ruin" and r.status == Status.RED:
